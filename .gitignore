@@ -41,3 +41,6 @@
 # Docker auxiliary
 .env.docker.local
 .docker/
+
+/app/assets/builds/*
+!/app/assets/builds/.keep

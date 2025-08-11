@@ -11,11 +11,19 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  root "pages#index"
-
   # Authentication
   devise_for :users
+
+  # Root: login quando não autenticado; index quando autenticado
+  authenticated :user do
+    root to: "pages#index", as: :authenticated_root
+  end
+
+  unauthenticated do
+    devise_scope :user do
+      root to: "devise/sessions#new", as: :unauthenticated_root
+    end
+  end
 
   # API
   namespace :api do

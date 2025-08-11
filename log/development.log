@@ -176,3 +176,578 @@ NameError (uninitialized constant User):
   
 config/routes.rb:16:in 'block in <main>'
 config/routes.rb:1:in '<main>'
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.8ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-08-11 19:14:18.702763', '2025-08-11 19:14:18.702766') RETURNING "key" /*application='HopeEscalas'*/[0m
+Migrating to DeviseCreateUsers (20250811184631)
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (5.8ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token") /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.7ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250811184631') RETURNING "version" /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (1.0ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+Migrating to CreatePatients (20250811185355)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "patients" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_patients_on_deleted_at" ON "patients" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_patients_on_cpf" ON "patients" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.0ms)[0m  [1m[35mALTER TABLE "patients" ADD CONSTRAINT patients_cpf_format CHECK (char_length(cpf) = 11 AND cpf ~ '^[0-9]{11}$') /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mALTER TABLE "patients" ADD CONSTRAINT patients_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$') /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mALTER TABLE "patients" ADD CONSTRAINT patients_full_name_minlen CHECK (char_length(full_name) >= 5) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250811185355') RETURNING "version" /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+Migrating to CreateProfessionals (20250811191022)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (5.0ms)[0m  [1m[35mCREATE TABLE "professionals" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "professional_id" character varying, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE INDEX "index_professionals_on_deleted_at" ON "professionals" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_cpf" ON "professionals" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_email" ON "professionals" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mALTER TABLE "professionals" ADD CONSTRAINT professionals_cpf_format CHECK (char_length(cpf) = 11 AND cpf ~ '^[0-9]{11}$') /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "professionals" ADD CONSTRAINT professionals_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$') /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "professionals" ADD CONSTRAINT professionals_full_name_minlen CHECK (char_length(full_name) >= 5) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250811191022') RETURNING "version" /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mSET search_path TO public /*application='HopeEscalas'*/[0m
+  [1m[35m (45.6ms)[0m  [1m[35mDROP DATABASE IF EXISTS "hope_escalas_development" /*application='HopeEscalas'*/[0m
+  [1m[35m (101.8ms)[0m  [1m[35mDROP DATABASE IF EXISTS "hope_escalas_test" /*application='HopeEscalas'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mSET search_path TO public /*application='HopeEscalas'*/[0m
+  [1m[35m (76.0ms)[0m  [1m[35mCREATE DATABASE "hope_escalas_development" ENCODING = 'unicode' /*application='HopeEscalas'*/[0m
+  [1m[35mSQL (0.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql" SCHEMA pg_catalog /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "patients" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (7.1ms)[0m  [1m[35mCREATE TABLE "patients" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT patients_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT patients_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT patients_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_patients_on_cpf" ON "patients" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_patients_on_deleted_at" ON "patients" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "professionals" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (4.5ms)[0m  [1m[35mCREATE TABLE "professionals" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "professional_id" character varying, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT professionals_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT professionals_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT professionals_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_cpf" ON "professionals" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_professionals_on_deleted_at" ON "professionals" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_email" ON "professionals" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "users" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.9ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token") /*application='HopeEscalas'*/[0m
+  [1m[35m (2.9ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20250811191022) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20250811185355),
+(20250811184631); /*application='HopeEscalas'*/[0m
+  [1m[35m (3.1ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.4ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.3ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-08-11 19:25:06.010327', '2025-08-11 19:25:06.010332') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'schema_sha1' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.1ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('schema_sha1', '8fc33e248984ca044c73478b9bda4325661f848a', '2025-08-11 19:25:06.019496', '2025-08-11 19:25:06.019499') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+Migrating to AddAccountToUsers (20250811191500)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (3.2ms)[0m  [1m[35mALTER TABLE "users" ADD "account_type" character varying /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "users" ADD "account_id" bigint /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE INDEX "index_users_on_account" ON "users" ("account_type", "account_id") /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.6ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250811191500') RETURNING "version" /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:25:15 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 10.5ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 273ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 75.7ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.js' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.js' was not found in the load path.):
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    22:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    23:   </head>
+    24: 
+    25:   <body>
+  
+app/views/layouts/application.html.erb:22
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:22
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:26:00 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 11.0ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 276ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 86.1ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.js' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.js' was not found in the load path.):
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    22:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    23:   </head>
+    24: 
+    25:   <body>
+  
+app/views/layouts/application.html.erb:22
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:22
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:28:12 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.0ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 213ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 43.1ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.css' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.css' was not found in the load path.):
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    22:     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    23:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    24:   </head>
+    25: 
+  
+app/views/layouts/application.html.erb:22
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:22
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:31:27 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.6ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 217ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 38.5ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.css' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.css' was not found in the load path.):
+    18:     <link rel="apple-touch-icon" href="/icon.png">
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    22:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    23:   </head>
+    24: 
+  
+app/views/layouts/application.html.erb:21
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:21
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:33:30 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.4ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 213ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 44.2ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.css' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.css' was not found in the load path.):
+    18:     <link rel="apple-touch-icon" href="/icon.png">
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    22:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    23:   </head>
+    24: 
+  
+app/views/layouts/application.html.erb:21
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.css' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:21
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:37:25 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 10.0ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 207ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 33.6ms)
+
+
+  
+ActionView::Template::Error (The asset 'application.js' was not found in the load path.)
+Caused by: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.)
+
+Information for: ActionView::Template::Error (The asset 'application.js' was not found in the load path.):
+    19: 
+    20:     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    21:     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    22:     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    23:   </head>
+    24: 
+    25:   <body>
+  
+app/views/layouts/application.html.erb:22
+
+Information for cause: Propshaft::MissingAssetError (The asset 'application.js' was not found in the load path.):
+  
+app/views/layouts/application.html.erb:22
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:45:27 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.1ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 201ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 26.4ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Hope Escalas" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/code/hope/hope-escalas/app/views/layouts/application.html.erb:23: syntax errors found
+  21 |  @output_buffer.safe_append='  '.freeze; @output_buffer.append=( stylesheet_link_tag "application", "data-turbo-track": "reload" ); @output_buffer.safe_append='
+  22 |     '.freeze; @output_buffer.append=( javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %
+> 23 |   </head>
+     |   ^ unexpected '<'; expected an expression after the operator
+  24 | 
+  25 |   <body>
+  26 |     <%= yield ); @output_buffer.safe_append='
+> 27 |   </body>
+     |    ^~~~~ unknown regexp options - bdy
+> 28 | </html>
+     | ^ unexpected '<'; expected an expression after the operator
+  29 | '.freeze;
+> 30 | ... /views/layouts/application.html.erb -->';@output_buffer
+     |     ^~~~~~ unknown regexp options - vw
+     |                                         ^ unexpected '-', expecting end-of-input
+     |                                            ^ unterminated string meets end of file
+     |                                            ^ expected a `do` keyword or a `{` to open the lambda block
+  31 |           end
+> 32 | 
+     | ^ expected an `end` to close the `def` statement
+
+     | ^ expected a matching `)`
+
+     | ^ expected a lambda block beginning with `do` to end with `end`
+
+     | ^ unexpected end-of-input, assuming it is closing the parent top level context
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Hope Escalas" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
+):
+1:    <!DOCTYPE html>
+2:    <html>
+3:      <head>
+4:        <title><%= content_for(:title) || "Hope Escalas" %></title>
+5:        <meta name="viewport" content="width=device-width,initial-scale=1">
+6:        <meta name="apple-mobile-web-app-capable" content="yes">
+7:        <meta name="mobile-web-app-capable" content="yes">
+8:        <%= csrf_meta_tags %>
+9:        <%= csp_meta_tag %>
+10:    
+11:        <%= yield :head %>
+12:    
+13:        <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+14:        <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+15:    
+16:        <link rel="icon" href="/icon.png" type="image/png">
+17:        <link rel="icon" href="/icon.svg" type="image/svg+xml">
+18:        <link rel="apple-touch-icon" href="/icon.png">
+19:    
+20:        <%# Includes all stylesheet files in app/assets/stylesheets %>
+21:      <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+22:        <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %
+23:      </head>
+24:    
+25:      <body>
+26:        <%= yield %>
+27:      </body>
+28:    </html>
+  
+app/views/layouts/application.html.erb:23: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/code/hope/hope-escalas/app/views/layouts/application.html.erb:23: syntax errors found
+  21 |  @output_buffer.safe_append='  '.freeze; @output_buffer.append=( stylesheet_link_tag "application", "data-turbo-track": "reload" ); @output_buffer.safe_append='
+  22 |     '.freeze; @output_buffer.append=( javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %
+> 23 |   </head>
+     |   ^ unexpected '<'; expected an expression after the operator
+  24 | 
+  25 |   <body>
+  26 |     <%= yield ); @output_buffer.safe_append='
+> 27 |   </body>
+     |    ^~~~~ unknown regexp options - bdy
+> 28 | </html>
+     | ^ unexpected '<'; expected an expression after the operator
+  29 | '.freeze;
+> 30 | ... /views/layouts/application.html.erb -->';@output_buffer
+     |     ^~~~~~ unknown regexp options - vw
+     |                                         ^ unexpected '-', expecting end-of-input
+     |                                            ^ unterminated string meets end of file
+     |                                            ^ expected a `do` keyword or a `{` to open the lambda block
+  31 |           end
+> 32 | 
+     | ^ expected an `end` to close the `def` statement
+
+     | ^ expected a matching `)`
+
+     | ^ expected a lambda block beginning with `do` to end with `end`
+
+     | ^ unexpected end-of-input, assuming it is closing the parent top level context
+):
+  
+app/views/layouts/application.html.erb:23: syntax errors found
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:45:58 -0300
+Processing by PagesController#index as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 18.1ms | GC: 1.1ms)
+Completed 200 OK in 29ms (Views: 19.2ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 2.0ms)
+
+
+Started GET "/assets/application-37f62fb4.css" for 127.0.0.1 at 2025-08-11 16:45:59 -0300
+Started GET "/assets/application-f14ad616.js" for 127.0.0.1 at 2025-08-11 16:45:59 -0300
+Unable to resolve './fonts/bootstrap-icons.woff2' for missing asset 'fonts/bootstrap-icons.woff2' in application.css
+Unable to resolve './fonts/bootstrap-icons.woff' for missing asset 'fonts/bootstrap-icons.woff' in application.css
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:51:39 -0300
+Processing by Devise::SessionsController#new as HTML
+[Devise] Could not find devise mapping for path "/".
+This may happen for two reasons:
+
+1) You forgot to wrap your route inside the scope block. For example:
+
+  devise_scope :user do
+    get "/some/route" => "some_devise_controller"
+  end
+
+2) You are testing a Devise controller bypassing the router.
+   If so, you can explicitly tell Devise which mapping to use:
+
+   @request.env["devise.mapping"] = Devise.mappings[:user]
+
+
+Completed 404 Not Found in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+  
+AbstractController::ActionNotFound (Could not find devise mapping for path "/".
+This may happen for two reasons:
+
+1) You forgot to wrap your route inside the scope block. For example:
+
+  devise_scope :user do
+    get "/some/route" => "some_devise_controller"
+  end
+
+2) You are testing a Devise controller bypassing the router.
+   If so, you can explicitly tell Devise which mapping to use:
+
+   @request.env["devise.mapping"] = Devise.mappings[:user]
+
+):
+  
+devise (4.9.4) app/controllers/devise_controller.rb:104:in 'DeviseController#unknown_action!'
+devise (4.9.4) app/controllers/devise_controller.rb:79:in 'DeviseController#assert_is_devise_resource!'
+devise (4.9.4) app/controllers/devise_controller.rb:117:in 'DeviseController#require_no_authentication'
+activesupport (8.0.2) lib/active_support/callbacks.rb:361:in 'block in ActiveSupport::Callbacks::CallTemplate::MethodCall#make_lambda'
+activesupport (8.0.2) lib/active_support/callbacks.rb:178:in 'block in ActiveSupport::Callbacks::Filters::Before#call'
+actionpack (8.0.2) lib/abstract_controller/callbacks.rb:34:in 'block (2 levels) in <module:Callbacks>'
+activesupport (8.0.2) lib/active_support/callbacks.rb:179:in 'ActiveSupport::Callbacks::Filters::Before#call'
+activesupport (8.0.2) lib/active_support/callbacks.rb:559:in 'block in ActiveSupport::Callbacks::CallbackSequence#invoke_before'
+activesupport (8.0.2) lib/active_support/callbacks.rb:559:in 'Array#each'
+activesupport (8.0.2) lib/active_support/callbacks.rb:559:in 'ActiveSupport::Callbacks::CallbackSequence#invoke_before'
+activesupport (8.0.2) lib/active_support/callbacks.rb:118:in 'block in ActiveSupport::Callbacks#run_callbacks'
+activesupport (8.0.2) lib/active_support/callbacks.rb:140:in 'ActiveSupport::Callbacks#run_callbacks'
+actionpack (8.0.2) lib/abstract_controller/callbacks.rb:260:in 'AbstractController::Callbacks#process_action'
+actionpack (8.0.2) lib/action_controller/metal/rescue.rb:27:in 'ActionController::Rescue#process_action'
+actionpack (8.0.2) lib/action_controller/metal/instrumentation.rb:76:in 'block in ActionController::Instrumentation#process_action'
+activesupport (8.0.2) lib/active_support/notifications.rb:210:in 'block in ActiveSupport::Notifications.instrument'
+activesupport (8.0.2) lib/active_support/notifications/instrumenter.rb:58:in 'ActiveSupport::Notifications::Instrumenter#instrument'
+activesupport (8.0.2) lib/active_support/notifications.rb:210:in 'ActiveSupport::Notifications.instrument'
+actionpack (8.0.2) lib/action_controller/metal/instrumentation.rb:75:in 'ActionController::Instrumentation#process_action'
+actionpack (8.0.2) lib/action_controller/metal/params_wrapper.rb:259:in 'ActionController::ParamsWrapper#process_action'
+activerecord (8.0.2) lib/active_record/railties/controller_runtime.rb:39:in 'ActiveRecord::Railties::ControllerRuntime#process_action'
+actionpack (8.0.2) lib/abstract_controller/base.rb:163:in 'AbstractController::Base#process'
+actionview (8.0.2) lib/action_view/rendering.rb:40:in 'ActionView::Rendering#process'
+actionpack (8.0.2) lib/action_controller/metal.rb:252:in 'ActionController::Metal#dispatch'
+actionpack (8.0.2) lib/action_controller/metal.rb:335:in 'ActionController::Metal.dispatch'
+actionpack (8.0.2) lib/action_dispatch/routing/route_set.rb:67:in 'ActionDispatch::Routing::RouteSet::Dispatcher#dispatch'
+actionpack (8.0.2) lib/action_dispatch/routing/route_set.rb:50:in 'ActionDispatch::Routing::RouteSet::Dispatcher#serve'
+actionpack (8.0.2) lib/action_dispatch/routing/mapper.rb:32:in 'block in <class:Constraints>'
+actionpack (8.0.2) lib/action_dispatch/routing/mapper.rb:62:in 'ActionDispatch::Routing::Mapper::Constraints#serve'
+actionpack (8.0.2) lib/action_dispatch/journey/router.rb:53:in 'block in ActionDispatch::Journey::Router#serve'
+actionpack (8.0.2) lib/action_dispatch/journey/router.rb:133:in 'block in ActionDispatch::Journey::Router#find_routes'
+actionpack (8.0.2) lib/action_dispatch/journey/router.rb:126:in 'Array#each'
+actionpack (8.0.2) lib/action_dispatch/journey/router.rb:126:in 'ActionDispatch::Journey::Router#find_routes'
+actionpack (8.0.2) lib/action_dispatch/journey/router.rb:34:in 'ActionDispatch::Journey::Router#serve'
+actionpack (8.0.2) lib/action_dispatch/routing/route_set.rb:908:in 'ActionDispatch::Routing::RouteSet#call'
+railties (8.0.2) lib/rails/engine/lazy_route_set.rb:68:in 'Rails::Engine::LazyRouteSet#call'
+bullet (8.0.8) lib/bullet/rack.rb:18:in 'Bullet::Rack#call'
+warden (1.2.9) lib/warden/manager.rb:36:in 'block in Warden::Manager#call'
+warden (1.2.9) lib/warden/manager.rb:34:in 'Kernel#catch'
+warden (1.2.9) lib/warden/manager.rb:34:in 'Warden::Manager#call'
+rack (3.2.0) lib/rack/tempfile_reaper.rb:20:in 'Rack::TempfileReaper#call'
+rack (3.2.0) lib/rack/etag.rb:29:in 'Rack::ETag#call'
+rack (3.2.0) lib/rack/conditional_get.rb:31:in 'Rack::ConditionalGet#call'
+rack (3.2.0) lib/rack/head.rb:15:in 'Rack::Head#call'
+actionpack (8.0.2) lib/action_dispatch/http/permissions_policy.rb:38:in 'ActionDispatch::PermissionsPolicy::Middleware#call'
+actionpack (8.0.2) lib/action_dispatch/http/content_security_policy.rb:38:in 'ActionDispatch::ContentSecurityPolicy::Middleware#call'
+rack-session (2.1.1) lib/rack/session/abstract/id.rb:274:in 'Rack::Session::Abstract::Persisted#context'
+rack-session (2.1.1) lib/rack/session/abstract/id.rb:268:in 'Rack::Session::Abstract::Persisted#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/cookies.rb:706:in 'ActionDispatch::Cookies#call'
+activerecord (8.0.2) lib/active_record/migration.rb:671:in 'ActiveRecord::Migration::CheckPending#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:31:in 'block in ActionDispatch::Callbacks#call'
+activesupport (8.0.2) lib/active_support/callbacks.rb:100:in 'ActiveSupport::Callbacks#run_callbacks'
+actionpack (8.0.2) lib/action_dispatch/middleware/callbacks.rb:30:in 'ActionDispatch::Callbacks#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in 'ActionDispatch::Executor#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/actionable_exceptions.rb:18:in 'ActionDispatch::ActionableExceptions#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/debug_exceptions.rb:31:in 'ActionDispatch::DebugExceptions#call'
+web-console (4.2.1) lib/web_console/middleware.rb:132:in 'WebConsole::Middleware#call_app'
+web-console (4.2.1) lib/web_console/middleware.rb:28:in 'block in WebConsole::Middleware#call'
+web-console (4.2.1) lib/web_console/middleware.rb:17:in 'Kernel#catch'
+web-console (4.2.1) lib/web_console/middleware.rb:17:in 'WebConsole::Middleware#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/show_exceptions.rb:32:in 'ActionDispatch::ShowExceptions#call'
+railties (8.0.2) lib/rails/rack/logger.rb:41:in 'Rails::Rack::Logger#call_app'
+railties (8.0.2) lib/rails/rack/logger.rb:29:in 'Rails::Rack::Logger#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/remote_ip.rb:96:in 'ActionDispatch::RemoteIp#call'
+request_store (1.7.0) lib/request_store/middleware.rb:19:in 'RequestStore::Middleware#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/request_id.rb:34:in 'ActionDispatch::RequestId#call'
+rack (3.2.0) lib/rack/method_override.rb:28:in 'Rack::MethodOverride#call'
+rack (3.2.0) lib/rack/runtime.rb:24:in 'Rack::Runtime#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:61:in 'block in ActionDispatch::ServerTiming#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:26:in 'ActionDispatch::ServerTiming::Subscriber#collect_events'
+actionpack (8.0.2) lib/action_dispatch/middleware/server_timing.rb:60:in 'ActionDispatch::ServerTiming#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/executor.rb:16:in 'ActionDispatch::Executor#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/static.rb:27:in 'ActionDispatch::Static#call'
+rack (3.2.0) lib/rack/sendfile.rb:114:in 'Rack::Sendfile#call'
+actionpack (8.0.2) lib/action_dispatch/middleware/host_authorization.rb:143:in 'ActionDispatch::HostAuthorization#call'
+railties (8.0.2) lib/rails/engine.rb:535:in 'Rails::Engine#call'
+puma (6.6.1) lib/puma/configuration.rb:279:in 'Puma::Configuration::ConfigMiddleware#call'
+puma (6.6.1) lib/puma/request.rb:99:in 'block in Puma::Request#handle_request'
+puma (6.6.1) lib/puma/thread_pool.rb:390:in 'Puma::ThreadPool#with_force_shutdown'
+puma (6.6.1) lib/puma/request.rb:98:in 'Puma::Request#handle_request'
+puma (6.6.1) lib/puma/server.rb:472:in 'Puma::Server#process_client'
+puma (6.6.1) lib/puma/server.rb:254:in 'block in Puma::Server#run'
+puma (6.6.1) lib/puma/thread_pool.rb:167:in 'block in Puma::ThreadPool#spawn_thread'
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:54:47 -0300
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.8ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 11.0ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 12.1ms | GC: 0.2ms)
+Completed 200 OK in 73ms (Views: 14.6ms | ActiveRecord: 14.0ms (0 queries, 0 cached) | GC: 0.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:55:09 -0300
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 1.3ms | GC: 0.3ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 5.0ms | GC: 1.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 6.2ms | GC: 1.9ms)
+Completed 200 OK in 31ms (Views: 8.1ms | ActiveRecord: 6.7ms (0 queries, 0 cached) | GC: 3.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-11 16:55:17 -0300
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.8ms | GC: 0.1ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 3.6ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.8ms | GC: 0.8ms)
+Completed 200 OK in 30ms (Views: 7.6ms | ActiveRecord: 7.2ms (0 queries, 0 cached) | GC: 3.6ms)
+
+

@@ -149,6 +149,46 @@ Observações:
 
 Jobs em desenvolvimento (opcional): configure Sidekiq e rode `bundle exec sidekiq`.
 
+### Setup após git pull em outra máquina
+
+Siga esta sequência para evitar erros de assets e watchers:
+
+```bash
+cd /home/gilgamesh/code/hope/hope-escalas
+
+# 1) Runtimes e gems
+mise install
+bundle install
+
+# 2) Variáveis de ambiente
+cp .env.example .env  # se ainda não existir
+source .env
+
+# 3) Serviços locais
+docker compose up -d
+
+# 4) Node/Yarn e dependências (o projeto usa Yarn via Corepack)
+corepack enable
+yarn install
+
+# Se o bin/dev acusar 'command not found: nodemon' ou falhas de Sass/PostCSS, rode:
+# yarn add -D nodemon sass postcss postcss-cli autoprefixer
+
+# 5) Compilação/Watch de assets (dev)
+bin/dev  # (sobe web, js e css watchers)
+
+# Alternativas pontuais
+yarn build       # JS
+yarn build:css   # CSS
+```
+
+Notas de assets:
+
+- Layout deve referenciar apenas `application`:
+  - `<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>`
+  - `<%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>`
+- `config/initializers/assets.rb` precisa incluir `app/assets/builds` no load path (já configurado).
+
 ### Pós-setup (Devise, Pundit, RSpec e Solargraph)
 
 ```bash
