@@ -97,10 +97,14 @@ volumes:
 Subir serviços e configurar variáveis locais:
 
 ```bash
+cp .env.example .env   # se ainda não existir
+source .env
 docker compose up -d
-export DATABASE_URL=postgres://postgres:postgres@localhost:5432/hope_escalas_development
-export REDIS_URL=redis://localhost:6379/0 # opcional no MVP
 ```
+
+Notas:
+
+- Volumes nomeados `pgdata` e `redisdata` persistem os dados localmente. Para reset total (cuidado, apaga dados): `docker compose down -v`.
 
 Como rodar o ambiente local passo a passo:
 
@@ -112,14 +116,17 @@ mise install
 cp .env.example .env
 source .env
 
-# 3) Subir Postgres e Redis
+# 3) Instalar gems
+bundle install
+
+# 4) Subir Postgres e Redis
 docker compose up -d
 docker compose ps
 
-# 4) Preparar o banco
+# 5) Preparar o banco
 bin/rails db:prepare
 
-# 5) Rodar a aplicação
+# 6) Rodar a aplicação
 bin/rails s
 
 # (Opcional) Rodar Sidekiq se for usar jobs/redis
@@ -141,6 +148,38 @@ Observações:
 - O Rails usará `DATABASE_URL` se definida; caso contrário, `config/database.yml` lê `PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE` do ambiente (carregadas via `source .env`).
 
 Jobs em desenvolvimento (opcional): configure Sidekiq e rode `bundle exec sidekiq`.
+
+### Pós-setup (Devise, Pundit, RSpec e Solargraph)
+
+```bash
+# Devise (autenticação)
+bin/rails generate devise:install
+
+# Pundit (autorização)
+bin/rails generate pundit:install
+
+# RSpec (testes)
+bin/rails generate rspec:install
+
+# Solargraph (LSP para editores)
+bundle exec solargraph config
+bundle exec solargraph scan
+```
+
+### Soft delete (Paranoia) — rápido
+
+```bash
+# Exemplo para Patients (repita para outras tabelas quando necessário)
+bin/rails generate migration AddDeletedAtToPatients deleted_at:datetime:index
+bin/rails db:migrate
+```
+
+```ruby
+# app/models/patient.rb
+class Patient < ApplicationRecord
+  acts_as_paranoid
+end
+```
 
 ## Domínio e fluxos
 

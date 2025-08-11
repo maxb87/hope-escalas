@@ -19,6 +19,19 @@ gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# Authentication
+gem "devise"
+
+# Soft delete
+gem "paranoia"
+
+# Authorization (policies)
+gem "pundit"
+
+# Logging and metrics
+gem "lograge"
+gem "prometheus_exporter"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
@@ -51,15 +64,32 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Ruby language server for IDEs
+  gem "solargraph", require: false
+
+   # Testing stack
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+
+  # Dependency audit
+  gem "bundler-audit", require: false
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Catch N+1 queries and common pitfalls in development
+  gem "bullet"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # Code coverage
+  gem "simplecov", require: false
 end
