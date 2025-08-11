@@ -1,0 +1,77 @@
+<%= form_with(model: professional) do |form| %>
+  <% if professional.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(professional.errors.count, "error") %> prohibited this professional from being saved:</h2>
+
+      <ul>
+        <% professional.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :full_name, style: "display: block" %>
+    <%= form.text_field :full_name %>
+  </div>
+
+  <div>
+    <%= form.label :sex, style: "display: block" %>
+    <%= form.number_field :sex %>
+  </div>
+
+  <div>
+    <%= form.label :birthday, style: "display: block" %>
+    <%= form.date_field :birthday %>
+  </div>
+
+  <div>
+    <%= form.label :started_at, style: "display: block" %>
+    <%= form.date_field :started_at %>
+  </div>
+
+  <div>
+    <%= form.label :birthplace, style: "display: block" %>
+    <%= form.text_field :birthplace %>
+  </div>
+
+  <div>
+    <%= form.label :email, style: "display: block" %>
+    <%= form.text_field :email %>
+  </div>
+
+  <div>
+    <%= form.label :cpf, style: "display: block" %>
+    <%= form.text_field :cpf %>
+  </div>
+
+  <div>
+    <%= form.label :rg, style: "display: block" %>
+    <%= form.text_field :rg %>
+  </div>
+
+  <div>
+    <%= form.label :current_address, style: "display: block" %>
+    <%= form.number_field :current_address %>
+  </div>
+
+  <div>
+    <%= form.label :current_phone, style: "display: block" %>
+    <%= form.number_field :current_phone %>
+  </div>
+
+  <div>
+    <%= form.label :professional_id, style: "display: block" %>
+    <%= form.text_field :professional_id %>
+  </div>
+
+  <div>
+    <%= form.label :deleted_at, style: "display: block" %>
+    <%= form.datetime_field :deleted_at %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
