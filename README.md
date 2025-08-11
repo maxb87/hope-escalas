@@ -57,6 +57,12 @@ Inicialização de app Rails (se ainda não existir esqueleto):
 rails _8.0.2_ new . -d postgresql --force --skip-git
 ```
 
+Nota sobre .env versionado:
+
+- O arquivo `.env` é versionado para padronizar o setup entre máquinas dos desenvolvedores.
+- Não armazene segredos no `.env`. Use credenciais criptografadas do Rails (`rails credentials:edit`) ou variáveis seguras na Railway.
+- Arquivos de chave em texto plano não são commitados (`config/master.key`, `config/credentials/*.key`). Em produção, defina `RAILS_MASTER_KEY` nas variáveis da Railway.
+
 ## Ambiente de desenvolvimento (Docker Compose)
 
 Arquivo sugerido `docker-compose.yml`:
@@ -96,12 +102,43 @@ export DATABASE_URL=postgres://postgres:postgres@localhost:5432/hope_escalas_dev
 export REDIS_URL=redis://localhost:6379/0 # opcional no MVP
 ```
 
+Como rodar o ambiente local passo a passo:
+
+```bash
+# 1) Instalar runtimes
+mise install
+
+# 2) Criar .env local a partir do exemplo (ou exportar as variáveis manualmente)
+cp .env.example .env
+source .env
+
+# 3) Subir Postgres e Redis
+docker compose up -d
+docker compose ps
+
+# 4) Preparar o banco
+bin/rails db:prepare
+
+# 5) Rodar a aplicação
+bin/rails s
+
+# (Opcional) Rodar Sidekiq se for usar jobs/redis
+# bundle exec sidekiq
+
+# Parar serviços Docker quando terminar
+docker compose down
+```
+
 ## Execução
 
 ```bash
 bin/rails db:prepare
 bin/rails s
 ```
+
+Observações:
+
+- O Rails usará `DATABASE_URL` se definida; caso contrário, `config/database.yml` lê `PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE` do ambiente (carregadas via `source .env`).
 
 Jobs em desenvolvimento (opcional): configure Sidekiq e rode `bundle exec sidekiq`.
 

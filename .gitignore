@@ -1,0 +1,43 @@
+# Rails standard ignores
+/log/*
+/tmp/*
+/tmp/
+/storage/*
+/public/assets
+/public/packs
+/public/packs-test
+/node_modules
+/.bundle
+/vendor/bundle
+/.byebug_history
+/*.rbc
+/.sass-cache
+/coverage
+/spec/examples.txt
+/rerun.txt
+/pickle-email-*.html
+/capybara-*.html
+/capybara
+/gem_files
+/doc/
+/pkg/
+/rdoc/
+*.swp
+*~
+.project
+.DS_Store
+.idea
+/.vscode
+
+# Credentials (keep encrypted files, ignore plaintext keys)
+/config/master.key
+/config/credentials/*.key
+
+# dotenv: we WANT to commit .env for team/dev parity per request
+# So do NOT ignore ".env". Keep only local overrides ignored.
+.env.local
+.env.*.local
+
+# Docker auxiliary
+.env.docker.local
+.docker/

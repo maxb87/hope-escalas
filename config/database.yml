@@ -19,10 +19,15 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
-  database: hope_escalas_development
+  # Preferir DATABASE_URL quando presente; caso contrário, usar variáveis PG*
+  url: <%= ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("PGDATABASE", "hope_escalas_development") %>
+  host: <%= ENV.fetch("PGHOST", "localhost") %>
+  port: <%= ENV.fetch("PGPORT", 5432) %>
+  username: <%= ENV.fetch("PGUSER", "postgres") %>
+  password: <%= ENV.fetch("PGPASSWORD", "postgres") %>
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
