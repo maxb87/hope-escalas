@@ -3,25 +3,29 @@ class PatientsController < ApplicationController
 
   # GET /patients or /patients.json
   def index
-    @patients = Patient.all
+    @patients = policy_scope(Patient)
   end
 
   # GET /patients/1 or /patients/1.json
   def show
+    authorize @patient
   end
 
   # GET /patients/new
   def new
     @patient = Patient.new
+    authorize @patient
   end
 
   # GET /patients/1/edit
   def edit
+    authorize @patient
   end
 
   # POST /patients or /patients.json
   def create
     @patient = Patient.new(patient_params)
+    authorize @patient
 
     ActiveRecord::Base.transaction do
       if @patient.save
@@ -54,6 +58,7 @@ class PatientsController < ApplicationController
 
   # PATCH/PUT /patients/1 or /patients/1.json
   def update
+    authorize @patient
     respond_to do |format|
       if @patient.update(patient_params)
         format.html { redirect_to @patient, notice: I18n.t("patients.notices.updated"), status: :see_other }
@@ -67,6 +72,7 @@ class PatientsController < ApplicationController
 
   # DELETE /patients/1 or /patients/1.json
   def destroy
+    authorize @patient
     @patient.destroy!
 
     respond_to do |format|

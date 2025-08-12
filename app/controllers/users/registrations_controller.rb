@@ -9,8 +9,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def update
     super do |resource|
       if resource.errors.empty? && resource.respond_to?(:force_password_reset) && resource.force_password_reset
-        resource.update_column(:force_password_reset, false)
-        bypass_sign_in(resource) # mantém a sessão após trocar a senha
+        if resource.respond_to?(:saved_change_to_encrypted_password?) && resource.saved_change_to_encrypted_password?
+          resource.update_column(:force_password_reset, false)
+          bypass_sign_in(resource)
+        else
+          flash.now[:alert] = I18n.t("devise.passwords.not_changed", default: "A nova senha não foi salva. Verifique os campos e tente novamente.")
+        end
       end
     end
   end
@@ -34,8 +38,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
         return false
       end
 
-      # Atualizar a senha usando Devise; valida confirmações
-      resource.update_without_password(permitted)
+      # Atribuição explícita seguida de save para garantir persistência
+      resource.password = permitted[:password]
+      resource.password_confirmation = permitted[:password_confirmation]
+      resource.save
     else
       super
     end

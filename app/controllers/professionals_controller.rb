@@ -3,25 +3,29 @@ class ProfessionalsController < ApplicationController
 
   # GET /professionals or /professionals.json
   def index
-    @professionals = Professional.all
+    @professionals = policy_scope(Professional)
   end
 
   # GET /professionals/1 or /professionals/1.json
   def show
+    authorize @professional
   end
 
   # GET /professionals/new
   def new
     @professional = Professional.new
+    authorize @professional
   end
 
   # GET /professionals/1/edit
   def edit
+    authorize @professional
   end
 
   # POST /professionals or /professionals.json
   def create
     @professional = Professional.new(professional_params)
+    authorize @professional
 
     ActiveRecord::Base.transaction do
       if @professional.save
@@ -54,6 +58,7 @@ class ProfessionalsController < ApplicationController
 
   # PATCH/PUT /professionals/1 or /professionals/1.json
   def update
+    authorize @professional
     respond_to do |format|
       if @professional.update(professional_params)
         format.html { redirect_to @professional, notice: I18n.t("professionals.notices.updated"), status: :see_other }
@@ -67,6 +72,7 @@ class ProfessionalsController < ApplicationController
 
   # DELETE /professionals/1 or /professionals/1.json
   def destroy
+    authorize @professional
     @professional.destroy!
 
     respond_to do |format|

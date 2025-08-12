@@ -50,4 +50,18 @@ class ApplicationPolicy
 
     attr_reader :user, :scope
   end
+
+  private
+
+  def admin_email?
+    user&.email == "admin@admin.com"
+  end
+
+  def professional?
+    user&.account_type == "Professional" && user&.account_id.present?
+  end
+
+  def patient?
+    user&.account_type == "Patient" && user&.account_id.present?
+  end
 end

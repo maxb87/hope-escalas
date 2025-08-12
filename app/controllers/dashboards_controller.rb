@@ -1,7 +1,7 @@
 class DashboardsController < ApplicationController
   def show
+    authorize :dashboards, :show?
     account = current_user.account
-
     if account.is_a?(Professional) || current_user.email == "admin@admin.com"
       redirect_to professionals_dashboard_path and return
     elsif account.is_a?(Patient)
@@ -12,14 +12,12 @@ class DashboardsController < ApplicationController
   end
 
   def professionals
-    @patients = Patient.order(:full_name)
+    authorize :dashboards, :professionals?
+    @patients = policy_scope(Patient).order(:full_name)
   end
 
   def patients
-    if current_user.account.is_a?(Patient)
-      @patient = current_user.account
-    else
-      redirect_to root_path, alert: "Acesso restrito a pacientes." and return
-    end
+    authorize :dashboards, :patients?
+    @patient = current_user.account if current_user.account.is_a?(Patient)
   end
 end
