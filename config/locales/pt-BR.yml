@@ -1,4 +1,11 @@
 pt-BR:
+  errors:
+    messages:
+      not_saved: "%{count} erro(s) impediram este %{resource} de ser salvo"
+  devise:
+    passwords:
+      force_reset: "Você precisa redefinir sua senha antes de continuar."
+pt-BR:
   hello: "Olá"
 
   date:

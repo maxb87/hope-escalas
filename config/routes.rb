@@ -12,7 +12,15 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Authentication
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: "users/registrations"
+  }
+
+  devise_scope :user do
+    get   "users/edit", to: "users/registrations#edit",   as: :edit_user_registration
+    put   "users",      to: "users/registrations#update", as: :user_registration
+    patch "users",      to: "users/registrations#update"
+  end
 
   # Dashboards pós autenticação
   get "/dashboard", to: "dashboards#show", as: :dashboard

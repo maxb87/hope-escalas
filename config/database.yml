@@ -25,7 +25,7 @@ development:
   url: <%= ENV["DATABASE_URL"] %>
   database: <%= ENV.fetch("PGDATABASE", "hope_escalas_development") %>
   host: <%= ENV.fetch("PGHOST", "localhost") %>
-  port: <%= ENV.fetch("PGPORT", 5432) %>
+  port: <%= ENV.fetch("PGPORT", 55432) %>
   username: <%= ENV.fetch("PGUSER", "postgres") %>
   password: <%= ENV.fetch("PGPASSWORD", "postgres") %>
 
