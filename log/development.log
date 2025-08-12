@@ -2158,3 +2158,258 @@ Processing by Devise::SessionsController#new as HTML
 Completed 200 OK in 141ms (Views: 64.4ms | ActiveRecord: 9.5ms (0 queries, 0 cached) | GC: 0.0ms)
 
 
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (2.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'admin@admin.com' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mUser Create (1.8ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('admin@admin.com', '$2a$12$EIHI0L0AuPfG36SBz41mteGqnEPNya7PiqNqeZPIllRblrOQf3YIK', NULL, NULL, NULL, '2025-08-12 17:33:30.937316', '2025-08-12 17:33:30.937316', NULL, NULL) RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (1.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."cpf" = '10000000001' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Create (2.6ms)[0m  [1m[32mINSERT INTO "professionals" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "professional_id", "deleted_at", "created_at", "updated_at") VALUES ('Nick Bollettieri', NULL, '1941-07-31', NULL, 'nick.bollettieri@hope.local', '10000000001', NULL, NULL, NULL, NULL, NULL, '2025-08-12 17:33:31.038620', '2025-08-12 17:33:31.038620') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 1 AND "users"."account_type" = 'Professional' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:14:in 'Professional#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'nick.bollettieri@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Create (0.7ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('nick.bollettieri@hope.local', '$2a$12$RBFoDx4tekgU/I6bhx5Na.N4u3h79dTFKAWxhJH91InbZyukv0Isa', NULL, NULL, NULL, '2025-08-12 17:33:31.259195', '2025-08-12 17:33:31.259195', 'Professional', 1) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Update (5.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$uPEzLv/S33XLmgBouklH7uMmX89uZjFT2y3CVEfr2SuCluyrX/9b2', "updated_at" = '2025-08-12 17:33:31.438651' WHERE "users"."id" = 2 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."cpf" = '10000000002' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Create (0.8ms)[0m  [1m[32mINSERT INTO "professionals" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "professional_id", "deleted_at", "created_at", "updated_at") VALUES ('Toni Nadal', NULL, '1961-02-20', NULL, 'toni.nadal@hope.local', '10000000002', NULL, NULL, NULL, NULL, NULL, '2025-08-12 17:33:31.472325', '2025-08-12 17:33:31.472325') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (2.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 2 AND "users"."account_type" = 'Professional' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:14:in 'Professional#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'toni.nadal@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Create (0.4ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('toni.nadal@hope.local', '$2a$12$8NQwGcuGRYdmg9nBxLtOrOp.4UeL5XuNgwqPzXpZmF2YrV4XFfyC.', NULL, NULL, NULL, '2025-08-12 17:33:31.676124', '2025-08-12 17:33:31.676124', 'Professional', 2) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Update (0.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$iF9zTcwh4gS/nsYY8GCbNegg7ZSoLH2N9aIq1EWBCQtdM509x5oSe', "updated_at" = '2025-08-12 17:33:31.848234' WHERE "users"."id" = 3 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (0.8ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."cpf" = '10000000003' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Create (0.5ms)[0m  [1m[32mINSERT INTO "professionals" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "professional_id", "deleted_at", "created_at", "updated_at") VALUES ('Ivan Lendl', NULL, '1960-03-07', NULL, 'ivan.lendl@hope.local', '10000000003', NULL, NULL, NULL, NULL, NULL, '2025-08-12 17:33:31.863448', '2025-08-12 17:33:31.863448') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 3 AND "users"."account_type" = 'Professional' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:14:in 'Professional#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'ivan.lendl@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Create (0.4ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('ivan.lendl@hope.local', '$2a$12$YrDjoODi/SQxFS7MiE8InOUaAeh5xhyIZGGHKjGVwRqZxoJJZMZq.', NULL, NULL, NULL, '2025-08-12 17:33:32.041811', '2025-08-12 17:33:32.041811', 'Professional', 3) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Update (0.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$GdHs.ZJpAvzcxENmNb07xO4RhKIedjkdXyHIDwi5L8SRSZPXGlD4S', "updated_at" = '2025-08-12 17:33:32.212862' WHERE "users"."id" = 4 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (0.4ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."cpf" = '10000000004' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Create (0.4ms)[0m  [1m[32mINSERT INTO "professionals" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "professional_id", "deleted_at", "created_at", "updated_at") VALUES ('Patrick Mouratoglou', NULL, '1970-06-08', NULL, 'patrick.mouratoglou@hope.local', '10000000004', NULL, NULL, NULL, NULL, NULL, '2025-08-12 17:33:32.219239', '2025-08-12 17:33:32.219239') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 4 AND "users"."account_type" = 'Professional' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:14:in 'Professional#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'patrick.mouratoglou@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Create (0.5ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('patrick.mouratoglou@hope.local', '$2a$12$LF2EmcR/nCo3MwAziHRPQOipp5Nh1DXDpsU1pV.c6IjBrhEFOfjgK', NULL, NULL, NULL, '2025-08-12 17:33:32.397069', '2025-08-12 17:33:32.397069', 'Professional', 4) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Update (0.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$Of3fgaQSLLstvIPCHoFy2OiJKEOrSL0avRj6mnmQT3yiEnk82qdpW', "updated_at" = '2025-08-12 17:33:32.566360' WHERE "users"."id" = 5 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (0.3ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."cpf" = '10000000005' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Create (0.4ms)[0m  [1m[32mINSERT INTO "professionals" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "professional_id", "deleted_at", "created_at", "updated_at") VALUES ('Darren Cahill', NULL, '1965-10-02', NULL, 'darren.cahill@hope.local', '10000000005', NULL, NULL, NULL, NULL, NULL, '2025-08-12 17:33:32.573033', '2025-08-12 17:33:32.573033') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 5 AND "users"."account_type" = 'Professional' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:14:in 'Professional#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'darren.cahill@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Create (0.5ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('darren.cahill@hope.local', '$2a$12$lmF/AHJHe02EdrPecV9qROgumYHBh.UKKrDEYJ60QvfnEWd6oB2Ry', NULL, NULL, NULL, '2025-08-12 17:33:32.755274', '2025-08-12 17:33:32.755274', 'Professional', 5) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/professional.rb:25:in 'Professional#create_associated_user!'
+  [1m[36mUser Update (0.5ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$82jTBdF0x.GvRXndc5ov4.KpBkdO4c2ebAoIu2BzBbzg8v1FOubde', "updated_at" = '2025-08-12 17:33:32.926678' WHERE "users"."id" = 6 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Load (1.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."cpf" = '20000000001' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Create (0.8ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Rafael Nadal', NULL, '1986-06-03', NULL, 'rafael.nadal@hope.local', '20000000001', NULL, NULL, NULL, NULL, '2025-08-12 17:33:32.988272', '2025-08-12 17:33:32.988272') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 1 AND "users"."account_type" = 'Patient' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:14:in 'Patient#create_associated_user!'
+  [1m[36mUser Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'rafael.nadal@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Create (0.6ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('rafael.nadal@hope.local', '$2a$12$kwXUGX6r5NWFTRoRKZ5cdeky3CSvoEdjsV7O1dTe0xo8dbuvfDBXS', NULL, NULL, NULL, '2025-08-12 17:33:33.176044', '2025-08-12 17:33:33.176044', 'Patient', 1) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Update (0.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$26K21rr4y4aGkuboEpC2AuLsMUHIFhaUB/cYHZ2ZBMkrHbPtaG0i2', "updated_at" = '2025-08-12 17:33:33.346721' WHERE "users"."id" = 7 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Load (0.4ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."cpf" = '20000000002' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Create (0.4ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Roger Federer', NULL, '1981-08-08', NULL, 'roger.federer@hope.local', '20000000002', NULL, NULL, NULL, NULL, '2025-08-12 17:33:33.353166', '2025-08-12 17:33:33.353166') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 2 AND "users"."account_type" = 'Patient' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:14:in 'Patient#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'roger.federer@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Create (0.4ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('roger.federer@hope.local', '$2a$12$mEz3lXl5yAyrSGES0BtiT.YbTqK7kaJTryG5jCcIKJhNMrZrhMFZO', NULL, NULL, NULL, '2025-08-12 17:33:33.524400', '2025-08-12 17:33:33.524400', 'Patient', 2) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Update (0.7ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$tMphmAdsgVe0Ugipyy7Xy.EUmKJpTikPMaPnAYVPWW5b6DoPegQuO', "updated_at" = '2025-08-12 17:33:33.692769' WHERE "users"."id" = 8 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Load (0.4ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."cpf" = '20000000003' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Create (0.5ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Novak Djokovic', NULL, '1987-05-22', NULL, 'novak.djokovic@hope.local', '20000000003', NULL, NULL, NULL, NULL, '2025-08-12 17:33:33.700206', '2025-08-12 17:33:33.700206') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 3 AND "users"."account_type" = 'Patient' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:14:in 'Patient#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'novak.djokovic@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Create (0.4ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('novak.djokovic@hope.local', '$2a$12$LTqU3Kx3540nXIL14NBcF.0WtPD6w3jkGPuyCt9w1eyz.XV8AAcBG', NULL, NULL, NULL, '2025-08-12 17:33:33.884494', '2025-08-12 17:33:33.884494', 'Patient', 3) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Update (0.6ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$gdbS96a0a8tLiDA5qqZPWu62qyGZrCnxRTT.0hKqWgPFqGoZh4ph6', "updated_at" = '2025-08-12 17:33:34.063763' WHERE "users"."id" = 9 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Load (0.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."cpf" = '20000000004' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Create (0.5ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Serena Williams', NULL, '1981-09-26', NULL, 'serena.williams@hope.local', '20000000004', NULL, NULL, NULL, NULL, '2025-08-12 17:33:34.069243', '2025-08-12 17:33:34.069243') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 4 AND "users"."account_type" = 'Patient' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:14:in 'Patient#create_associated_user!'
+  [1m[36mUser Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'serena.williams@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Create (0.3ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('serena.williams@hope.local', '$2a$12$4Y9bxZ9StDS/BKZBo2jRq.RB2YR.Gb5tGiUsxZX7sB3Y/nUBklmlW', NULL, NULL, NULL, '2025-08-12 17:33:34.259851', '2025-08-12 17:33:34.259851', 'Patient', 4) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Update (1.0ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$pPtxz88caGbQz5juE2o6D.jIABgwL15tVGttA22ZhCvwO.QRj4Wgq', "updated_at" = '2025-08-12 17:33:34.439623' WHERE "users"."id" = 10 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Load (15.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."cpf" = '20000000005' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mPatient Create (1.0ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Andy Murray', NULL, '1987-05-15', NULL, 'andy.murray@hope.local', '20000000005', NULL, NULL, NULL, NULL, '2025-08-12 17:33:34.470496', '2025-08-12 17:33:34.470496') RETURNING "id" /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 5 AND "users"."account_type" = 'Patient' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:14:in 'Patient#create_associated_user!'
+  [1m[36mUser Exists? (1.7ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'andy.murray@hope.local' LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Create (1.4ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "account_type", "account_id") VALUES ('andy.murray@hope.local', '$2a$12$mZ7kG9t7LKayT8xPXAZ/Ce0fskHrcMpkhDDCJ7ME9JqMNK0R0pt8W', NULL, NULL, NULL, '2025-08-12 17:33:34.710261', '2025-08-12 17:33:34.710261', 'Patient', 5) RETURNING "id" /*application='HopeEscalas'*/[0m
+  ↳ app/models/patient.rb:25:in 'Patient#create_associated_user!'
+  [1m[36mUser Update (1.3ms)[0m  [1m[33mUPDATE "users" SET "encrypted_password" = '$2a$12$BO1h..ePHjAkm6tbVWZpsu5OUqo8/MC01gE3rCJ/UmqxyFKRn8nX.', "updated_at" = '2025-08-12 17:33:34.911469' WHERE "users"."id" = 11 /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (10.0ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-12 14:33:41 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 13.0ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 46.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 73.9ms | GC: 0.0ms)
+Completed 200 OK in 400ms (Views: 303.5ms | ActiveRecord: 12.8ms (0 queries, 0 cached) | GC: 23.1ms)
+
+
+Started POST "/users/sign_in" for 127.0.0.1 at 2025-08-12 14:33:51 -0300
+Processing by Devise::SessionsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Log in"}
+  [1m[36mUser Load (1.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+Redirected to http://127.0.0.1:3000/
+Completed 303 See Other in 254ms (ActiveRecord: 1.3ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:33:51 -0300
+Processing by PagesController#index as TURBO_STREAM
+  [1m[36mUser Load (1.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='pages'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.5ms | GC: 0.0ms)
+Completed 200 OK in 28ms (Views: 8.3ms | ActiveRecord: 1.2ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:47:04 -0300
+Processing by PagesController#index as HTML
+  [1m[36mUser Load (2.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='pages'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.8ms | GC: 0.0ms)
+Completed 200 OK in 109ms (Views: 5.1ms | ActiveRecord: 11.1ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:47:15 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='pages'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 1.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 29.0ms | GC: 0.0ms)
+Completed 200 OK in 347ms (Views: 32.7ms | ActiveRecord: 35.4ms (1 query, 0 cached) | GC: 22.4ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:49:03 -0300
+Processing by PagesController#index as HTML
+  [1m[36mUser Load (1.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='pages'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (Duration: 0.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 5.1ms | GC: 0.0ms)
+Completed 200 OK in 40ms (Views: 8.0ms | ActiveRecord: 1.2ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:49:34 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by DashboardsController#show as HTML
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='dashboards'*/[0m
+Redirected to http://127.0.0.1:3000/dashboard/professionals
+Completed 302 Found in 144ms (ActiveRecord: 45.7ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-12 14:49:35 -0300
+Processing by DashboardsController#professionals as HTML
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  [1m[36mPatient Load (2.2ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."full_name" ASC /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/professionals.html.erb:14:in 'Enumerable#each_with_index'
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 38.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 63.9ms | GC: 0.0ms)
+Completed 200 OK in 426ms (Views: 68.8ms | ActiveRecord: 5.4ms (2 queries, 0 cached) | GC: 77.9ms)
+
+
+Started GET "/patients/1" for 127.0.0.1 at 2025-08-12 14:49:43 -0300
+Processing by PatientsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mPatient Load (1.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:65:in 'PatientsController#set_patient'
+  Rendering layout layouts/application.html.erb
+  Rendering patients/show.html.erb within layouts/application
+  Rendered patients/_patient.html.erb (Duration: 5.4ms | GC: 0.0ms)
+  Rendered patients/show.html.erb within layouts/application (Duration: 10.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 10.9ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 46ms (ActiveRecord: 1.2ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+  
+ActionView::Template::Error (undefined method 'birthplace' for an instance of Patient)
+Caused by: NoMethodError (undefined method 'birthplace' for an instance of Patient)
+
+Information for: ActionView::Template::Error (undefined method 'birthplace' for an instance of Patient):
+    21: 
+    22:   <p>
+    23:     <strong>Birthplace:</strong>
+    24:     <%= patient.birthplace %>
+    25:   </p>
+    26: 
+    27:   <p>
+  
+app/views/patients/_patient.html.erb:24
+app/views/patients/show.html.erb:3
+
+Information for cause: NoMethodError (undefined method 'birthplace' for an instance of Patient):
+  
+app/views/patients/_patient.html.erb:24
+app/views/patients/show.html.erb:3
+Started GET "/patients/1" for 127.0.0.1 at 2025-08-12 14:56:13 -0300
+Processing by PatientsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mPatient Load (1.6ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:65:in 'PatientsController#set_patient'
+  Rendering layout layouts/application.html.erb
+  Rendering patients/show.html.erb within layouts/application
+  Rendered patients/_patient.html.erb (Duration: 5.1ms | GC: 0.0ms)
+  Rendered patients/show.html.erb within layouts/application (Duration: 14.2ms | GC: 1.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 22.7ms | GC: 1.6ms)
+Completed 200 OK in 129ms (Views: 27.3ms | ActiveRecord: 9.0ms (2 queries, 0 cached) | GC: 6.0ms)
+
+
+Started GET "/patients/1" for 127.0.0.1 at 2025-08-12 14:58:26 -0300
+Processing by PatientsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mPatient Load (0.5ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:65:in 'PatientsController#set_patient'
+  Rendering layout layouts/application.html.erb
+  Rendering patients/show.html.erb within layouts/application
+  Rendered patients/_patient.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered patients/show.html.erb within layouts/application (Duration: 3.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 6.0ms | GC: 0.0ms)
+Completed 200 OK in 99ms (Views: 9.4ms | ActiveRecord: 10.0ms (2 queries, 0 cached) | GC: 0.9ms)
+
+
+Started GET "/patients" for 127.0.0.1 at 2025-08-12 14:58:28 -0300
+Processing by PatientsController#index as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='patients'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering patients/index.html.erb within layouts/application
+  [1m[36mPatient Load (0.6ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL /*action='index',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/patients/index.html.erb:8
+  Rendered patients/_patient.html.erb (Duration: 0.5ms | GC: 0.0ms)
+  Rendered patients/_patient.html.erb (Duration: 0.7ms | GC: 0.0ms)
+  Rendered patients/_patient.html.erb (Duration: 0.1ms | GC: 0.0ms)
+  Rendered patients/_patient.html.erb (Duration: 0.1ms | GC: 0.0ms)
+  Rendered patients/_patient.html.erb (Duration: 0.0ms | GC: 0.0ms)
+  Rendered patients/index.html.erb within layouts/application (Duration: 12.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.0ms | GC: 0.0ms)
+Completed 200 OK in 38ms (Views: 15.2ms | ActiveRecord: 1.1ms (2 queries, 0 cached) | GC: 0.0ms)
+
+

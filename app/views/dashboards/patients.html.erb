@@ -1,0 +1,25 @@
+<h1>Meu perfil</h1>
+
+<% if @patient %>
+  <dl class="row">
+    <dt class="col-sm-3">Nome completo</dt>
+    <dd class="col-sm-9"><%= @patient.full_name %></dd>
+
+    <dt class="col-sm-3">Nascimento</dt>
+    <dd class="col-sm-9">
+      <% if @patient.birthday %>
+        <%= @patient.birthday.strftime('%d/%m/%Y') %>
+      <% else %>
+        —
+      <% end %>
+    </dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9"><%= @patient.email %></dd>
+
+    <dt class="col-sm-3">CPF</dt>
+    <dd class="col-sm-9"><%= @patient.cpf %></dd>
+  </dl>
+<% else %>
+  <p>Perfil não encontrado.</p>
+<% end %> 

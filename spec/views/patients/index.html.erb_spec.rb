@@ -6,7 +6,6 @@ RSpec.describe "patients/index", type: :view do
       Patient.create!(
         full_name: "Full Name",
         sex: 2,
-        birthplace: "Birthplace",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",
@@ -16,7 +15,6 @@ RSpec.describe "patients/index", type: :view do
       Patient.create!(
         full_name: "Full Name",
         sex: 2,
-        birthplace: "Birthplace",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",
@@ -31,7 +29,6 @@ RSpec.describe "patients/index", type: :view do
     cell_selector = 'div>p'
     assert_select cell_selector, text: Regexp.new("Full Name".to_s), count: 2
     assert_select cell_selector, text: Regexp.new(2.to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Birthplace".to_s), count: 2
     assert_select cell_selector, text: Regexp.new("Email".to_s), count: 2
     assert_select cell_selector, text: Regexp.new("Cpf".to_s), count: 2
     assert_select cell_selector, text: Regexp.new("Rg".to_s), count: 2

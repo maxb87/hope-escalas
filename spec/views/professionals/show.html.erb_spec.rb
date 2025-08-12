@@ -4,9 +4,8 @@ RSpec.describe "professionals/show", type: :view do
   before(:each) do
     assign(:professional, Professional.create!(
       full_name: "Full Name",
-      sex: 2,
-      birthplace: "Birthplace",
-      email: "Email",
+             sex: 2,
+       email: "Email",
       cpf: "Cpf",
       rg: "Rg",
       current_address: 3,
@@ -19,7 +18,6 @@ RSpec.describe "professionals/show", type: :view do
     render
     expect(rendered).to match(/Full Name/)
     expect(rendered).to match(/2/)
-    expect(rendered).to match(/Birthplace/)
     expect(rendered).to match(/Email/)
     expect(rendered).to match(/Cpf/)
     expect(rendered).to match(/Rg/)

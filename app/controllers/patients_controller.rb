@@ -67,6 +67,6 @@ class PatientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def patient_params
-      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
+      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
     end
 end

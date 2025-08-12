@@ -1,0 +1,29 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Pacientes</h1>
+  <%= link_to "Cadastrar paciente", new_patient_path, class: "btn btn-primary" %>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nome completo</th>
+      <th>Idade (nascimento)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @patients.each_with_index do |patient, idx| %>
+      <% birth = patient.birthday %>
+      <% age = birth.present? ? ((Time.zone.today.year - birth.year) - ((Time.zone.today.month > birth.month || (Time.zone.today.month == birth.month && Time.zone.today.day >= birth.day)) ? 0 : 1)) : nil %>
+      <tr class="<%= idx.even? ? 'bg-white' : 'bg-light' %>" onclick="window.location='<%= patient_path(patient) %>'" style="cursor: pointer;">
+        <td><%= patient.full_name %></td>
+        <td>
+          <% if birth.present? && age %>
+            <%= age %> (<%= birth.strftime('%d/%m/%Y') %>)
+          <% else %>
+            —
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table> 

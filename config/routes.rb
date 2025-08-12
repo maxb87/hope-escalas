@@ -14,8 +14,13 @@ Rails.application.routes.draw do
   # Authentication
   devise_for :users
 
+  # Dashboards pós autenticação
+  get "/dashboard", to: "dashboards#show", as: :dashboard
+  get "/dashboard/professionals", to: "dashboards#professionals", as: :professionals_dashboard
+  get "/dashboard/patients", to: "dashboards#patients", as: :patients_dashboard
+
   # Root
-  root to: "pages#index"
+  root to: "dashboards#show"
 
   # API
   namespace :api do

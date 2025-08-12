@@ -67,6 +67,6 @@ class ProfessionalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def professional_params
-      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :professional_id, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
+      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, :professional_id, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
     end
 end

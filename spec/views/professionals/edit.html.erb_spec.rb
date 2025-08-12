@@ -4,9 +4,8 @@ RSpec.describe "professionals/edit", type: :view do
   let(:professional) {
     Professional.create!(
       full_name: "MyString",
-      sex: 1,
-      birthplace: "MyString",
-      email: "MyString",
+             sex: 1,
+       email: "MyString",
       cpf: "MyString",
       rg: "MyString",
       current_address: 1,
@@ -23,12 +22,10 @@ RSpec.describe "professionals/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", professional_path(professional), "post" do
-
       assert_select "input[name=?]", "professional[full_name]"
 
       assert_select "input[name=?]", "professional[sex]"
 
-      assert_select "input[name=?]", "professional[birthplace]"
 
       assert_select "input[name=?]", "professional[email]"
 

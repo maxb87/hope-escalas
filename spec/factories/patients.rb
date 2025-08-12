@@ -4,7 +4,6 @@ FactoryBot.define do
     sex { 1 }
     birthday { "2025-08-11" }
     started_at { "2025-08-11" }
-    birthplace { "MyString" }
     email { "MyString" }
     cpf { "MyString" }
     rg { "MyString" }
