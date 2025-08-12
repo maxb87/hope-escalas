@@ -13,10 +13,12 @@ class ProfessionalsController < ApplicationController
   # GET /professionals/new
   def new
     @professional = Professional.new
+    @professional.build_user
   end
 
   # GET /professionals/1/edit
   def edit
+    @professional.build_user unless @professional.user
   end
 
   # POST /professionals or /professionals.json
@@ -65,6 +67,6 @@ class ProfessionalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def professional_params
-      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :professional_id, :deleted_at ])
+      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :professional_id, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
     end
 end

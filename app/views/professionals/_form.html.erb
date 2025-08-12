@@ -66,6 +66,24 @@
     <%= form.text_field :professional_id %>
   </div>
 
+  <fieldset>
+    <legend>Conta de acesso</legend>
+    <%= form.fields_for :user do |uf| %>
+      <div>
+        <%= uf.label :email, "E-mail do usuário", style: "display: block" %>
+        <%= uf.email_field :email, value: professional.email %>
+      </div>
+      <div>
+        <%= uf.label :password, style: "display: block" %>
+        <%= uf.password_field :password, autocomplete: "new-password" %>
+      </div>
+      <div>
+        <%= uf.label :password_confirmation, style: "display: block" %>
+        <%= uf.password_field :password_confirmation, autocomplete: "new-password" %>
+      </div>
+    <% end %>
+  </fieldset>
+
   <div>
     <%= form.label :deleted_at, style: "display: block" %>
     <%= form.datetime_field :deleted_at %>

@@ -13,10 +13,12 @@ class PatientsController < ApplicationController
   # GET /patients/new
   def new
     @patient = Patient.new
+    @patient.build_user
   end
 
   # GET /patients/1/edit
   def edit
+    @patient.build_user unless @patient.user
   end
 
   # POST /patients or /patients.json
@@ -65,6 +67,6 @@ class PatientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def patient_params
-      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :deleted_at ])
+      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :birthplace, :email, :cpf, :rg, :current_address, :current_phone, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
     end
 end

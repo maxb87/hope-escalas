@@ -2136,3 +2136,25 @@ Started GET "/assets/application-37f62fb4.css" for 127.0.0.1 at 2025-08-12 14:13
 Started GET "/assets/application-f14ad616.js" for 127.0.0.1 at 2025-08-12 14:13:11 -0300
 Unable to resolve './fonts/bootstrap-icons.woff2' for missing asset 'fonts/bootstrap-icons.woff2' in application.css
 Unable to resolve './fonts/bootstrap-icons.woff' for missing asset 'fonts/bootstrap-icons.woff' in application.css
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Started GET "/" for 127.0.0.1 at 2025-08-12 14:27:45 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by PagesController#index as HTML
+Completed 401 Unauthorized in 36ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-12 14:27:45 -0300
+Processing by Devise::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 8.0ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 28.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 53.8ms | GC: 0.0ms)
+Completed 200 OK in 141ms (Views: 64.4ms | ActiveRecord: 9.5ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
