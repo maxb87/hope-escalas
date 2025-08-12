@@ -146,6 +146,7 @@ pt-BR:
       created: "Paciente criado com sucesso."
       updated: "Paciente atualizado com sucesso."
       destroyed: "Paciente excluído com sucesso."
+      dev_password: "(senha temporária: %{password})"
 
   professionals:
     index:
@@ -168,6 +169,7 @@ pt-BR:
       created: "Profissional criado com sucesso."
       updated: "Profissional atualizado com sucesso."
       destroyed: "Profissional excluído com sucesso."
+      dev_password: "(senha temporária: %{password})"
 
   dashboards:
     professionals:

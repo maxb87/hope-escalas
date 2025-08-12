@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 px-3 py-2 border rounded">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="navbar-brand mb-0 h1">
+      <% if user_signed_in? %>
+        <% account = current_user.account %>
+        <% title = (account.is_a?(Patient) ? "Meu perfil" : "Lista de Pacientes") %>
+        <%= title %>
+      <% else %>
+        Hope Escalas
+      <% end %>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <% if user_signed_in? %>
+        <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger d-flex align-items-center gap-2" do %>
+          <span class="bi bi-box-arrow-right"></span>
+          <span>Sair</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</nav> 

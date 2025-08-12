@@ -13,25 +13,41 @@ class PatientsController < ApplicationController
   # GET /patients/new
   def new
     @patient = Patient.new
-    @patient.build_user
   end
 
   # GET /patients/1/edit
   def edit
-    @patient.build_user unless @patient.user
   end
 
   # POST /patients or /patients.json
   def create
     @patient = Patient.new(patient_params)
 
-    respond_to do |format|
+    ActiveRecord::Base.transaction do
       if @patient.save
-        format.html { redirect_to @patient, notice: I18n.t("patients.notices.created") }
-        format.json { render :show, status: :created, location: @patient }
+        generated_password = SecureRandom.alphanumeric(6)
+        @patient.create_user!(
+          email: @patient.email,
+          password: generated_password,
+          password_confirmation: generated_password,
+          force_password_reset: true
+        )
+
+        notice_message = I18n.t("patients.notices.created")
+        if Rails.env.development?
+          notice_message = "#{notice_message} #{I18n.t('patients.notices.dev_password', password: generated_password)}"
+        end
+
+        respond_to do |format|
+          format.html { redirect_to @patient, notice: notice_message }
+          format.json { render :show, status: :created, location: @patient }
+        end
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @patient.errors, status: :unprocessable_entity }
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @patient.errors, status: :unprocessable_entity }
+        end
+        raise ActiveRecord::Rollback
       end
     end
   end
@@ -67,6 +83,6 @@ class PatientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def patient_params
-      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, { user_attributes: [ :email, :password, :password_confirmation ] } ])
+      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone ])
     end
 end

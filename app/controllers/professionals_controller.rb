@@ -13,25 +13,41 @@ class ProfessionalsController < ApplicationController
   # GET /professionals/new
   def new
     @professional = Professional.new
-    @professional.build_user
   end
 
   # GET /professionals/1/edit
   def edit
-    @professional.build_user unless @professional.user
   end
 
   # POST /professionals or /professionals.json
   def create
     @professional = Professional.new(professional_params)
 
-    respond_to do |format|
+    ActiveRecord::Base.transaction do
       if @professional.save
-        format.html { redirect_to @professional, notice: I18n.t("professionals.notices.created") }
-        format.json { render :show, status: :created, location: @professional }
+        generated_password = SecureRandom.alphanumeric(6)
+        @professional.create_user!(
+          email: @professional.email,
+          password: generated_password,
+          password_confirmation: generated_password,
+          force_password_reset: true
+        )
+
+        notice_message = I18n.t("professionals.notices.created")
+        if Rails.env.development?
+          notice_message = "#{notice_message} #{I18n.t('professionals.notices.dev_password', password: generated_password)}"
+        end
+
+        respond_to do |format|
+          format.html { redirect_to @professional, notice: notice_message }
+          format.json { render :show, status: :created, location: @professional }
+        end
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @professional.errors, status: :unprocessable_entity }
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @professional.errors, status: :unprocessable_entity }
+        end
+        raise ActiveRecord::Rollback
       end
     end
   end
@@ -67,6 +83,6 @@ class ProfessionalsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def professional_params
-      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, :professional_id, { user_attributes: [ :email, :password, :password_confirmation ] } ])
+      params.expect(professional: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, :professional_id ])
     end
 end
