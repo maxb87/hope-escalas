@@ -47,6 +47,9 @@ mise install
 gem install bundler --no-document
 gem install rails -v 8.0.2 --no-document
 
+# Yarn (via Corepack - incluído no Node.js 16.10+)
+corepack enable
+
 # Instalar dependências do app (se já criado)
 bundle install || true
 ```
