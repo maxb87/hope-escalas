@@ -27,7 +27,7 @@ class PatientsController < ApplicationController
 
     respond_to do |format|
       if @patient.save
-        format.html { redirect_to @patient, notice: "Paciente criado com sucesso." }
+        format.html { redirect_to @patient, notice: I18n.t("patients.notices.created") }
         format.json { render :show, status: :created, location: @patient }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,7 +40,7 @@ class PatientsController < ApplicationController
   def update
     respond_to do |format|
       if @patient.update(patient_params)
-        format.html { redirect_to @patient, notice: "Paciente atualizado com sucesso.", status: :see_other }
+        format.html { redirect_to @patient, notice: I18n.t("patients.notices.updated"), status: :see_other }
         format.json { render :show, status: :ok, location: @patient }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,7 +54,7 @@ class PatientsController < ApplicationController
     @patient.destroy!
 
     respond_to do |format|
-      format.html { redirect_to patients_path, notice: "Paciente excluído com sucesso.", status: :see_other }
+      format.html { redirect_to patients_path, notice: I18n.t("patients.notices.destroyed"), status: :see_other }
       format.json { head :no_content }
     end
   end

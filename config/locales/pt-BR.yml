@@ -7,35 +7,53 @@ pt-BR:
       short: "%d/%m"
       long: "%d de %B de %Y"
     day_names:
-      [
-        Domingo,
-        Segunda-feira,
-        Terça-feira,
-        Quarta-feira,
-        Quinta-feira,
-        Sexta-feira,
-        Sábado,
-      ]
-    abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sáb]
+      - Domingo
+      - Segunda-feira
+      - Terça-feira
+      - Quarta-feira
+      - Quinta-feira
+      - Sexta-feira
+      - Sábado
+    abbr_day_names:
+      - Dom
+      - Seg
+      - Ter
+      - Qua
+      - Qui
+      - Sex
+      - Sáb
     month_names:
-      [
-        ~,
-        Janeiro,
-        Fevereiro,
-        Março,
-        Abril,
-        Maio,
-        Junho,
-        Julho,
-        Agosto,
-        Setembro,
-        Outubro,
-        Novembro,
-        Dezembro,
-      ]
+      - ~
+      - Janeiro
+      - Fevereiro
+      - Março
+      - Abril
+      - Maio
+      - Junho
+      - Julho
+      - Agosto
+      - Setembro
+      - Outubro
+      - Novembro
+      - Dezembro
     abbr_month_names:
-      [~, Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
-    order: [:day, :month, :year]
+      - ~
+      - Jan
+      - Fev
+      - Mar
+      - Abr
+      - Mai
+      - Jun
+      - Jul
+      - Ago
+      - Set
+      - Out
+      - Nov
+      - Dez
+    order:
+      - :day
+      - :month
+      - :year
 
   time:
     formats:
@@ -124,6 +142,10 @@ pt-BR:
       title: "Editar paciente"
       show_link: "Ver paciente"
       back_link: "Voltar para pacientes"
+    notices:
+      created: "Paciente criado com sucesso."
+      updated: "Paciente atualizado com sucesso."
+      destroyed: "Paciente excluído com sucesso."
 
   professionals:
     index:
@@ -142,6 +164,10 @@ pt-BR:
       title: "Editar profissional"
       show_link: "Ver profissional"
       back_link: "Voltar para profissionais"
+    notices:
+      created: "Profissional criado com sucesso."
+      updated: "Profissional atualizado com sucesso."
+      destroyed: "Profissional excluído com sucesso."
 
   dashboards:
     professionals:

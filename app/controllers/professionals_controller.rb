@@ -27,7 +27,7 @@ class ProfessionalsController < ApplicationController
 
     respond_to do |format|
       if @professional.save
-        format.html { redirect_to @professional, notice: "Profissional criado com sucesso." }
+        format.html { redirect_to @professional, notice: I18n.t("professionals.notices.created") }
         format.json { render :show, status: :created, location: @professional }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,7 +40,7 @@ class ProfessionalsController < ApplicationController
   def update
     respond_to do |format|
       if @professional.update(professional_params)
-        format.html { redirect_to @professional, notice: "Profissional atualizado com sucesso.", status: :see_other }
+        format.html { redirect_to @professional, notice: I18n.t("professionals.notices.updated"), status: :see_other }
         format.json { render :show, status: :ok, location: @professional }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,7 +54,7 @@ class ProfessionalsController < ApplicationController
     @professional.destroy!
 
     respond_to do |format|
-      format.html { redirect_to professionals_path, notice: "Profissional excluído com sucesso.", status: :see_other }
+      format.html { redirect_to professionals_path, notice: I18n.t("professionals.notices.destroyed"), status: :see_other }
       format.json { head :no_content }
     end
   end

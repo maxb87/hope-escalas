@@ -2413,3 +2413,128 @@ Processing by PatientsController#index as HTML
 Completed 200 OK in 38ms (Views: 15.2ms | ActiveRecord: 1.1ms (2 queries, 0 cached) | GC: 0.0ms)
 
 
+Started GET "/" for 127.0.0.1 at 2025-08-12 15:14:44 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (2.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by DashboardsController#show as HTML
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='dashboards'*/[0m
+Redirected to http://127.0.0.1:3000/dashboard/professionals
+Completed 302 Found in 133ms (ActiveRecord: 37.3ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-12 15:14:44 -0300
+Processing by DashboardsController#professionals as HTML
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 299.3ms | GC: 81.5ms)
+  Rendered layout layouts/application.html.erb (Duration: 301.3ms | GC: 81.5ms)
+Completed 500 Internal Server Error in 371ms (ActiveRecord: 2.1ms (1 query, 0 cached) | GC: 81.5ms)
+
+
+  
+ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13)
+
+Information for: ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+    1: <div class="d-flex justify-content-between align-items-center mb-3">
+    2:   <h1><%= t('dashboards.professionals.title') %></h1>
+    3:   <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
+    4: </div>
+    5: 
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13):
+  
+app/views/dashboards/professionals.html.erb:2
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-12 15:16:37 -0300
+Processing by DashboardsController#professionals as HTML
+  [1m[36mUser Load (1.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 328.6ms | GC: 89.4ms)
+  Rendered layout layouts/application.html.erb (Duration: 329.1ms | GC: 89.4ms)
+Completed 500 Internal Server Error in 434ms (ActiveRecord: 7.9ms (1 query, 0 cached) | GC: 89.6ms)
+
+
+  
+ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13)
+
+Information for: ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+    1: <div class="d-flex justify-content-between align-items-center mb-3">
+    2:   <h1><%= t('dashboards.professionals.title') %></h1>
+    3:   <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
+    4: </div>
+    5: 
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13):
+  
+app/views/dashboards/professionals.html.erb:2
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-12 15:17:14 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by DashboardsController#professionals as HTML
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 275.9ms | GC: 73.3ms)
+  Rendered layout layouts/application.html.erb (Duration: 281.2ms | GC: 73.3ms)
+Completed 500 Internal Server Error in 434ms (ActiveRecord: 44.6ms (1 query, 0 cached) | GC: 73.3ms)
+
+
+  
+ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>)
+Caused by: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13)
+
+Information for: ActionView::Template::Error (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+    1: <div class="d-flex justify-content-between align-items-center mb-3">
+    2:   <h1><%= t('dashboards.professionals.title') %></h1>
+    3:   <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
+    4: </div>
+    5: 
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: I18n::InvalidLocaleData (can not load translations from /home/gilgamesh/hope/hope-escalas/config/locales/pt-BR.yml: #<Psych::SyntaxError: (<unknown>): did not find expected node content while parsing a flow node at line 38 column 13>):
+  
+app/views/dashboards/professionals.html.erb:2
+
+Information for cause: Psych::SyntaxError ((<unknown>): did not find expected node content while parsing a flow node at line 38 column 13):
+  
+app/views/dashboards/professionals.html.erb:2
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-12 15:17:56 -0300
+Processing by DashboardsController#professionals as HTML
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  [1m[36mPatient Load (2.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."full_name" ASC /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/professionals.html.erb:14:in 'Enumerable#each_with_index'
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 279.2ms | GC: 88.4ms)
+  Rendered layout layouts/application.html.erb (Duration: 296.9ms | GC: 88.7ms)
+Completed 200 OK in 383ms (Views: 299.5ms | ActiveRecord: 9.0ms (2 queries, 0 cached) | GC: 96.7ms)
+
+
+Started GET "/patients/new" for 127.0.0.1 at 2025-08-12 15:18:07 -0300
+Processing by PatientsController#new as HTML
+  [1m[36mUser Load (2.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='patients'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering patients/new.html.erb within layouts/application
+  Rendered patients/_form.html.erb (Duration: 32.8ms | GC: 0.3ms)
+  Rendered patients/new.html.erb within layouts/application (Duration: 39.3ms | GC: 0.3ms)
+  Rendered layout layouts/application.html.erb (Duration: 41.4ms | GC: 0.3ms)
+Completed 200 OK in 86ms (Views: 44.2ms | ActiveRecord: 0.8ms (1 query, 0 cached) | GC: 0.3ms)
+
+
