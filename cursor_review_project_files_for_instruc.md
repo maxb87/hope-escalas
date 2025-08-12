@@ -1,11 +1,12 @@
 # Review project files for instructions
+
 _Exported on 8/12/2025 at 12:34:22 GMT-3 from Cursor (1.3.9)_
 
 ---
 
 **User**
 
-Read through the project , especially the @Gemfile , the @models/  , @routes.rb  and @README.md and ask for instructions
+Read through the project , especially the @Gemfile , the @models/ , @routes.rb and @README.md and ask for instructions
 
 ---
 
@@ -16,6 +17,7 @@ Scanning the key files you highlighted to understand the stack and current domai
 Quick check of more files to understand routing and setup before asking next steps. Reading routes, Gemfile, README, and relevant migrations in parallel.
 
 Just reviewed the key files you mentioned. High-level picture:
+
 - Rails 8 with Devise, Pundit, Paranoia, Turbo/Stimulus, PostgreSQL, Lograge/Prometheus.
 - `User` is Devise-authenticated and polymorphic to `Patient`/`Professional`.
 - `Patient` and `Professional` have soft delete enabled and `has_one :user`.
@@ -23,6 +25,7 @@ Just reviewed the key files you mentioned. High-level picture:
 - README outlines desired flows (first login reset, magic link), soft-delete, and ops/dev setup.
 
 How would you like me to proceed? Pick one or more:
+
 - Implement soft delete fully: add `deleted_at` to `patients` and `professionals` and wire scopes.
 - Lock down authorization: add Pundit policies for `Patient`/`Professional` and apply in controllers.
 - Finish Devise flows: enforce first-login password change; optionally add confirmable/lockable.
@@ -58,7 +61,9 @@ And keep track of it as we interact
 Skimmed the files you pointed out. I’ll maintain a running checklist and update statuses as we progress.
 
 ### Checklist (initial status: all To do)
+
 - [ ] Soft delete (Paranoia) for `patients` and `professionals`
+
   - [ ] Migrations: add `deleted_at:datetime` + index to `patients`, `professionals`
   - [ ] Confirm `acts_as_paranoid` on models (`Patient`, `Professional`)
   - [ ] Ensure controllers/scopes don’t accidentally expose soft-deleted rows
@@ -66,6 +71,7 @@ Skimmed the files you pointed out. I’ll maintain a running checklist and updat
   - [ ] Specs: soft delete and restore behavior
 
 - [ ] Authorization with Pundit
+
   - [ ] Ensure `ApplicationController` includes `Pundit::Authorization` and verification callbacks
   - [ ] Policies: `PatientPolicy`, `ProfessionalPolicy` (define `index/show/create/update/destroy?`)
   - [ ] Scopes: restrict records appropriately (e.g., professionals only)
@@ -73,6 +79,7 @@ Skimmed the files you pointed out. I’ll maintain a running checklist and updat
   - [ ] Specs: policy and controller authorization tests
 
 - [ ] Devise flows: first-login password change; optional confirmable/lockable
+
   - [ ] Add a flag on `users` (e.g., `force_password_reset:boolean` default false)
   - [ ] Enforce redirect to password update when flag is true
   - [ ] Optionally add `:confirmable` and/or `:lockable` (update model + migrations)
@@ -80,12 +87,14 @@ Skimmed the files you pointed out. I’ll maintain a running checklist and updat
   - [ ] Specs: first-login redirect and module behavior
 
 - [ ] API `api/v1/users` (controller + serializers)
+
   - [ ] Controller: `Api::V1::UsersController` with `index`, `show`
   - [ ] Auth: require authenticated user (and policy scope)
   - [ ] Serialization: Jbuilder views (`index.json.jbuilder`, `show.json.jbuilder`)
   - [ ] Specs: request specs for `index`/`show`
 
 - [ ] Magic link flow
+
   - [ ] Model: `MagicLinkToken` (references user/patient, token_digest, expires_at, used_at, purpose)
   - [ ] Generation: service to issue token and email link
   - [ ] Mailer: send link with signed/hashed token
@@ -94,11 +103,13 @@ Skimmed the files you pointed out. I’ll maintain a running checklist and updat
   - [ ] Specs: token lifecycle (issue, consume, expire), request specs
 
 - [ ] Seeds/admin setup
+
   - [ ] `db/seeds.rb`: create admin `Professional`, sample `Patient`, related `User` records
   - [ ] Set `force_password_reset` true for first login
   - [ ] Document default credentials in README (dev only)
 
 - [ ] Tests
+
   - [ ] Model: associations/validations (`User`, `Patient`, `Professional`)
   - [ ] Request: `patients`/`professionals` CRUD with Pundit enforcement
   - [ ] API: `api/v1/users` request specs
@@ -117,6 +128,7 @@ Would you like me to start with soft delete migrations and Pundit wiring, or pri
 - Next suggested step: soft delete migrations + Pundit base setup
 
 Summary:
+
 - Prepared a concise, actionable checklist covering soft delete, Pundit, Devise flows, API, magic links, seeds, tests, and observability.
 - Ready to begin with your chosen priority; I’ll update this list as we proceed.
 
@@ -191,10 +203,10 @@ Made the requested migration edit: added an index on `users.deleted_at` in `db/m
 - **Lint**: Clean.
 
 Checklist updates:
+
 - [x] Soft delete (Paranoia) migrations
   - [x] Users: `deleted_at` + index
   - [x] Patients: `deleted_at` + index (already present)
   - [x] Professionals: `deleted_at` + index (already present)
 
 Want me to run `bin/rails db:prepare` to initialize the DB now, or proceed to the next checklist item (Pundit wiring)?
-

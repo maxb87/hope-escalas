@@ -14,21 +14,13 @@ Rails.application.routes.draw do
   # Authentication
   devise_for :users
 
-  # Root: login quando não autenticado; index quando autenticado
-  authenticated :user do
-    root to: "pages#index", as: :authenticated_root
-  end
-
-  unauthenticated do
-    devise_scope :user do
-      root to: "devise/sessions#new", as: :unauthenticated_root
-    end
-  end
+  # Root
+  root to: "pages#index"
 
   # API
   namespace :api do
     namespace :v1 do
-      resources :users, only: [:index, :show]
+      resources :users, only: [ :index, :show ]
     end
   end
 end
