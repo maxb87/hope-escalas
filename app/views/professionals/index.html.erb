@@ -1,16 +1,16 @@
 <p style="color: green"><%= notice %></p>
 
-<% content_for :title, "Professionals" %>
+<% content_for :title, t('professionals.index.title') %>
 
-<h1>Professionals</h1>
+<h1><%= t('professionals.index.title') %></h1>
 
 <div id="professionals">
   <% @professionals.each do |professional| %>
     <%= render professional %>
     <p>
-      <%= link_to "Show this professional", professional %>
+      <%= link_to t('professionals.index.show_link'), professional %>
     </p>
   <% end %>
 </div>
 
-<%= link_to "New professional", new_professional_path %>
+<%= link_to t('professionals.index.new_link'), new_professional_path %>

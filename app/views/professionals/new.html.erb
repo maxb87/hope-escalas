@@ -1,11 +1,11 @@
-<% content_for :title, "New professional" %>
+<% content_for :title, t('professionals.new.title') %>
 
-<h1>New professional</h1>
+<h1><%= t('professionals.new.title') %></h1>
 
 <%= render "form", professional: @professional %>
 
 <br>
 
 <div>
-  <%= link_to "Back to professionals", professionals_path %>
+  <%= link_to t('professionals.new.back_link'), professionals_path %>
 </div>

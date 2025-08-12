@@ -1,7 +1,7 @@
 <%= form_with(model: professional) do |form| %>
   <% if professional.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(professional.errors.count, "error") %> prohibited this professional from being saved:</h2>
+      <h2><%= pluralize(professional.errors.count, "erro") %> impediram o salvamento deste profissional:</h2>
 
       <ul>
         <% professional.errors.each do |error| %>
@@ -30,7 +30,6 @@
     <%= form.label :started_at, style: "display: block" %>
     <%= form.date_field :started_at %>
   </div>
-
 
   <div>
     <%= form.label :email, style: "display: block" %>
@@ -70,18 +69,17 @@
         <%= uf.email_field :email, value: professional.email %>
       </div>
       <div>
-        <%= uf.label :password, style: "display: block" %>
+        <%= uf.label :password, "Senha", style: "display: block" %>
         <%= uf.password_field :password, autocomplete: "new-password" %>
       </div>
       <div>
-        <%= uf.label :password_confirmation, style: "display: block" %>
+        <%= uf.label :password_confirmation, "Confirmação de senha", style: "display: block" %>
         <%= uf.password_field :password_confirmation, autocomplete: "new-password" %>
       </div>
     <% end %>
   </fieldset>
 
-
   <div>
-    <%= form.submit %>
+    <%= form.submit "Salvar" %>
   </div>
 <% end %>

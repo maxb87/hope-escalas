@@ -1,12 +1,12 @@
-<% content_for :title, "Editing patient" %>
+<% content_for :title, t('patients.edit.title') %>
 
-<h1>Editing patient</h1>
+<h1><%= t('patients.edit.title') %></h1>
 
 <%= render "form", patient: @patient %>
 
 <br>
 
 <div>
-  <%= link_to "Show this patient", @patient %> |
-  <%= link_to "Back to patients", patients_path %>
+  <%= link_to t('patients.edit.show_link'), @patient %> |
+  <%= link_to t('patients.edit.back_link'), patients_path %>
 </div>

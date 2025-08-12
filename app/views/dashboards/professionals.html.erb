@@ -1,13 +1,13 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1>Pacientes</h1>
-  <%= link_to "Cadastrar paciente", new_patient_path, class: "btn btn-primary" %>
+  <h1><%= t('dashboards.professionals.title') %></h1>
+  <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
 </div>
 
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Nome completo</th>
-      <th>Idade (nascimento)</th>
+      <th><%= t('activerecord.attributes.patient.full_name') %></th>
+      <th><%= t('dashboards.professionals.age_col') %></th>
     </tr>
   </thead>
   <tbody>
@@ -18,7 +18,7 @@
         <td><%= patient.full_name %></td>
         <td>
           <% if birth.present? && age %>
-            <%= age %> (<%= birth.strftime('%d/%m/%Y') %>)
+            <%= age %> (<%= l(birth) %>)
           <% else %>
             —
           <% end %>

@@ -27,7 +27,7 @@ class PatientsController < ApplicationController
 
     respond_to do |format|
       if @patient.save
-        format.html { redirect_to @patient, notice: "Patient was successfully created." }
+        format.html { redirect_to @patient, notice: "Paciente criado com sucesso." }
         format.json { render :show, status: :created, location: @patient }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,7 +40,7 @@ class PatientsController < ApplicationController
   def update
     respond_to do |format|
       if @patient.update(patient_params)
-        format.html { redirect_to @patient, notice: "Patient was successfully updated.", status: :see_other }
+        format.html { redirect_to @patient, notice: "Paciente atualizado com sucesso.", status: :see_other }
         format.json { render :show, status: :ok, location: @patient }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,7 +54,7 @@ class PatientsController < ApplicationController
     @patient.destroy!
 
     respond_to do |format|
-      format.html { redirect_to patients_path, notice: "Patient was successfully destroyed.", status: :see_other }
+      format.html { redirect_to patients_path, notice: "Paciente excluído com sucesso.", status: :see_other }
       format.json { head :no_content }
     end
   end
@@ -67,6 +67,6 @@ class PatientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def patient_params
-      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, :deleted_at, { user_attributes: [ :email, :password, :password_confirmation ] } ])
+      params.expect(patient: [ :full_name, :sex, :birthday, :started_at, :email, :cpf, :rg, :current_address, :current_phone, { user_attributes: [ :email, :password, :password_confirmation ] } ])
     end
 end

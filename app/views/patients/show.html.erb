@@ -3,8 +3,8 @@
 <%= render @patient %>
 
 <div>
-  <%= link_to "Edit this patient", edit_patient_path(@patient) %> |
-  <%= link_to "Back to patients", patients_path %>
+  <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient) %> |
+  <%= link_to t('patients.show.back_link'), patients_path %>
 
-  <%= button_to "Destroy this patient", @patient, method: :delete %>
+  <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy') } %>
 </div>

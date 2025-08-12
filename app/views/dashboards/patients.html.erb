@@ -1,25 +1,25 @@
-<h1>Meu perfil</h1>
+<h1><%= t('dashboards.patients.title') %></h1>
 
 <% if @patient %>
   <dl class="row">
-    <dt class="col-sm-3">Nome completo</dt>
+    <dt class="col-sm-3"><%= t('activerecord.attributes.patient.full_name') %></dt>
     <dd class="col-sm-9"><%= @patient.full_name %></dd>
 
-    <dt class="col-sm-3">Nascimento</dt>
+    <dt class="col-sm-3"><%= t('activerecord.attributes.patient.birthday') %></dt>
     <dd class="col-sm-9">
       <% if @patient.birthday %>
-        <%= @patient.birthday.strftime('%d/%m/%Y') %>
+        <%= l(@patient.birthday) %>
       <% else %>
         —
       <% end %>
     </dd>
 
-    <dt class="col-sm-3">Email</dt>
+    <dt class="col-sm-3"><%= t('activerecord.attributes.patient.email') %></dt>
     <dd class="col-sm-9"><%= @patient.email %></dd>
 
-    <dt class="col-sm-3">CPF</dt>
+    <dt class="col-sm-3"><%= t('activerecord.attributes.patient.cpf') %></dt>
     <dd class="col-sm-9"><%= @patient.cpf %></dd>
   </dl>
 <% else %>
-  <p>Perfil não encontrado.</p>
+  <p><%= t('dashboards.patients.not_found') %></p>
 <% end %> 

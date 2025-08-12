@@ -3,8 +3,8 @@
 <%= render @professional %>
 
 <div>
-  <%= link_to "Edit this professional", edit_professional_path(@professional) %> |
-  <%= link_to "Back to professionals", professionals_path %>
+  <%= link_to t('professionals.show.edit_link'), edit_professional_path(@professional) %> |
+  <%= link_to t('professionals.show.back_link'), professionals_path %>
 
-  <%= button_to "Destroy this professional", @professional, method: :delete %>
+  <%= button_to t('professionals.show.destroy'), @professional, method: :delete, data: { confirm: t('professionals.show.confirm_destroy') } %>
 </div>
