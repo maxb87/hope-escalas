@@ -30,12 +30,14 @@ class PatientsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @patient.save
-        generated_password = SecureRandom.alphanumeric(6)
+        # generated_password = SecureRandom.alphanumeric(6)
+        generated_password = @patient.cpf.to_s.first(6) # MVP: will implement a better password generation later
         @patient.create_user!(
           email: @patient.email,
           password: generated_password,
           password_confirmation: generated_password,
-          force_password_reset: true
+          # force_password_reset: true
+          force_password_reset: false # MVP: will implement forced password reset later
         )
 
         notice_message = I18n.t("patients.notices.created")

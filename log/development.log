@@ -9650,3 +9650,5 @@ Processing by Users::SessionsController#new as TURBO_STREAM
 Completed 200 OK in 281ms (Views: 4.6ms | ActiveRecord: 0.9ms (1 query, 0 cached) | GC: 0.2ms)
 
 
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m

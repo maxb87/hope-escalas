@@ -4,20 +4,31 @@
 # - Admin (sem associação) com email admin@admin.com
 # - 5 Professionals (técnicos de tênis) com Users associados
 # - 5 Patients (tenistas famosos, incluindo Rafael Nadal) com Users associados
-# Todos com senha 123456 e sem necessidade de reset de senha no primeiro login
+# MVP: Senha inicial = 6 primeiros dígitos do CPF (sem necessidade de reset)
+# FUTURO: Voltar a usar senha aleatória + force_password_reset = true
 
 require "active_record"
 require "date"
 
+# MVP: Senha padrão para admin (não tem CPF)
 SEED_PASSWORD = "123456"
 
 def set_password_and_flags!(user, password)
   user.password = password
   user.password_confirmation = password
+
+  # MVP: Sempre false - senha inicial é CPF
+  # FUTURO: Voltar a usar force_password_reset = true para senhas aleatórias
   if user.respond_to?(:force_password_reset)
     user.force_password_reset = false
   end
   user.save!
+end
+
+def generate_initial_password(cpf)
+  # MVP: 6 primeiros dígitos do CPF
+  # FUTURO: Voltar a usar SecureRandom.alphanumeric(6)
+  cpf.to_s[0..5]
 end
 
 ActiveRecord::Base.transaction do
@@ -44,14 +55,17 @@ ActiveRecord::Base.transaction do
     prof.birthday  = attrs[:birthday]
     prof.save!
 
+    # MVP: Senha = 6 primeiros dígitos do CPF
+    initial_password = generate_initial_password(attrs[:cpf])
+
     if prof.user
       prof.user.email = attrs[:email]
-      set_password_and_flags!(prof.user, SEED_PASSWORD)
+      set_password_and_flags!(prof.user, initial_password)
     else
-      prof.create_user!(email: attrs[:email], password: SEED_PASSWORD, password_confirmation: SEED_PASSWORD, force_password_reset: false)
+      prof.create_user!(email: attrs[:email], password: initial_password, password_confirmation: initial_password, force_password_reset: false)
     end
 
-    puts "  ✓ Professional ensured: #{prof.full_name} (#{prof.email})"
+    puts "  ✓ Professional ensured: #{prof.full_name} (#{prof.email}) - Senha: #{initial_password}"
   end
 
   puts "Seeding: Patients (players)"
@@ -70,14 +84,17 @@ ActiveRecord::Base.transaction do
     pat.birthday  = attrs[:birthday]
     pat.save!
 
+    # MVP: Senha = 6 primeiros dígitos do CPF
+    initial_password = generate_initial_password(attrs[:cpf])
+
     if pat.user
       pat.user.email = attrs[:email]
-      set_password_and_flags!(pat.user, SEED_PASSWORD)
+      set_password_and_flags!(pat.user, initial_password)
     else
-      pat.create_user!(email: attrs[:email], password: SEED_PASSWORD, password_confirmation: SEED_PASSWORD, force_password_reset: false)
+      pat.create_user!(email: attrs[:email], password: initial_password, password_confirmation: initial_password, force_password_reset: false)
     end
 
-    puts "  ✓ Patient ensured: #{pat.full_name} (#{pat.email})"
+    puts "  ✓ Patient ensured: #{pat.full_name} (#{pat.email}) - Senha: #{initial_password}"
   end
 end
 

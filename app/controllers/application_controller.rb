@@ -32,18 +32,20 @@ class ApplicationController < ActionController::Base
     redirect_to(request.referer.present? ? request.referer : root_path, alert: I18n.t("pundit.default", default: "Você não tem permissão para executar esta ação."))
   end
 
-  def enforce_password_reset
-    # IMPORTANT: Never touch current_user inside Devise controllers to avoid
-    # triggering Devise modules (e.g., :lockable) before columns exist.
-    return if devise_controller?
-
-    user = current_user
-    return unless user
-    return unless user.respond_to?(:force_password_reset)
-    return unless user.force_password_reset
-
-    redirect_to edit_user_registration_path, alert: I18n.t("devise.passwords.force_reset", default: "Você precisa redefinir sua senha antes de continuar.")
-  end
+  # MVP: Comentado - não há reset de senha obrigatório
+  # FUTURO: Voltar a habilitar para senhas aleatórias
+  # def enforce_password_reset
+  #   # IMPORTANT: Never touch current_user inside Devise controllers to avoid
+  #   # triggering Devise modules (e.g., :lockable) before columns exist.
+  #   return if devise_controller?
+  #
+  #   user = current_user
+  #   return unless user
+  #   return unless user.respond_to?(:force_password_reset)
+  #   return unless user.force_password_reset
+  #
+  #   redirect_to edit_user_registration_path, alert: I18n.t("devise.passwords.force_reset", default: "Você precisa redefinir sua senha antes de continuar.")
+  # end
 
   def after_sign_in_path_for(resource)
     # Redirecionamento conforme regra de acesso (admin/profissional → lista de pacientes; paciente → perfil)
