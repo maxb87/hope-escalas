@@ -3,6 +3,7 @@ class PsychometricScalesController < ApplicationController
 
   def index
     @psychometric_scales = policy_scope(PsychometricScale).active.ordered
+    flash.now[:notice] = I18n.t("psychometric_scales.index.notice") if params[:n]
   end
 
   def show

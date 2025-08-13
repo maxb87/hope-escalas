@@ -5,15 +5,14 @@ class ScaleResponse < ApplicationRecord
   belongs_to :patient
   belongs_to :psychometric_scale
 
-  validates :answers, presence: true
-  validates :total_score, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :interpretation, presence: true
-  validates :completed_at, presence: true
-  validate :answers_structure_valid
-  validate :all_required_items_answered
+  # Validações: quando não há respostas, permitimos campos calculados em branco
+  validates :total_score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :interpretation, presence: true, if: -> { answers.present? }
+  validates :completed_at, presence: true, if: -> { answers.present? }
+  validate :validate_answers
 
   before_validation :calculate_score, if: :answers_changed?
-  before_validation :set_completed_at, unless: :completed_at?
+  before_validation :set_completed_at, if: -> { answers.present? && !completed_at? }
 
   scope :recent, -> { order(completed_at: :desc) }
   scope :by_scale, ->(scale) { where(psychometric_scale: scale) }
@@ -99,32 +98,33 @@ class ScaleResponse < ApplicationRecord
     self.completed_at = Time.current
   end
 
-  def answers_structure_valid
-    return unless answers.present?
+  def validate_answers
+    # Ordem de mensagens: 1) ausência, 2) itens faltantes, 3) estrutura/valores inválidos
+    if answers.blank?
+      errors.add(:answers, I18n.t("scale_responses.errors.answers_blank"))
+      return
+    end
 
-    answers.each do |item_key, value|
-      unless item_key.match?(/\Aitem_\d+\z/)
-        errors.add(:answers, "estrutura inválida: #{item_key}")
-        return
-      end
-
-      unless value.to_s.match?(/\A[0-3]\z/)
-        errors.add(:answers, "valor inválido para #{item_key}: #{value}")
-        return
+    # Itens obrigatórios não respondidos
+    if psychometric_scale.present?
+      required_numbers = psychometric_scale.scale_items.required.pluck(:item_number)
+      answered_numbers = answers.keys.map { |k| k.gsub("item_", "").to_i }
+      missing = (required_numbers - answered_numbers).sort
+      if missing.any?
+        errors.add(:answers, I18n.t("scale_responses.errors.missing_required_items", items: missing.join(", ")))
       end
     end
-  end
 
-  def all_required_items_answered
-    return unless psychometric_scale.present? && answers.present?
-
-    required_items = psychometric_scale.scale_items.required
-    answered_items = answers.keys.map { |k| k.gsub("item_", "").to_i }
-
-    missing_items = required_items.pluck(:item_number) - answered_items
-
-    if missing_items.any?
-      errors.add(:answers, "itens obrigatórios não respondidos: #{missing_items.join(', ')}")
+    # Estrutura e domínio dos valores
+    answers.each do |item_key, value|
+      unless item_key.match?(/\Aitem_\d+\z/)
+        errors.add(:answers, I18n.t("scale_responses.errors.invalid_key", key: item_key))
+        break
+      end
+      unless value.to_s.match?(/\A[0-3]\z/)
+        errors.add(:answers, I18n.t("scale_responses.errors.invalid_value", key: item_key, value: value))
+        break
+      end
     end
   end
 end

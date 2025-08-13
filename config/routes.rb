@@ -5,6 +5,11 @@ Rails.application.routes.draw do
     member do
       patch :cancel
     end
+    collection do
+      get :pending
+      get :completed
+      get :cancelled
+    end
   end
   resources :scale_responses, only: [ :new, :create, :show ]
 

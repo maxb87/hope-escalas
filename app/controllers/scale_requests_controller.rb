@@ -3,6 +3,25 @@ class ScaleRequestsController < ApplicationController
 
   def index
     @scale_requests = policy_scope(ScaleRequest).includes(:patient, :professional, :psychometric_scale).recent
+    authorize ScaleRequest
+  end
+
+  def pending
+    @scale_requests = policy_scope(ScaleRequest).pending.includes(:patient, :professional, :psychometric_scale).recent
+    authorize ScaleRequest
+    render :index
+  end
+
+  def completed
+    @scale_requests = policy_scope(ScaleRequest).completed.includes(:patient, :professional, :psychometric_scale).recent
+    authorize ScaleRequest
+    render :index
+  end
+
+  def cancelled
+    @scale_requests = policy_scope(ScaleRequest).cancelled.includes(:patient, :professional, :psychometric_scale).recent
+    authorize ScaleRequest
+    render :index
   end
 
   def show
@@ -14,18 +33,23 @@ class ScaleRequestsController < ApplicationController
     @scale_request = ScaleRequest.new
     @scale_request.patient = @patient if @patient
     @psychometric_scales = PsychometricScale.active.ordered
+    @patients = policy_scope(Patient).order(:full_name)
     authorize @scale_request
   end
 
   def create
     @scale_request = ScaleRequest.new(scale_request_params)
     @scale_request.professional = current_user.account
+    # status default já é :pending pelo enum; linha abaixo é redundante, mas inofensiva
+    @scale_request.status ||= :pending
     authorize @scale_request
 
     if @scale_request.save
-      redirect_to @scale_request, notice: "Solicitação criada com sucesso."
+      redirect_to @scale_request.patient, notice: I18n.t("scale_requests.create.success")
     else
       @psychometric_scales = PsychometricScale.active.ordered
+      @patients = policy_scope(Patient).order(:full_name)
+      flash.now[:alert] = I18n.t("errors.messages.not_saved", count: @scale_request.errors.count, resource: @scale_request.class.model_name.human.downcase)
       render :new, status: :unprocessable_entity
     end
   end
@@ -33,15 +57,15 @@ class ScaleRequestsController < ApplicationController
   def destroy
     authorize @scale_request
     @scale_request.destroy
-    redirect_to scale_requests_path, notice: "Solicitação cancelada com sucesso."
+    redirect_to scale_requests_path, notice: I18n.t("scale_requests.destroy.success")
   end
 
   def cancel
     authorize @scale_request
     if @scale_request.cancel!
-      redirect_to @scale_request, notice: "Solicitação cancelada com sucesso."
+      redirect_to @scale_request, notice: I18n.t("scale_requests.cancel.success")
     else
-      redirect_to @scale_request, alert: "Não foi possível cancelar a solicitação."
+      redirect_to @scale_request, alert: I18n.t("scale_requests.cancel.failure")
     end
   end
 

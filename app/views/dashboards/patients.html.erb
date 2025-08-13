@@ -20,6 +20,56 @@
     <dt class="col-sm-3"><%= t('activerecord.attributes.patient.cpf') %></dt>
     <dd class="col-sm-9"><%= @patient.cpf %></dd>
   </dl>
+
+  <hr/>
+
+  <h2><%= t('dashboards.patients.pending_requests_title') %></h2>
+  <% if @pending_requests.present? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><%= t('dashboards.patients.scale_col') %></th>
+          <th><%= t('dashboards.patients.requested_at_col') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @pending_requests.each do |req| %>
+          <tr>
+            <td><%= req.psychometric_scale.name %></td>
+            <td><%= l(req.requested_at, format: :short) %></td>
+            <td>
+              <%= link_to t('dashboards.patients.fill_scale'), new_scale_response_path(scale_request_id: req.id), class: 'btn btn-sm btn-primary' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p><%= t('dashboards.patients.no_pending') %></p>
+  <% end %>
+
+  <h2 class="mt-4"><%= t('dashboards.patients.completed_responses_title') %></h2>
+  <% if @completed_responses.present? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><%= t('dashboards.patients.scale_col') %></th>
+          <th><%= t('dashboards.patients.completed_at_col') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @completed_responses.each do |resp| %>
+          <tr>
+            <td><%= resp.psychometric_scale.name %></td>
+            <td><%= l(resp.completed_at, format: :short) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p><%= t('dashboards.patients.no_completed') %></p>
+  <% end %>
 <% else %>
   <p><%= t('dashboards.patients.not_found') %></p>
 <% end %> 

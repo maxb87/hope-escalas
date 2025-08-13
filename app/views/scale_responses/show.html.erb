@@ -1,2 +1,27 @@
-<h1>ScaleResponses#show</h1>
-<p>Find me in app/views/scale_responses/show.html.erb</p>
+<h2><%= @scale_response.psychometric_scale.name %> — Resultado</h2>
+
+<div class="mb-3">
+  <strong>Paciente:</strong> <%= @scale_response.patient.full_name %><br/>
+  <strong>Data:</strong> <%= l(@scale_response.completed_at, format: :short) %>
+</div>
+
+<div class="mb-3">
+  <strong>Pontuação total:</strong> <%= @scale_response.total_score %><br/>
+  <strong>Interpretação:</strong> <%= @scale_response.interpretation %>
+</div>
+
+<h3>Respostas por item</h3>
+<ol>
+  <% @scale_response.psychometric_scale.scale_items.ordered.each do |item| %>
+    <% key = "item_#{item.item_number}" %>
+    <% score = @scale_response.answers[key].to_i %>
+    <li class="mb-2">
+      <div><strong><%= item.item_number %>. <%= item.question_text %></strong></div>
+      <div>Resposta: <strong><%= score %></strong> — <%= item.options[score.to_s] %></div>
+    </li>
+  <% end %>
+  </ol>
+
+<div class="mt-3">
+  <%= link_to "Voltar", :back, class: "btn btn-secondary" %>
+</div>

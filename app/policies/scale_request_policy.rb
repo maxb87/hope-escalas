@@ -17,6 +17,19 @@ class ScaleRequestPolicy < ApplicationPolicy
     user.email == "admin@admin.com" || user.account_type == "Professional" || user.account_type == "Patient"
   end
 
+  # Permitir autorizar coleções em actions como pending/completed/cancelled
+  def pending?
+    index?
+  end
+
+  def completed?
+    index?
+  end
+
+  def cancelled?
+    index?
+  end
+
   def show?
     user.email == "admin@admin.com" ||
     (user.account_type == "Professional" && record.professional == user.account) ||

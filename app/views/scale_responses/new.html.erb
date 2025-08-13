@@ -1,2 +1,36 @@
-<h1>ScaleResponses#new</h1>
-<p>Find me in app/views/scale_responses/new.html.erb</p>
+<h2><%= @scale_response.psychometric_scale.name %></h2>
+
+<p>Responda a todos os itens abaixo. Selecione uma opção de 0 a 3 para cada pergunta.</p>
+
+<%= form_with model: @scale_response, url: scale_responses_path, method: :post, data: { turbo: false } do |f| %>
+  <% if @scale_response.errors.any? %>
+    <div class="alert alert-danger" data-turbo-cache="false">
+      <h4 class="mb-2"><%= t('errors.messages.not_saved', count: @scale_response.errors.count, resource: @scale_response.class.model_name.human.downcase) %></h4>
+      <ul class="mb-0">
+        <% @scale_response.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%= hidden_field_tag :scale_request_id, @scale_request.id %>
+  <div class="list-group">
+    <% @scale_items.each do |item| %>
+      <div class="list-group-item mb-3">
+        <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
+        <div class="d-flex gap-3">
+          <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+            <label class="form-check-label">
+              <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
+              <span><%= score %> — <%= label %></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-4">
+    <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>
+  </div>
+<% end %>

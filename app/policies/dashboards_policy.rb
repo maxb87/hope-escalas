@@ -4,10 +4,10 @@ class DashboardsPolicy < ApplicationPolicy
   end
 
   def professionals?
-    user && (user.email == "admin@admin.com" || (user.account_type == "Professional" && user.account_id.present?))
+    admin_email? || professional?
   end
 
   def patients?
-    user && user.account_type == "Patient" && user.account_id.present?
+    patient?
   end
 end

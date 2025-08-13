@@ -19,5 +19,13 @@ class DashboardsController < ApplicationController
   def patients
     authorize :dashboards, :patients?
     @patient = current_user.account if current_user.account.is_a?(Patient)
+    if @patient
+      @pending_requests = ScaleRequest.where(patient: @patient, status: "pending")
+                                      .includes(:psychometric_scale)
+                                      .order(requested_at: :desc)
+      @completed_responses = ScaleResponse.where(patient: @patient)
+                                          .includes(:psychometric_scale)
+                                          .order(completed_at: :desc)
+    end
   end
 end

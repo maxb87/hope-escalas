@@ -3,8 +3,11 @@
     <div class="navbar-brand mb-0 h1">
       <% if user_signed_in? %>
         <% account = current_user.account %>
-        <% title = (account.is_a?(Patient) ? "Meu perfil" : "Lista de Pacientes") %>
-        <%= title %>
+        <% if account.is_a?(Patient) %>
+          <%= link_to t('dashboards.patients.title'), patients_dashboard_path, class: 'text-decoration-none' %>
+        <% else %>
+          <%= link_to t('dashboards.professionals.title'), professionals_dashboard_path, class: 'text-decoration-none' %>
+        <% end %>
       <% else %>
         Hope Escalas
       <% end %>

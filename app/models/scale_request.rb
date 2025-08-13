@@ -10,38 +10,22 @@ class ScaleRequest < ApplicationRecord
   belongs_to :psychometric_scale
   has_one :scale_response, dependent: :destroy
 
-  validates :status, presence: true, inclusion: { in: %w[pending completed expired cancelled] }
+  # Status como enum (coluna integer com default 0 na migration)
+  enum :status, { pending: 0, completed: 1, expired: 2, cancelled: 3 }, default: :pending
+
+  validates :status, presence: true
   validates :requested_at, presence: true
   # MVP: Expiração desabilitada - solicitações não expiram
   # validates :expires_at, presence: true, if: :pending?
   # validate :expires_at_after_requested_at, if: :expires_at?
 
-  scope :pending, -> { where(status: "pending") }
-  scope :completed, -> { where(status: "completed") }
-  scope :expired, -> { where(status: "expired") }
-  scope :cancelled, -> { where(status: "cancelled") }
-  scope :active, -> { where(status: [ "pending" ]) }
   scope :recent, -> { order(requested_at: :desc) }
+  scope :active, -> { pending }
 
-  before_create :set_requested_at, unless: :requested_at?
+  # Preencher requested_at antes de validar na criação
+  before_validation :set_requested_at, on: :create, unless: :requested_at?
   # MVP: Expiração desabilitada - não define expires_at automaticamente
   # before_create :set_expires_at, unless: :expires_at?
-
-  def pending?
-    status == "pending"
-  end
-
-  def completed?
-    status == "completed"
-  end
-
-  def expired?
-    status == "expired"
-  end
-
-  def cancelled?
-    status == "cancelled"
-  end
 
   # MVP: Expiração desabilitada - sempre retorna false
   def expired_by_time?
@@ -54,15 +38,15 @@ class ScaleRequest < ApplicationRecord
   end
 
   def complete!
-    update!(status: "completed") if can_be_completed?
+    completed! if can_be_completed?
   end
 
   def cancel!
-    update!(status: "cancelled") if pending?
+    cancelled! if pending?
   end
 
   def expire!
-    update!(status: "expired") if pending?
+    expired! if pending?
   end
 
   private

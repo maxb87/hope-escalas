@@ -27,9 +27,14 @@ class ScaleResponsesController < ApplicationController
 
     if @scale_response.save
       @scale_request.complete!
-      redirect_to @scale_response, notice: "Escala preenchida com sucesso."
+      if current_user.account_type == "Patient"
+        redirect_to patients_dashboard_path, notice: I18n.t("scale_responses.create.success")
+      else
+        redirect_to @scale_response, notice: I18n.t("scale_responses.create.success")
+      end
     else
       @scale_items = @scale_request.psychometric_scale.scale_items.ordered
+      flash.now[:alert] = I18n.t("errors.messages.not_saved", count: @scale_response.errors.count, resource: @scale_response.class.model_name.human.downcase)
       render :new, status: :unprocessable_entity
     end
   end
@@ -46,7 +51,11 @@ class ScaleResponsesController < ApplicationController
 
   def scale_response_params
     # Permitir respostas para todos os itens (item_1, item_2, etc.)
-    permitted_params = params.require(:scale_response).permit(:answers)
+    # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
+    # Convertemos para Parameters e permitimos answers vazio sem disparar ParameterMissing.
+    scale_hash = params[:scale_response] || {}
+    scale_params = ActionController::Parameters.new(scale_hash)
+    permitted_params = scale_params.permit(answers: {})
 
     # Converter answers para o formato esperado se necessário
     if permitted_params[:answers].present?
@@ -57,6 +66,8 @@ class ScaleResponsesController < ApplicationController
         end
       end
       permitted_params[:answers] = answers
+    else
+      permitted_params[:answers] = {}
     end
 
     permitted_params

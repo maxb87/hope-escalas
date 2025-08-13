@@ -136,6 +136,9 @@ pt-BR:
       user: "Usuário"
       patient: "Paciente"
       professional: "Profissional"
+      scale_response: "Resposta de escala"
+      scale_request: "Solicitação de escala"
+      psychometric_scale: "Escala psicométrica"
     attributes:
       user:
         email: "E-mail"
@@ -162,6 +165,15 @@ pt-BR:
         current_address: "Endereço"
         current_phone: "Telefone"
         professional_id: "ID profissional"
+      scale_response:
+        answers: "Respostas"
+        total_score: "Pontuação total"
+        interpretation: "Interpretação"
+        completed_at: "Concluída em"
+      scale_request:
+        status: "Status"
+        requested_at: "Solicitada em"
+        notes: "Observações"
     errors:
       messages:
         record_invalid: "Registro inválido"
@@ -171,6 +183,8 @@ pt-BR:
         too_short: "é muito curto"
         too_long: "é muito longo"
         confirmation: "não confere"
+        not_a_number: "não é um número"
+        greater_than_or_equal_to: "deve ser maior ou igual a %{count}"
 
   patients:
     index:
@@ -180,6 +194,9 @@ pt-BR:
     show:
       edit_link: "Editar paciente"
       back_link: "Voltar para pacientes"
+      request_scale: "Solicitar Escala"
+      pending_requests: "Solicitações pendentes"
+      completed_requests: "Solicitações concluídas"
       destroy: "Excluir paciente"
       confirm_destroy: "Tem certeza?"
     new:
@@ -226,3 +243,58 @@ pt-BR:
     patients:
       title: "Meu perfil"
       not_found: "Perfil não encontrado."
+      pending_requests_title: "Escalas pendentes para preenchimento"
+      completed_responses_title: "Escalas preenchidas"
+      scale_col: "Escala"
+      requested_at_col: "Solicitada em"
+      completed_at_col: "Concluída em"
+      fill_scale: "Preencher"
+      no_pending: "Você não tem escalas pendentes."
+      no_completed: "Você ainda não preencheu escalas."
+
+  scale_responses:
+    create:
+      success: "Escala preenchida com sucesso."
+    new:
+      submit: "Enviar respostas"
+    errors:
+      answers_blank: "Respostas não podem ficar em branco. Selecione uma opção para cada item."
+      missing_required_items: "Itens obrigatórios não respondidos: %{items}"
+      invalid_key: "Estrutura inválida nas respostas: %{key}"
+      invalid_value: "Valor inválido em %{key}: %{value} (permitidos: 0, 1, 2, 3)"
+  psychometric_scales:
+    index:
+      notice: "Selecione uma escala para solicitar."
+  scale_requests:
+    new:
+      title: "Nova solicitação de escala"
+      link: "Nova solicitação"
+    form:
+      patient: "Paciente"
+      scale: "Escala"
+      notes: "Observações"
+      submit: "Criar solicitação"
+    index:
+      title: "Solicitações de escalas"
+    filters:
+      all: "Todas"
+      pending: "Pendentes"
+      completed: "Concluídas"
+      cancelled: "Canceladas"
+    table:
+      patient: "Paciente"
+      scale: "Escala"
+      status: "Status"
+      requested_at: "Solicitada em"
+    show:
+      title: "Detalhe da solicitação"
+    actions:
+      cancel: "Cancelar solicitação"
+      confirm_cancel: "Tem certeza que deseja cancelar esta solicitação?"
+    create:
+      success: "Solicitação criada com sucesso."
+    destroy:
+      success: "Solicitação cancelada com sucesso."
+    cancel:
+      success: "Solicitação cancelada com sucesso."
+      failure: "Não foi possível cancelar a solicitação."

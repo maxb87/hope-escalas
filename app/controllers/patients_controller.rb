@@ -10,6 +10,8 @@ class PatientsController < ApplicationController
   # GET /patients/1 or /patients/1.json
   def show
     authorize @patient
+    @pending_requests = @patient.scale_requests.pending.includes(:psychometric_scale).order(requested_at: :desc)
+    @completed_requests = @patient.scale_requests.completed.includes(:psychometric_scale).order(requested_at: :desc)
   end
 
   # GET /patients/new
