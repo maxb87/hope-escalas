@@ -13,7 +13,9 @@ class ApplicationController < ActionController::Base
 
   def skip_pundit?
     # Evita callbacks em controllers do Devise e internos do Rails
-    devise_controller? || params[:controller].start_with?("rails/")
+    devise_controller? ||
+    params[:controller].start_with?("rails/") ||
+    params[:controller] =~ /(^(rails_)?admin)|(^pages$)|(^dashboards$)/
   end
 
   def verify_authorized_unless_index

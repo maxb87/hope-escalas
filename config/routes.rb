@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  # Psychometric Scales System
+  resources :psychometric_scales, only: [ :index, :show ]
+  resources :scale_requests, except: [ :edit, :update ] do
+    member do
+      patch :cancel
+    end
+  end
+  resources :scale_responses, only: [ :new, :create, :show ]
+
   resources :professionals do
     member do
       patch :restore

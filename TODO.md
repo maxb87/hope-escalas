@@ -3,7 +3,7 @@
 [x] Soft delete (Paranoia) para patients e professionals
 [x] Migrações: deleted_at:datetime + índices em users, patients, professionals
 [x] Modelos com acts_as_paranoid
-[ ] UX de "Restaurar" item (opcional)
+[ ] UX de "Restaurar" item (opcional)D
 [x] Specs de soft delete/restore (models e requests)
 [x] Endpoints de restore em patients e professionals
 [x] Requests: index não lista deletados; show de deletado 404; restore funciona
@@ -63,7 +63,7 @@
 
 ### Modelo de Domínio - Escalas Psicométricas
 
-[ ] **Model `PsychometricScale`**
+[x] **Model `PsychometricScale`**
 
 - `name:string, null: false` - Nome da escala (ex: "Inventário de Depressão de Beck")
 - `code:string, null: false` - Código único (ex: "BDI")
@@ -73,7 +73,7 @@
 - `deleted_at:datetime` - Soft delete
 - Validações: name e code únicos, code em maiúsculas
 
-[ ] **Model `ScaleRequest`**
+[x] **Model `ScaleRequest`**
 
 - `patient:references, null: false` - Paciente solicitado
 - `professional:references, null: false` - Profissional que solicitou
@@ -86,7 +86,7 @@
 - `deleted_at:datetime` - Soft delete
 - Validações: expires_at > requested_at, status válido (MVP: desabilitado)
 
-[ ] **Model `ScaleResponse`**
+[x] **Model `ScaleResponse`**
 
 - `scale_request:references, null: false` - Solicitação relacionada
 - `patient:references, null: false` - Paciente que respondeu
@@ -98,7 +98,7 @@
 - `deleted_at:datetime` - Soft delete
 - Validações: answers não vazio, total_score calculado
 
-[ ] **Associações**
+[x] **Associações**
 
 - `PsychometricScale` has_many `ScaleRequest`
 - `PsychometricScale` has_many `ScaleResponse`
@@ -115,28 +115,29 @@
 
 ### Migrações
 
-[ ] `create_psychometric_scales` migration
-[ ] `create_scale_requests` migration
-[ ] `create_scale_responses` migration
-[ ] Índices para performance (status, dates, patient_id, professional_id)
+[x] `create_psychometric_scales` migration
+[x] `create_scale_requests` migration
+[x] `create_scale_responses` migration
+[x] Índices para performance (status, dates, patient_id, professional_id)
 
 ### Controllers e Views
 
-[ ] **PsychometricScalesController**
+[x] **PsychometricScalesController**
 
 - `index` - Lista escalas disponíveis (apenas admin/profissionais)
 - `show` - Detalhes da escala
 - CRUD básico (apenas admin)
 
-[ ] **ScaleRequestsController**
+[x] **ScaleRequestsController**
 
 - `index` - Lista solicitações (filtros por status, paciente, profissional)
 - `show` - Detalhes da solicitação
 - `new` - Formulário para solicitar preenchimento
 - `create` - Criar nova solicitação
 - `destroy` - Cancelar solicitação
+- `cancel` - Cancelar solicitação (método customizado)
 
-[ ] **ScaleResponsesController**
+[x] **ScaleResponsesController**
 
 - `new` - Formulário de preenchimento da escala
 - `create` - Salvar respostas e calcular pontuação
@@ -144,20 +145,20 @@
 
 ### Autorização (Pundit)
 
-[ ] **PsychometricScalePolicy**
+[x] **PsychometricScalePolicy**
 
 - Admin pode gerenciar todas as escalas
 - Profissionais podem visualizar escalas ativas
 - Pacientes não têm acesso
 
-[ ] **ScaleRequestPolicy**
+[x] **ScaleRequestPolicy**
 
 - Profissionais podem criar solicitações para seus pacientes
 - Profissionais podem ver solicitações que criaram
 - Pacientes podem ver apenas suas próprias solicitações
 - Admin pode gerenciar todas as solicitações
 
-[ ] **ScaleResponsePolicy**
+[x] **ScaleResponsePolicy**
 
 - Pacientes podem criar respostas para suas solicitações
 - Profissionais podem ver respostas de seus pacientes
@@ -184,7 +185,7 @@
 
 ### Funcionalidades Especiais
 
-[ ] **Implementação BDI (Inventário de Depressão de Beck)**
+[x] **Implementação BDI (Inventário de Depressão de Beck)**
 
 - 21 itens com 4 opções cada (0-3 pontos)
 - Cálculo automático da pontuação total
@@ -228,10 +229,10 @@
 
 ### Próximos Passos Sugeridos
 
-1. **Prioridade 1**: Modelo de domínio (PsychometricScale + ScaleRequest + ScaleResponse)
-2. **Prioridade 2**: Migrações e associações
-3. **Prioridade 3**: Implementação BDI (estrutura de itens e cálculo)
-4. **Prioridade 4**: Controllers básicos + autorização
+1. **Prioridade 1**: ✅ Modelo de domínio (PsychometricScale + ScaleRequest + ScaleResponse)
+2. **Prioridade 2**: ✅ Migrações e associações
+3. **Prioridade 3**: ✅ Implementação BDI (estrutura de itens e cálculo)
+4. **Prioridade 4**: ✅ Controllers básicos + autorização
 5. **Prioridade 5**: Views e formulários de preenchimento
 
 ---
@@ -262,3 +263,17 @@ DETALHES TÉCNICOS DO LOCKOUT:
   - Informar tempo de bloqueio quando conta está bloqueada
   - Mensagens em português brasileiro
   - Interface limpa sem duplicação
+
+✅ CHECKPOINT: Prioridade 2 (Controllers básicos + autorização) completamente implementada e funcionando.
+
+DETALHES TÉCNICOS DA PRIORIDADE 2:
+
+- ✅ Controllers criados: PsychometricScalesController, ScaleRequestsController, ScaleResponsesController
+- ✅ Rotas configuradas com resources e member actions
+- ✅ Policies do Pundit implementadas: PsychometricScalePolicy, ScaleRequestPolicy, ScaleResponsePolicy
+- ✅ Autorização aplicada em todas as ações
+- ✅ Fluxo profissional: listar escalas → solicitar preenchimento → gerenciar solicitações
+- ✅ Fluxo paciente: responder solicitações → visualizar respostas
+- ✅ Validações de parâmetros e segurança implementadas
+- ✅ Cálculo automático de pontuação e interpretação BDI
+- ✅ Completamento automático de solicitações após preenchimento
