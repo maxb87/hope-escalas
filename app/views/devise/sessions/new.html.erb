@@ -1,6 +1,40 @@
 <h2>Entrar</h2>
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <%# Lógica personalizada para mensagens de tentativas restantes e bloqueio %>
+  <% if resource.respond_to?(:email) && resource.email.present? %>
+    <% user = User.find_by(email: resource.email) %>
+    <% if user %>
+      <% if user.access_locked? %>
+        <% remaining_time = distance_of_time_in_words(Time.current, user.locked_at + Devise.unlock_in) %>
+        <div class="alert alert-danger">
+          <%= I18n.t("devise.failure.locked_with_time", time: remaining_time) %>
+        </div>
+      <% else %>
+        <% remaining_attempts = [Devise.maximum_attempts - user.failed_attempts.to_i, 0].max %>
+        <% if remaining_attempts == 1 %>
+          <div class="alert alert-danger">
+            <%= I18n.t("devise.failure.last_attempt") %>
+          </div>
+        <% elsif remaining_attempts < Devise.maximum_attempts %>
+          <div class="alert alert-danger">
+            <%= I18n.t("devise.failure.invalid_with_attempts", attempts: remaining_attempts) %>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%# Fallback: mensagem genérica apenas quando o usuário não existe %>
+      <% if flash[:alert].present? %>
+        <div class="alert alert-danger"><%= flash[:alert] %></div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%# Fallback: mensagem genérica quando não há e-mail preenchido %>
+    <% if flash[:alert].present? %>
+      <div class="alert alert-danger"><%= flash[:alert] %></div>
+    <% end %>
+  <% end %>
+  
   <div class="field">
     <%= f.label :email, "E-mail" %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>

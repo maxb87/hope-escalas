@@ -33,11 +33,14 @@ class ApplicationController < ActionController::Base
   end
 
   def enforce_password_reset
-    return unless current_user
-    return unless current_user.respond_to?(:force_password_reset)
-    return unless current_user.force_password_reset
-    # Allow Devise registrations/passwords controllers so the user can change password
-    return if devise_controller? && [ "registrations", "passwords" ].include?(controller_name)
+    # IMPORTANT: Never touch current_user inside Devise controllers to avoid
+    # triggering Devise modules (e.g., :lockable) before columns exist.
+    return if devise_controller?
+
+    user = current_user
+    return unless user
+    return unless user.respond_to?(:force_password_reset)
+    return unless user.force_password_reset
 
     redirect_to edit_user_registration_path, alert: I18n.t("devise.passwords.force_reset", default: "Você precisa redefinir sua senha antes de continuar.")
   end

@@ -24,6 +24,12 @@
 
   <body class="m-4">
     <%= render partial: "shared/navbar" %>
+    <%# Não exibir flash messages nas views do Devise para evitar duplicação %>
+    <% unless devise_controller? %>
+      <% flash.each do |type, message| %>
+        <div class="alert alert-<%= type == 'alert' ? 'danger' : 'info' %>"><%= message %></div>
+      <% end %>
+    <% end %>
     <%= yield %>
   </body>
 </html>
