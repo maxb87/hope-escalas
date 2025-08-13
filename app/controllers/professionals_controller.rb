@@ -31,13 +31,12 @@ class ProfessionalsController < ApplicationController
     ActiveRecord::Base.transaction do
       if @professional.save
         # generated_password = SecureRandom.alphanumeric(6)
-        generated_password = @professional.cpf.to_s.first(6)
+        generated_password = @professional.cpf.to_s.first(6) # MVP: will implement a better password generation later
         @professional.create_user!(
           email: @professional.email,
           password: generated_password,
           password_confirmation: generated_password,
-          # force_password_reset: true
-          force_password_reset: false # MVP: will implement forced password reset later
+          force_password_reset: false # MVP: will implement forced password reset later with true
         )
 
         notice_message = I18n.t("professionals.notices.created")

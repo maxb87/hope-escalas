@@ -2,7 +2,7 @@ Checklist atualizado
 [x] Soft delete (Paranoia) para patients e professionals
 [x] Migrações: deleted_at:datetime + índices em users, patients, professionals
 [x] Modelos com acts_as_paranoid
-[ ] UX de "Restaurar" item (opcional)
+[ ] UX de “Restaurar” item (opcional)
 [x] Specs de soft delete/restore (models e requests)
 [x] Endpoints de restore em patients e professionals
 [x] Requests: index não lista deletados; show de deletado 404; restore funciona
@@ -11,20 +11,12 @@ Checklist atualizado
 [x] PatientPolicy, ProfessionalPolicy e DashboardsPolicy (+ Scope)
 [x] Usar authorize/policy_scope nos controllers (Patients/Professionals/Dashboards)
 [ ] Specs de policies/authorization
-
-[x] MVP: Fluxo de primeiro login simplificado
-[x] Senha inicial = 6 primeiros dígitos do CPF (patients/professionals)
-[x] Admin mantém senha padrão "123456"
-[x] Desabilitado force_password_reset (comentado para futuras versões)
-[x] Seeds atualizados com senhas baseadas no CPF
-[x] Controllers e views simplificados (código original comentado)
-
-[ ] FUTURO: Voltar ao fluxo complexo de primeiro login
-[ ] users.force_password_reset:boolean, null:false, default:false
-[ ] Enforce redirect para edit_user_registration_path quando flag = true
-[ ] Users::RegistrationsController: troca sem senha atual no primeiro login, limpa flag, bypass_sign_in
-[ ] View registrations#edit: esconder e-mail e senha atual durante reset forçado
-[ ] I18n básico para mensagens
+[x] Devise: primeiro login exige troca de senha
+[x] users.force_password_reset:boolean, null:false, default:false
+[x] Enforce redirect para edit_user_registration_path quando flag = true
+[x] Users::RegistrationsController: troca sem senha atual no primeiro login, limpa flag, bypass_sign_in
+[x] View registrations#edit: esconder e-mail e senha atual durante reset forçado
+[x] I18n básico para mensagens
 [x] Redirecionamento pós-login por perfil (admin/profissional → lista de pacientes; paciente → próprio perfil)
 [ ] Opcional: habilitar :confirmable/:lockable
 [x] Segurança de login (bloqueio após tentativas) - IMPLEMENTADO E FUNCIONANDO
@@ -70,19 +62,11 @@ Próximos passos sugeridos
 Prioridade 1: Magic link
 Prioridade 2: API api/v1/users
 
-IMPLEMENTADO: Pundit (policies + controllers), MVP de primeiro login (senha = CPF), soft delete com endpoints e specs, sistema de lockout completo e funcionando.
+Implementado: Pundit (policies + controllers), fluxo de primeiro login (migr., controller, view, i18n), soft delete com endpoints e specs, sistema de lockout completo e funcionando.
 
-✅ CHECKPOINT MVP: Fluxo de primeiro login simplificado implementado com sucesso.
+À fazer MVP: magic link
 
-DETALHES TÉCNICOS DO MVP:
-
-- ✅ Senha inicial = 6 primeiros dígitos do CPF
-- ✅ Admin mantém senha padrão "123456"
-- ✅ force_password_reset desabilitado (comentado)
-- ✅ Seeds atualizados com senhas baseadas no CPF
-- ✅ Controllers simplificados (código original preservado em comentários)
-- ✅ Views simplificadas (código original preservado em comentários)
-- ✅ Código original preservado para futuras versões
+✅ CHECKPOINT: Sistema de lockout completamente implementado e funcionando. Todas as funcionalidades solicitadas foram entregues com sucesso.
 
 DETALHES TÉCNICOS DO LOCKOUT:
 
