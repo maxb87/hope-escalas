@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_192000) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_13_173846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,73 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_192000) do
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "professionals_email_format"
   end
 
+  create_table "psychometric_scale_items", force: :cascade do |t|
+    t.bigint "psychometric_scale_id", null: false
+    t.integer "item_number", null: false
+    t.text "question_text", null: false
+    t.jsonb "options", default: {}, null: false
+    t.boolean "is_required", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["options"], name: "index_psychometric_scale_items_on_options", using: :gin
+    t.index ["psychometric_scale_id", "item_number"], name: "index_scale_items_on_scale_and_number", unique: true
+    t.index ["psychometric_scale_id"], name: "index_psychometric_scale_items_on_psychometric_scale_id"
+  end
+
+  create_table "psychometric_scales", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.text "description"
+    t.string "version"
+    t.boolean "is_active", default: true
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_psychometric_scales_on_code", unique: true
+    t.index ["deleted_at"], name: "index_psychometric_scales_on_deleted_at"
+    t.index ["is_active"], name: "index_psychometric_scales_on_is_active"
+  end
+
+  create_table "scale_requests", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "professional_id", null: false
+    t.bigint "psychometric_scale_id", null: false
+    t.integer "status", default: 0
+    t.datetime "requested_at", null: false
+    t.datetime "expires_at"
+    t.text "notes"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_scale_requests_on_deleted_at"
+    t.index ["expires_at"], name: "index_scale_requests_on_expires_at"
+    t.index ["patient_id"], name: "index_scale_requests_on_patient_id"
+    t.index ["professional_id"], name: "index_scale_requests_on_professional_id"
+    t.index ["psychometric_scale_id"], name: "index_scale_requests_on_psychometric_scale_id"
+    t.index ["requested_at"], name: "index_scale_requests_on_requested_at"
+    t.index ["status"], name: "index_scale_requests_on_status"
+  end
+
+  create_table "scale_responses", force: :cascade do |t|
+    t.bigint "scale_request_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "psychometric_scale_id", null: false
+    t.jsonb "answers", default: {}, null: false
+    t.integer "total_score"
+    t.string "interpretation"
+    t.datetime "completed_at", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answers"], name: "index_scale_responses_on_answers", using: :gin
+    t.index ["completed_at"], name: "index_scale_responses_on_completed_at"
+    t.index ["deleted_at"], name: "index_scale_responses_on_deleted_at"
+    t.index ["patient_id"], name: "index_scale_responses_on_patient_id"
+    t.index ["psychometric_scale_id"], name: "index_scale_responses_on_psychometric_scale_id"
+    t.index ["scale_request_id"], name: "index_scale_responses_on_scale_request_id"
+    t.index ["total_score"], name: "index_scale_responses_on_total_score"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -77,4 +144,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_192000) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
+
+  add_foreign_key "psychometric_scale_items", "psychometric_scales"
+  add_foreign_key "scale_requests", "patients"
+  add_foreign_key "scale_requests", "professionals"
+  add_foreign_key "scale_requests", "psychometric_scales"
+  add_foreign_key "scale_responses", "patients"
+  add_foreign_key "scale_responses", "psychometric_scales"
+  add_foreign_key "scale_responses", "scale_requests"
 end
