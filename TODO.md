@@ -81,10 +81,10 @@
 - `status:integer, default: 0` - Status (pending, completed, expired, cancelled)
 - `requested_at:datetime, null: false` - Data/hora da solicitação
 - `completed_at:datetime` - Data/hora do preenchimento
-- `expires_at:datetime` - Data/hora de expiração
+- `expires_at:datetime` - Data/hora de expiração (MVP: desabilitado)
 - `notes:text` - Observações do profissional
 - `deleted_at:datetime` - Soft delete
-- Validações: expires_at > requested_at, status válido
+- Validações: expires_at > requested_at, status válido (MVP: desabilitado)
 
 [ ] **Model `ScaleResponse`**
 
@@ -198,12 +198,12 @@
 
 - Alertar paciente sobre solicitações pendentes no login
 - Notificar profissional quando escala for preenchida
-- Lembretes de expiração de solicitações
+- Lembretes de expiração de solicitações (MVP: desabilitado)
 
 [ ] **Validações de Negócio**
 
 - Não permitir múltiplas solicitações ativas da mesma escala para o mesmo paciente
-- Expiração automática de solicitações antigas
+- Expiração automática de solicitações antigas (MVP: desabilitado)
 - Validação de respostas obrigatórias
 
 ### Testes
@@ -213,7 +213,7 @@
 - Validações de `PsychometricScale`, `ScaleRequest`, `ScaleResponse`
 - Cálculo de pontuação BDI
 - Interpretação de resultados
-- Expiração automática de solicitações
+- Expiração automática de solicitações (MVP: desabilitado)
 
 [ ] **Request Specs**
 

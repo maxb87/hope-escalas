@@ -1,3 +1,7 @@
+# MVP: Expiração de solicitações desabilitada
+# - Solicitações não expiram automaticamente
+# - Métodos de expiração comentados mas mantidos para uso futuro
+# - Para habilitar: descomente as validações e callbacks relacionados a expires_at
 class ScaleRequest < ApplicationRecord
   acts_as_paranoid
 
@@ -8,8 +12,9 @@ class ScaleRequest < ApplicationRecord
 
   validates :status, presence: true, inclusion: { in: %w[pending completed expired cancelled] }
   validates :requested_at, presence: true
-  validates :expires_at, presence: true, if: :pending?
-  validate :expires_at_after_requested_at, if: :expires_at?
+  # MVP: Expiração desabilitada - solicitações não expiram
+  # validates :expires_at, presence: true, if: :pending?
+  # validate :expires_at_after_requested_at, if: :expires_at?
 
   scope :pending, -> { where(status: "pending") }
   scope :completed, -> { where(status: "completed") }
@@ -19,7 +24,8 @@ class ScaleRequest < ApplicationRecord
   scope :recent, -> { order(requested_at: :desc) }
 
   before_create :set_requested_at, unless: :requested_at?
-  before_create :set_expires_at, unless: :expires_at?
+  # MVP: Expiração desabilitada - não define expires_at automaticamente
+  # before_create :set_expires_at, unless: :expires_at?
 
   def pending?
     status == "pending"
@@ -37,8 +43,10 @@ class ScaleRequest < ApplicationRecord
     status == "cancelled"
   end
 
+  # MVP: Expiração desabilitada - sempre retorna false
   def expired_by_time?
-    expires_at.present? && expires_at < Time.current
+    # expires_at.present? && expires_at < Time.current
+    false
   end
 
   def can_be_completed?
@@ -63,13 +71,15 @@ class ScaleRequest < ApplicationRecord
     self.requested_at = Time.current
   end
 
-  def set_expires_at
-    self.expires_at = 7.days.from_now
-  end
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def set_expires_at
+  #   self.expires_at = 7.days.from_now
+  # end
 
-  def expires_at_after_requested_at
-    if expires_at <= requested_at
-      errors.add(:expires_at, "deve ser posterior à data de solicitação")
-    end
-  end
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def expires_at_after_requested_at
+  #   if expires_at <= requested_at
+  #     errors.add(:expires_at, "deve ser posterior à data de solicitação")
+  #   end
+  # end
 end

@@ -1,5 +1,5 @@
 # Review project files for instructions
-_Exported on 8/13/2025 at 14:45:53 GMT-3 from Cursor (1.4.3)_
+_Exported on 8/13/2025 at 14:51:23 GMT-3 from Cursor (1.4.3)_
 
 ---
 
@@ -8536,4 +8536,322 @@ puts "📊 Escala BDI criada com 21 itens"
 - Dashboard com notificações
 
 Quer continuar com a **Prioridade 2** (Controllers + autorização) ou prefere testar algo específico primeiro?
+
+---
+
+**User**
+
+para o MVP a solicitação não deve expirar. não delete o codigo de expiração, apenas sinalize com comentários
+
+---
+
+**Cursor**
+
+Perfeito! Vou comentar o código de expiração para o MVP, mantendo a funcionalidade disponível para uso futuro.
+
+
+```ruby
+class ScaleRequest < ApplicationRecord
+  acts_as_paranoid
+
+  belongs_to :patient
+  belongs_to :professional
+  belongs_to :psychometric_scale
+  has_one :scale_response, dependent: :destroy
+
+  validates :status, presence: true, inclusion: { in: %w[pending completed expired cancelled] }
+  validates :requested_at, presence: true
+  # MVP: Expiração desabilitada - solicitações não expiram
+  # validates :expires_at, presence: true, if: :pending?
+  # validate :expires_at_after_requested_at, if: :expires_at?
+
+  scope :pending, -> { where(status: "pending") }
+  scope :completed, -> { where(status: "completed") }
+  scope :expired, -> { where(status: "expired") }
+  scope :cancelled, -> { where(status: "cancelled") }
+  scope :active, -> { where(status: [ "pending" ]) }
+  scope :recent, -> { order(requested_at: :desc) }
+
+  before_create :set_requested_at, unless: :requested_at?
+  # MVP: Expiração desabilitada - não define expires_at automaticamente
+  # before_create :set_expires_at, unless: :expires_at?
+
+  def pending?
+    status == "pending"
+  end
+
+  def completed?
+    status == "completed"
+  end
+
+  def expired?
+    status == "expired"
+  end
+
+  def cancelled?
+    status == "cancelled"
+  end
+
+  # MVP: Expiração desabilitada - sempre retorna false
+  def expired_by_time?
+    # expires_at.present? && expires_at < Time.current
+    false
+  end
+
+  def can_be_completed?
+    pending? && !expired_by_time?
+  end
+
+  def complete!
+    update!(status: "completed") if can_be_completed?
+  end
+
+  def cancel!
+    update!(status: "cancelled") if pending?
+  end
+
+  def expire!
+    update!(status: "expired") if pending?
+  end
+
+  private
+
+  def set_requested_at
+    self.requested_at = Time.current
+  end
+
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def set_expires_at
+  #   self.expires_at = 7.days.from_now
+  # end
+
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def expires_at_after_requested_at
+  #   if expires_at <= requested_at
+  #     errors.add(:expires_at, "deve ser posterior à data de solicitação")
+  #   end
+  # end
+end
+```
+
+Agora vou também comentar a funcionalidade de expiração automática que pode estar em outros lugares do sistema:
+
+
+Vou atualizar o TODO.md para refletir que a expiração está desabilitada no MVP:
+
+
+```markdown
+- `expires_at:datetime` - Data/hora de expiração
+- `notes:text` - Observações do profissional
+- `deleted_at:datetime` - Soft delete
+- Validações: expires_at > requested_at, status válido
+
+->
+
+- `expires_at:datetime` - Data/hora de expiração (MVP: desabilitado)
+- `notes:text` - Observações do profissional
+- `deleted_at:datetime` - Soft delete
+- Validações: expires_at > requested_at, status válido (MVP: desabilitado)
+```
+
+```markdown
+[ ] **Validações de Negócio**
+
+- Não permitir múltiplas solicitações ativas da mesma escala para o mesmo paciente
+- Expiração automática de solicitações antigas
+- Validação de respostas obrigatórias
+
+->
+
+[ ] **Validações de Negócio**
+
+- Não permitir múltiplas solicitações ativas da mesma escala para o mesmo paciente
+- Expiração automática de solicitações antigas (MVP: desabilitado)
+- Validação de respostas obrigatórias
+```
+
+```markdown
+- Expiração automática de solicitações
+
+->
+
+- Expiração automática de solicitações (MVP: desabilitado)
+```
+
+```markdown
+- Expiração automática de solicitações
+
+->
+
+- Expiração automática de solicitações (MVP: desabilitado)
+```
+
+```markdown
+[ ] **Model Specs**
+
+- Validações de `PsychometricScale`, `ScaleRequest`, `ScaleResponse`
+- Cálculo de pontuação BDI
+- Interpretação de resultados
+- Expiração automática de solicitações
+
+->
+
+[ ] **Model Specs**
+
+- Validações de `PsychometricScale`, `ScaleRequest`, `ScaleResponse`
+- Cálculo de pontuação BDI
+- Interpretação de resultados
+- Expiração automática de solicitações (MVP: desabilitado)
+```
+
+Agora vou também comentar a funcionalidade de lembretes de expiração no sistema de notificações:
+
+
+```markdown
+[ ] **Sistema de Notificações**
+
+- Alertar paciente sobre solicitações pendentes no login
+- Notificar profissional quando escala for preenchida
+- Lembretes de expiração de solicitações
+
+->
+
+[ ] **Sistema de Notificações**
+
+- Alertar paciente sobre solicitações pendentes no login
+- Notificar profissional quando escala for preenchida
+- Lembretes de expiração de solicitações (MVP: desabilitado)
+```
+
+Perfeito! Agora vou criar um comentário no modelo para documentar claramente que a expiração está desabilitada no MVP:
+
+
+```ruby
+# MVP: Expiração de solicitações desabilitada
+# - Solicitações não expiram automaticamente
+# - Métodos de expiração comentados mas mantidos para uso futuro
+# - Para habilitar: descomente as validações e callbacks relacionados a expires_at
+class ScaleRequest < ApplicationRecord
+  acts_as_paranoid
+
+  belongs_to :patient
+  belongs_to :professional
+  belongs_to :psychometric_scale
+  has_one :scale_response, dependent: :destroy
+
+  validates :status, presence: true, inclusion: { in: %w[pending completed expired cancelled] }
+  validates :requested_at, presence: true
+  # MVP: Expiração desabilitada - solicitações não expiram
+  # validates :expires_at, presence: true, if: :pending?
+  # validate :expires_at_after_requested_at, if: :expires_at?
+
+  scope :pending, -> { where(status: "pending") }
+  scope :completed, -> { where(status: "completed") }
+  scope :expired, -> { where(status: "expired") }
+  scope :cancelled, -> { where(status: "cancelled") }
+  scope :active, -> { where(status: [ "pending" ]) }
+  scope :recent, -> { order(requested_at: :desc) }
+
+  before_create :set_requested_at, unless: :requested_at?
+  # MVP: Expiração desabilitada - não define expires_at automaticamente
+  # before_create :set_expires_at, unless: :expires_at?
+
+  def pending?
+    status == "pending"
+  end
+
+  def completed?
+    status == "completed"
+  end
+
+  def expired?
+    status == "expired"
+  end
+
+  def cancelled?
+    status == "cancelled"
+  end
+
+  # MVP: Expiração desabilitada - sempre retorna false
+  def expired_by_time?
+    # expires_at.present? && expires_at < Time.current
+    false
+  end
+
+  def can_be_completed?
+    pending? && !expired_by_time?
+  end
+
+  def complete!
+    update!(status: "completed") if can_be_completed?
+  end
+
+  def cancel!
+    update!(status: "cancelled") if pending?
+  end
+
+  def expire!
+    update!(status: "expired") if pending?
+  end
+
+  private
+
+  def set_requested_at
+    self.requested_at = Time.current
+  end
+
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def set_expires_at
+  #   self.expires_at = 7.days.from_now
+  # end
+
+  # MVP: Expiração desabilitada - mantido para uso futuro
+  # def expires_at_after_requested_at
+  #   if expires_at <= requested_at
+  #     errors.add(:expires_at, "deve ser posterior à data de solicitação")
+  #   end
+  # end
+end
+```
+
+## ✅ **Expiração Desabilitada para MVP**
+
+### **🔧 O que foi feito:**
+
+1. **✅ Comentado código de expiração no modelo:**
+   - Validações de `expires_at`
+   - Callback `set_expires_at`
+   - Método `expired_by_time?` sempre retorna `false`
+   - Validação `expires_at_after_requested_at`
+
+2. **✅ Documentação atualizada:**
+   - TODO.md marcado com "(MVP: desabilitado)"
+   - Comentários claros no código
+   - Instruções para habilitar no futuro
+
+3. **✅ Funcionalidade mantida:**
+   - Campo `expires_at` ainda existe no banco
+   - Índices mantidos
+   - Métodos comentados mas preservados
+
+### **📋 Comportamento do MVP:**
+
+- **Solicitações não expiram** automaticamente
+- **Status permanece "pending"** até ser completado ou cancelado manualmente
+- **Pacientes podem preencher** a qualquer momento
+- **Profissionais podem cancelar** solicitações manualmente
+
+### **�� Para habilitar expiração no futuro:**
+
+1. Descomente as validações de `expires_at`
+2. Descomente o callback `set_expires_at`
+3. Descomente a validação `expires_at_after_requested_at`
+4. Restaure o método `expired_by_time?`
+5. Implemente job para expiração automática
+
+### **📊 Próximos Passos:**
+
+Agora podemos prosseguir com a **Prioridade 2**: Controllers básicos + autorização, sabendo que as solicitações não expiram no MVP.
+
+Quer continuar com os controllers ou há algo mais que gostaria de ajustar no modelo?
 
