@@ -227,18 +227,38 @@ end
 ## Domínio e fluxos
 
 - Entidades principais:
+
   - `Professional` (profissionais médicos): acessam autenticados, gerenciam pacientes e solicitam preenchimento de escalas psicométricas.
-  - `Patient` (pacientes): acessam via login direto ou magic link e veem apenas as escalas solicitadas por um médico.
+  - `Patient` (pacientes): acessam via login direto e veem apenas as escalas solicitadas por um médico.
   - `User` (Devise): conta autenticável associada a um `Professional` ou `Patient`. Conta provisionada por administrador.
+  - `PsychometricScale` (escalas): catálogo de escalas disponíveis (ex: BDI - Inventário de Depressão de Beck).
+  - `ScaleRequest` (solicitações): pedidos de preenchimento de escalas por profissionais para pacientes.
+  - `ScaleResponse` (respostas): preenchimentos das escalas pelos pacientes com cálculo automático de pontuação.
+
 - Autenticação (Devise):
+
   - Usuários cadastrados por administrador recebem login com senha inicial de uso único.
   - No primeiro login, devem redefinir a senha antes de continuar.
+
 - Fluxo do profissional:
-  - Login → seleciona/cadastra paciente → visualiza escalas preenchidas/pendentes → solicita preenchimento de escala específica.
-  - Ao solicitar, o sistema envia um magic link ao e-mail do paciente (possibilidade de reenvio).
-- Fluxo do paciente (magic link):
-  - Clica no magic link → realiza login (ou primeiro login com troca de senha) → redirecionado para sua página de perfil → vê somente as escalas solicitadas.
-  - Magic link: uso único e expiração curta.
+
+  1. Login → Dashboard com lista de pacientes
+  2. Seleciona paciente → Perfil do paciente
+  3. Clica "Solicitar preenchimento" → Lista de escalas disponíveis
+  4. Seleciona escala (ex: BDI) → Cria solicitação
+  5. Visualiza solicitações pendentes/completadas do paciente
+
+- Fluxo do paciente:
+
+  1. Login → Alerta sobre N solicitações pendentes
+  2. Perfil mostra lista de escalas a preencher (nome + data solicitação)
+  3. Clica em escala → Formulário de preenchimento
+  4. Preenche todos os itens → Sistema calcula pontuação automaticamente
+  5. Volta ao perfil → Tabela com escalas preenchidas (nome + data conclusão)
+
+- Primeira escala implementada: **BDI (Inventário de Depressão de Beck)**
+  - 21 itens com 4 opções cada (0-3 pontos)
+  - Cálculo automático: 0-11 (Mínima), 12-19 (Leve), 20-27 (Moderada), 28-63 (Grave)
 
 ## Testes e qualidade
 
@@ -267,9 +287,10 @@ bundle exec bundler-audit check --update
 
 Subdomínio de escalas psicométricas (alto nível):
 
-- Catálogo de escalas, versões e itens mantidos por administradores
-- Solicitação de escala vinculando `Patient` e tipo de escala (estados: pendente, preenchida, expirada)
-- Tokens de magic link vinculados à solicitação (escopo: paciente + escala + expiração + uso único)
+- Catálogo de escalas psicométricas mantido por administradores
+- Solicitação de escala vinculando `Patient`, `Professional` e `PsychometricScale` (estados: pendente, completada, expirada, cancelada)
+- Preenchimento de escalas pelos pacientes com cálculo automático de pontuação e interpretação
+- Sistema de notificações para alertar sobre solicitações pendentes e conclusões
 
 ## Segurança (master key, magic link)
 
@@ -277,10 +298,11 @@ Subdomínio de escalas psicométricas (alto nível):
   - Arquivo criptografado: `config/credentials.yml.enc` (ou `config/credentials/production.yml.enc`)
   - Chave (NÃO commitar): `config/master.key` (ou `config/credentials/production.key`)
   - Em produção (Railway), defina `RAILS_MASTER_KEY` nas variáveis do projeto
-- Magic link:
-  - Token assinado, escopo a paciente e à escala solicitada, uso único, expiração curta
-  - Revogação após uso/expiração; auditoria de emissão/consumo
-  - Após login, redirecionar para o perfil do paciente com filtro de escalas solicitadas
+- Segurança de dados:
+  - Respostas de escalas armazenadas em JSONB com validação de estrutura
+  - Pontuações calculadas automaticamente para evitar manipulação
+  - Auditoria completa de solicitações e preenchimentos
+  - Expiração automática de solicitações antigas
 
 ## Observabilidade
 
@@ -317,9 +339,12 @@ Subdomínio de escalas psicométricas (alto nível):
 
 ## Roadmap
 
-- MVP com cadastro de pacientes, solicitação de escalas e magic link
-- Painel do profissional: solicitações e status
-- Painel do paciente: solicitações pendentes e escalas preenchidas
+- MVP com cadastro de pacientes, solicitação de escalas psicométricas e preenchimento
+- Implementação do BDI (Inventário de Depressão de Beck) como primeira escala
+- Painel do profissional: solicitações, status e visualização de resultados
+- Painel do paciente: solicitações pendentes e histórico de escalas preenchidas
+- Sistema de notificações para alertas e lembretes
+- Expansão do catálogo de escalas psicométricas
 
 ## Licença
 

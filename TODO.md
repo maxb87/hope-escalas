@@ -1,8 +1,9 @@
-Checklist atualizado
+# Checklist atualizado
+
 [x] Soft delete (Paranoia) para patients e professionals
 [x] Migrações: deleted_at:datetime + índices em users, patients, professionals
 [x] Modelos com acts_as_paranoid
-[ ] UX de “Restaurar” item (opcional)
+[ ] UX de "Restaurar" item (opcional)
 [x] Specs de soft delete/restore (models e requests)
 [x] Endpoints de restore em patients e professionals
 [x] Requests: index não lista deletados; show de deletado 404; restore funciona
@@ -57,6 +58,183 @@ Checklist atualizado
         [ ] Observabilidade
         [ ] Lograge em produção (e opcional em dev)
         [ ] Prometheus exporter simples
+
+## 📊 IMPLEMENTAÇÃO DE ESCALAS PSICOMÉTRICAS
+
+### Modelo de Domínio - Escalas Psicométricas
+
+[ ] **Model `PsychometricScale`**
+
+- `name:string, null: false` - Nome da escala (ex: "Inventário de Depressão de Beck")
+- `code:string, null: false` - Código único (ex: "BDI")
+- `description:text` - Descrição da escala
+- `version:string` - Versão da escala
+- `is_active:boolean, default: true` - Se está disponível para solicitação
+- `deleted_at:datetime` - Soft delete
+- Validações: name e code únicos, code em maiúsculas
+
+[ ] **Model `ScaleRequest`**
+
+- `patient:references, null: false` - Paciente solicitado
+- `professional:references, null: false` - Profissional que solicitou
+- `psychometric_scale:references, null: false` - Escala solicitada
+- `status:integer, default: 0` - Status (pending, completed, expired, cancelled)
+- `requested_at:datetime, null: false` - Data/hora da solicitação
+- `completed_at:datetime` - Data/hora do preenchimento
+- `expires_at:datetime` - Data/hora de expiração
+- `notes:text` - Observações do profissional
+- `deleted_at:datetime` - Soft delete
+- Validações: expires_at > requested_at, status válido
+
+[ ] **Model `ScaleResponse`**
+
+- `scale_request:references, null: false` - Solicitação relacionada
+- `patient:references, null: false` - Paciente que respondeu
+- `psychometric_scale:references, null: false` - Escala respondida
+- `answers:jsonb` - Respostas do paciente (estrutura específica por escala)
+- `total_score:integer` - Pontuação total calculada
+- `interpretation:string` - Interpretação baseada na pontuação
+- `completed_at:datetime, null: false` - Data/hora do preenchimento
+- `deleted_at:datetime` - Soft delete
+- Validações: answers não vazio, total_score calculado
+
+[ ] **Associações**
+
+- `PsychometricScale` has_many `ScaleRequest`
+- `PsychometricScale` has_many `ScaleResponse`
+- `ScaleRequest` belongs_to `Patient`
+- `ScaleRequest` belongs_to `Professional`
+- `ScaleRequest` belongs_to `PsychometricScale`
+- `ScaleRequest` has_one `ScaleResponse`
+- `ScaleResponse` belongs_to `ScaleRequest`
+- `ScaleResponse` belongs_to `Patient`
+- `ScaleResponse` belongs_to `PsychometricScale`
+- `Patient` has_many `ScaleRequest`
+- `Patient` has_many `ScaleResponse`
+- `Professional` has_many `ScaleRequest`
+
+### Migrações
+
+[ ] `create_psychometric_scales` migration
+[ ] `create_scale_requests` migration
+[ ] `create_scale_responses` migration
+[ ] Índices para performance (status, dates, patient_id, professional_id)
+
+### Controllers e Views
+
+[ ] **PsychometricScalesController**
+
+- `index` - Lista escalas disponíveis (apenas admin/profissionais)
+- `show` - Detalhes da escala
+- CRUD básico (apenas admin)
+
+[ ] **ScaleRequestsController**
+
+- `index` - Lista solicitações (filtros por status, paciente, profissional)
+- `show` - Detalhes da solicitação
+- `new` - Formulário para solicitar preenchimento
+- `create` - Criar nova solicitação
+- `destroy` - Cancelar solicitação
+
+[ ] **ScaleResponsesController**
+
+- `new` - Formulário de preenchimento da escala
+- `create` - Salvar respostas e calcular pontuação
+- `show` - Visualizar resposta preenchida
+
+### Autorização (Pundit)
+
+[ ] **PsychometricScalePolicy**
+
+- Admin pode gerenciar todas as escalas
+- Profissionais podem visualizar escalas ativas
+- Pacientes não têm acesso
+
+[ ] **ScaleRequestPolicy**
+
+- Profissionais podem criar solicitações para seus pacientes
+- Profissionais podem ver solicitações que criaram
+- Pacientes podem ver apenas suas próprias solicitações
+- Admin pode gerenciar todas as solicitações
+
+[ ] **ScaleResponsePolicy**
+
+- Pacientes podem criar respostas para suas solicitações
+- Profissionais podem ver respostas de seus pacientes
+- Admin pode ver todas as respostas
+
+### Views
+
+[ ] **Escalas Psicométricas**
+
+- `index.html.erb` - Lista de escalas disponíveis
+- `show.html.erb` - Detalhes da escala
+
+[ ] **Solicitações**
+
+- `index.html.erb` - Lista de solicitações com filtros
+- `show.html.erb` - Detalhes da solicitação
+- `new.html.erb` - Formulário de nova solicitação
+- `_request.html.erb` - Partial para item da lista
+
+[ ] **Respostas**
+
+- `new.html.erb` - Formulário de preenchimento da escala
+- `show.html.erb` - Visualização da resposta preenchida
+
+### Funcionalidades Especiais
+
+[ ] **Implementação BDI (Inventário de Depressão de Beck)**
+
+- 21 itens com 4 opções cada (0-3 pontos)
+- Cálculo automático da pontuação total
+- Interpretação baseada na pontuação:
+  - 0-11: Mínima
+  - 12-19: Leve
+  - 20-27: Moderada
+  - 28-63: Grave
+
+[ ] **Sistema de Notificações**
+
+- Alertar paciente sobre solicitações pendentes no login
+- Notificar profissional quando escala for preenchida
+- Lembretes de expiração de solicitações
+
+[ ] **Validações de Negócio**
+
+- Não permitir múltiplas solicitações ativas da mesma escala para o mesmo paciente
+- Expiração automática de solicitações antigas
+- Validação de respostas obrigatórias
+
+### Testes
+
+[ ] **Model Specs**
+
+- Validações de `PsychometricScale`, `ScaleRequest`, `ScaleResponse`
+- Cálculo de pontuação BDI
+- Interpretação de resultados
+- Expiração automática de solicitações
+
+[ ] **Request Specs**
+
+- CRUD de solicitações e respostas
+- Autorização com Pundit
+- Fluxo completo de solicitação → preenchimento
+
+[ ] **Feature Specs**
+
+- Fluxo profissional: solicitar → paciente preenche → visualizar resultado
+- Fluxo paciente: login → ver solicitações → preencher → confirmar
+
+### Próximos Passos Sugeridos
+
+1. **Prioridade 1**: Modelo de domínio (PsychometricScale + ScaleRequest + ScaleResponse)
+2. **Prioridade 2**: Migrações e associações
+3. **Prioridade 3**: Implementação BDI (estrutura de itens e cálculo)
+4. **Prioridade 4**: Controllers básicos + autorização
+5. **Prioridade 5**: Views e formulários de preenchimento
+
+---
 
 Próximos passos sugeridos
 Prioridade 1: Magic link

@@ -9754,3 +9754,164 @@ puma (6.6.1) lib/puma/request.rb:98:in 'Puma::Request#handle_request'
 puma (6.6.1) lib/puma/server.rb:472:in 'Puma::Server#process_client'
 puma (6.6.1) lib/puma/server.rb:254:in 'block in Puma::Server#run'
 puma (6.6.1) lib/puma/thread_pool.rb:167:in 'block in Puma::ThreadPool#spawn_thread'
+Started GET "/" for 127.0.0.1 at 2025-08-13 14:20:46 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by DashboardsController#show as HTML
+Completed 401 Unauthorized in 42ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 14.3ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-13 14:20:46 -0300
+Processing by Users::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.7ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 6.0ms | GC: 0.8ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 27.6ms | GC: 7.5ms)
+Completed 200 OK in 117ms (Views: 32.6ms | ActiveRecord: 14.9ms (0 queries, 0 cached) | GC: 10.9ms)
+
+
+Started POST "/users/sign_in" for 127.0.0.1 at 2025-08-13 14:20:53 -0300
+Processing by Users::SessionsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Entrar"}
+  [1m[36mUser Load (2.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  [1m[36mUser Update (3.4ms)[0m  [1m[33mUPDATE "users" SET "updated_at" = '2025-08-13 17:20:53.317059', "failed_attempts" = 0 WHERE "users"."id" = 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  [1m[36mTRANSACTION (1.4ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+Redirected to http://127.0.0.1:3000/dashboard/professionals
+Completed 303 See Other in 309ms (ActiveRecord: 7.4ms (2 queries, 0 cached) | GC: 8.8ms)
+
+
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-13 14:20:53 -0300
+Processing by DashboardsController#professionals as TURBO_STREAM
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  [1m[36mPatient Load (1.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."full_name" ASC /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/professionals.html.erb:14:in 'Enumerable#each_with_index'
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 14.1ms | GC: 1.7ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.5ms | GC: 1.7ms)
+Completed 200 OK in 38ms (Views: 12.2ms | ActiveRecord: 8.3ms (2 queries, 0 cached) | GC: 3.5ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-08-13 14:20:53 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-08-13 14:20:53 -0300
+Started GET "/patients/new" for 127.0.0.1 at 2025-08-13 14:20:56 -0300
+Processing by PatientsController#new as HTML
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='patients'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering patients/new.html.erb within layouts/application
+  Rendered patients/_form.html.erb (Duration: 12.9ms | GC: 4.3ms)
+  Rendered patients/new.html.erb within layouts/application (Duration: 15.3ms | GC: 4.8ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 17.3ms | GC: 4.8ms)
+Completed 200 OK in 56ms (Views: 31.8ms | ActiveRecord: 1.1ms (1 query, 0 cached) | GC: 18.0ms)
+
+
+Started POST "/patients" for 127.0.0.1 at 2025-08-13 14:21:24 -0300
+Processing by PatientsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "patient" => {"full_name" => "Bill Marston", "sex" => "", "birthday" => "1921-01-01", "started_at" => "", "email" => "[FILTERED]", "cpf" => "11111100000", "rg" => "", "current_address" => "", "current_phone" => ""}, "commit" => "Salvar"}
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:32:in 'block in PatientsController#create'
+  [1m[36mPatient Create (8.6ms)[0m  [1m[32mINSERT INTO "patients" ("full_name", "sex", "birthday", "started_at", "email", "cpf", "rg", "current_phone", "current_address", "deleted_at", "created_at", "updated_at") VALUES ('Bill Marston', NULL, '1921-01-01', NULL, 'bill@hope.local', '11111100000', '', NULL, NULL, NULL, '2025-08-13 17:21:24.559078', '2025-08-13 17:21:24.559078') RETURNING "id" /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:32:in 'block in PatientsController#create'
+  [1m[36mUser Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'bill@hope.local' LIMIT 1 /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:35:in 'block in PatientsController#create'
+  [1m[36mUser Create (1.2ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "deleted_at", "force_password_reset", "created_at", "updated_at", "account_type", "account_id", "failed_attempts", "unlock_token", "locked_at") VALUES ('bill@hope.local', '$2a$12$CnFqtyRkIvoeMYUnhN3G9.re2Pz2RBRTr5cYTlPvOXflW.w3lEbzG', NULL, NULL, NULL, NULL, FALSE, '2025-08-13 17:21:24.879362', '2025-08-13 17:21:24.879362', 'Patient', 6, 0, NULL, NULL) RETURNING "id" /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:35:in 'block in PatientsController#create'
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."account_id" = 6 AND "users"."account_type" = 'Patient' LIMIT 1 /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:35:in 'block in PatientsController#create'
+Redirected to http://127.0.0.1:3000/patients/6
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:31:in 'PatientsController#create'
+Completed 302 Found in 362ms (ActiveRecord: 13.4ms (5 queries, 0 cached) | GC: 42.6ms)
+
+
+Started GET "/patients/6" for 127.0.0.1 at 2025-08-13 14:21:24 -0300
+Processing by PatientsController#show as TURBO_STREAM
+  Parameters: {"id" => "6"}
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mPatient Load (0.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:99:in 'PatientsController#set_patient'
+  Rendering layout layouts/application.html.erb
+  Rendering patients/show.html.erb within layouts/application
+  Rendered patients/_patient.html.erb (Duration: 0.5ms | GC: 0.0ms)
+  Rendered patients/show.html.erb within layouts/application (Duration: 2.8ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 3.8ms | GC: 0.0ms)
+Completed 200 OK in 20ms (Views: 4.2ms | ActiveRecord: 1.5ms (2 queries, 0 cached) | GC: 0.9ms)
+
+
+Started DELETE "/users/sign_out" for 127.0.0.1 at 2025-08-13 14:21:29 -0300
+Processing by Users::SessionsController#destroy as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]"}
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='destroy',application='HopeEscalas',controller='sessions'*/[0m
+Redirected to http://127.0.0.1:3000/
+Completed 303 See Other in 22ms (ActiveRecord: 1.0ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-13 14:21:29 -0300
+Processing by DashboardsController#show as TURBO_STREAM
+Completed 401 Unauthorized in 17ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-13 14:21:29 -0300
+Processing by Users::SessionsController#new as TURBO_STREAM
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 2.0ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.8ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 3.8ms | GC: 0.6ms)
+Completed 200 OK in 19ms (Views: 4.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.6ms)
+
+
+Started POST "/users/sign_in" for 127.0.0.1 at 2025-08-13 14:21:35 -0300
+Processing by Users::SessionsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Entrar"}
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'bill@hope.local' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  [1m[36mPatient Load (0.9ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  ↳ app/controllers/application_controller.rb:50:in 'ApplicationController#after_sign_in_path_for'
+Redirected to http://127.0.0.1:3000/dashboard/patients
+Completed 303 See Other in 305ms (ActiveRecord: 2.0ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard/patients" for 127.0.0.1 at 2025-08-13 14:21:35 -0300
+Processing by DashboardsController#patients as TURBO_STREAM
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 12 ORDER BY "users"."id" ASC LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:21:in 'DashboardsController#patients'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/patients.html.erb within layouts/application
+  Rendered dashboards/patients.html.erb within layouts/application (Duration: 0.7ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.8ms | GC: 0.0ms)
+Completed 200 OK in 19ms (Views: 2.2ms | ActiveRecord: 1.4ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+Started DELETE "/users/sign_out" for 127.0.0.1 at 2025-08-13 14:21:37 -0300
+Processing by Users::SessionsController#destroy as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]"}
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 12 ORDER BY "users"."id" ASC LIMIT 1 /*action='destroy',application='HopeEscalas',controller='sessions'*/[0m
+Redirected to http://127.0.0.1:3000/
+Completed 303 See Other in 16ms (ActiveRecord: 1.1ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2025-08-13 14:21:37 -0300
+Processing by DashboardsController#show as TURBO_STREAM
+Completed 401 Unauthorized in 11ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-13 14:21:37 -0300
+Processing by Users::SessionsController#new as TURBO_STREAM
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 1.7ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.7ms | GC: 0.0ms)
+Completed 200 OK in 15ms (Views: 3.2ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
