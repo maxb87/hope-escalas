@@ -10,6 +10,44 @@
   <strong>Interpretação:</strong> <%= @scale_response.interpretation %>
 </div>
 
+<% if @scale_response.results.present? %>
+  <% metrics = @scale_response.results["metrics"] || {} %>
+  <% subscales = @scale_response.results["subscales"] || {} %>
+  <% interp = @scale_response.results["interpretation"] || {} %>
+
+  <% if metrics.present? %>
+    <h3>Métricas</h3>
+    <table class="table table-sm w-auto">
+      <tbody>
+      <% metrics.each do |key, value| %>
+        <tr>
+          <th class="text-nowrap"><%= key.humanize %></th>
+          <td><%= value %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if subscales.present? %>
+    <h3>Subescalas</h3>
+    <table class="table table-sm w-auto">
+      <tbody>
+      <% subscales.each do |key, value| %>
+        <tr>
+          <th class="text-nowrap"><%= key.humanize %></th>
+          <td><%= value %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if interp.present? && interp["rules"].present? %>
+    <p class="text-muted">Regra: <%= interp["rules"] %></p>
+  <% end %>
+<% end %>
+
 <h3>Respostas por item</h3>
 <ol>
   <% @scale_response.psychometric_scale.scale_items.ordered.each do |item| %>

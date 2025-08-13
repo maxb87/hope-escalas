@@ -51,9 +51,8 @@ class ScaleResponse < ApplicationRecord
 
     case psychometric_scale.code
     when "BDI"
-      calculate_bdi_score
-    when "BAI"
-      calculate_bai_score
+      results_hash = Scoring::BDI.calculate(answers, scale_version: psychometric_scale.version)
+      apply_results!(results_hash)
     else
       calculate_generic_score
     end
@@ -72,6 +71,18 @@ class ScaleResponse < ApplicationRecord
   def calculate_generic_score
     self.total_score = answers.values.sum(&:to_i)
     self.interpretation = "Pontuação total: #{total_score}"
+    # Preenche estrutura de results mínima para manter contrato
+    self.results = {
+      "schema_version" => 1,
+      "scale_code" => psychometric_scale.code,
+      "scale_version" => psychometric_scale.version,
+      "computed_at" => Time.current.iso8601,
+      "metrics" => { "total" => total_score },
+      "subscales" => {},
+      "interpretation" => { "level" => interpretation }
+    }
+    self.results_schema_version = 1
+    self.computed_at = Time.current
   end
 
   def interpret_bdi_score(score)
@@ -96,6 +107,19 @@ class ScaleResponse < ApplicationRecord
 
   def set_completed_at
     self.completed_at = Time.current
+  end
+
+  def apply_results!(hash)
+    self.results = hash
+    self.results_schema_version = hash["schema_version"] || 1
+    self.computed_at = Time.zone.parse(hash["computed_at"]) rescue Time.current
+    # Preencher campos legados
+    if (total = hash.dig("metrics", "total"))
+      self.total_score = total.to_i
+    end
+    if (level = hash.dig("interpretation", "level"))
+      self.interpretation = level
+    end
   end
 
   def validate_answers

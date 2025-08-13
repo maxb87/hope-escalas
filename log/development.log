@@ -11904,3 +11904,281 @@ Completed 422 Unprocessable Content in 48ms (Views: 11.6ms | ActiveRecord: 4.7ms
 
 Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-08-13 20:01:23 -0300
 Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-08-13 20:01:23 -0300
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (1.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (2.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+Migrating to AddResultsToScaleResponses (20250813190010)
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (3.9ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results" jsonb DEFAULT '{}' NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results_schema_version" integer DEFAULT 1 NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "computed_at" timestamp(6) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_results" ON "scale_responses" USING gin ("results") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_answers" ON "scale_responses" USING gin ("answers") /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[31mROLLBACK /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[35mSQL (0.6ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql" SCHEMA pg_catalog /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "patients" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (7.9ms)[0m  [1m[35mCREATE TABLE "patients" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT patients_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT patients_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT patients_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_patients_on_cpf" ON "patients" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_patients_on_deleted_at" ON "patients" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "professionals" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (4.0ms)[0m  [1m[35mCREATE TABLE "professionals" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "professional_id" character varying, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT professionals_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT professionals_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT professionals_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_cpf" ON "professionals" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_professionals_on_deleted_at" ON "professionals" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_email" ON "professionals" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "psychometric_scale_items" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "psychometric_scale_items" ("id" bigserial primary key, "psychometric_scale_id" bigint NOT NULL, "item_number" integer NOT NULL, "question_text" text NOT NULL, "options" jsonb DEFAULT '{}' NOT NULL, "is_required" boolean DEFAULT TRUE, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scale_items_on_options" ON "psychometric_scale_items" USING gin ("options") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_scale_items_on_scale_and_number" ON "psychometric_scale_items" ("psychometric_scale_id", "item_number") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scale_items_on_psychometric_scale_id" ON "psychometric_scale_items" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "psychometric_scales" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "psychometric_scales" ("id" bigserial primary key, "name" character varying NOT NULL, "code" character varying NOT NULL, "description" text, "version" character varying, "is_active" boolean DEFAULT TRUE, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_psychometric_scales_on_code" ON "psychometric_scales" ("code") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scales_on_deleted_at" ON "psychometric_scales" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scales_on_is_active" ON "psychometric_scales" ("is_active") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "scale_requests" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.7ms)[0m  [1m[35mCREATE TABLE "scale_requests" ("id" bigserial primary key, "patient_id" bigint NOT NULL, "professional_id" bigint NOT NULL, "psychometric_scale_id" bigint NOT NULL, "status" integer DEFAULT 0, "requested_at" timestamp(6) NOT NULL, "expires_at" timestamp(6), "notes" text, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_deleted_at" ON "scale_requests" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_expires_at" ON "scale_requests" ("expires_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_patient_id" ON "scale_requests" ("patient_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_professional_id" ON "scale_requests" ("professional_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_psychometric_scale_id" ON "scale_requests" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_requested_at" ON "scale_requests" ("requested_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_status" ON "scale_requests" ("status") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "scale_responses" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE TABLE "scale_responses" ("id" bigserial primary key, "scale_request_id" bigint NOT NULL, "patient_id" bigint NOT NULL, "psychometric_scale_id" bigint NOT NULL, "answers" jsonb DEFAULT '{}' NOT NULL, "total_score" integer, "interpretation" character varying, "completed_at" timestamp(6) NOT NULL, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_answers" ON "scale_responses" USING gin ("answers") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_completed_at" ON "scale_responses" ("completed_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_deleted_at" ON "scale_responses" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_patient_id" ON "scale_responses" ("patient_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_psychometric_scale_id" ON "scale_responses" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_scale_request_id" ON "scale_responses" ("scale_request_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_total_score" ON "scale_responses" ("total_score") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "users" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (4.4ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "deleted_at" timestamp(6), "force_password_reset" boolean DEFAULT FALSE NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "account_type" character varying, "account_id" bigint, "failed_attempts" integer DEFAULT 0 NOT NULL, "unlock_token" character varying, "locked_at" timestamp(6)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_users_on_account" ON "users" ("account_type", "account_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_users_on_deleted_at" ON "users" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_unlock_token" ON "users" ("unlock_token") /*application='HopeEscalas'*/[0m
+  [1m[35m (4.0ms)[0m  [1m[35mALTER TABLE "psychometric_scale_items" ADD CONSTRAINT "fk_rails_058b855ca1"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (3.4ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_fa052d863e"
+FOREIGN KEY ("patient_id")
+  REFERENCES "patients" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_55fc33110f"
+FOREIGN KEY ("professional_id")
+  REFERENCES "professionals" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.1ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_c92af00ada"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.7ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_d790a3d23f"
+FOREIGN KEY ("patient_id")
+  REFERENCES "patients" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.0ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_8c013153ae"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.2ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_d696f52d3a"
+FOREIGN KEY ("scale_request_id")
+  REFERENCES "scale_requests" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20250813173846) /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20250813173836),
+(20250813173830),
+(20250813173818),
+(20250812192000),
+(20250811191500),
+(20250811191022),
+(20250811185355),
+(20250811184631); /*application='HopeEscalas'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-08-13 23:10:14.097358', '2025-08-13 23:10:14.097362') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.6ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'schema_sha1' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.8ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('schema_sha1', '00cb88d909b93b452a161aed39939a007a560bfc', '2025-08-13 23:10:14.108969', '2025-08-13 23:10:14.108972') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+Migrating to AddResultsToScaleResponses (20250813190010)
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results" jsonb DEFAULT '{}' NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (1.0ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results_schema_version" integer DEFAULT 1 NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "computed_at" timestamp(6) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.4ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_results" ON "scale_responses" USING gin ("results") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_answers" ON "scale_responses" USING gin ("answers") /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[31mROLLBACK /*application='HopeEscalas'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[35mSQL (0.9ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql" SCHEMA pg_catalog /*application='HopeEscalas'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "patients" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (8.2ms)[0m  [1m[35mCREATE TABLE "patients" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT patients_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT patients_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT patients_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_patients_on_cpf" ON "patients" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_patients_on_deleted_at" ON "patients" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "professionals" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.9ms)[0m  [1m[35mCREATE TABLE "professionals" ("id" bigserial primary key, "full_name" character varying NOT NULL, "sex" integer, "birthday" date NOT NULL, "started_at" date, "email" character varying NOT NULL, "cpf" character varying NOT NULL, "rg" character varying, "current_phone" integer, "current_address" integer, "professional_id" character varying, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT professionals_cpf_format CHECK (char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text), CONSTRAINT professionals_full_name_minlen CHECK (char_length(full_name::text) >= 5), CONSTRAINT professionals_email_format CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_cpf" ON "professionals" ("cpf") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_professionals_on_deleted_at" ON "professionals" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_professionals_on_email" ON "professionals" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE IF EXISTS "psychometric_scale_items" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.7ms)[0m  [1m[35mCREATE TABLE "psychometric_scale_items" ("id" bigserial primary key, "psychometric_scale_id" bigint NOT NULL, "item_number" integer NOT NULL, "question_text" text NOT NULL, "options" jsonb DEFAULT '{}' NOT NULL, "is_required" boolean DEFAULT TRUE, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scale_items_on_options" ON "psychometric_scale_items" USING gin ("options") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_scale_items_on_scale_and_number" ON "psychometric_scale_items" ("psychometric_scale_id", "item_number") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scale_items_on_psychometric_scale_id" ON "psychometric_scale_items" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "psychometric_scales" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.4ms)[0m  [1m[35mCREATE TABLE "psychometric_scales" ("id" bigserial primary key, "name" character varying NOT NULL, "code" character varying NOT NULL, "description" text, "version" character varying, "is_active" boolean DEFAULT TRUE, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_psychometric_scales_on_code" ON "psychometric_scales" ("code") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scales_on_deleted_at" ON "psychometric_scales" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_psychometric_scales_on_is_active" ON "psychometric_scales" ("is_active") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "scale_requests" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (2.0ms)[0m  [1m[35mCREATE TABLE "scale_requests" ("id" bigserial primary key, "patient_id" bigint NOT NULL, "professional_id" bigint NOT NULL, "psychometric_scale_id" bigint NOT NULL, "status" integer DEFAULT 0, "requested_at" timestamp(6) NOT NULL, "expires_at" timestamp(6), "notes" text, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_deleted_at" ON "scale_requests" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_expires_at" ON "scale_requests" ("expires_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_patient_id" ON "scale_requests" ("patient_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_professional_id" ON "scale_requests" ("professional_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_psychometric_scale_id" ON "scale_requests" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_requested_at" ON "scale_requests" ("requested_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.7ms)[0m  [1m[35mCREATE INDEX "index_scale_requests_on_status" ON "scale_requests" ("status") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "scale_responses" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "scale_responses" ("id" bigserial primary key, "scale_request_id" bigint NOT NULL, "patient_id" bigint NOT NULL, "psychometric_scale_id" bigint NOT NULL, "answers" jsonb DEFAULT '{}' NOT NULL, "total_score" integer, "interpretation" character varying, "completed_at" timestamp(6) NOT NULL, "deleted_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_answers" ON "scale_responses" USING gin ("answers") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_completed_at" ON "scale_responses" ("completed_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_deleted_at" ON "scale_responses" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_patient_id" ON "scale_responses" ("patient_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_psychometric_scale_id" ON "scale_responses" ("psychometric_scale_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_scale_request_id" ON "scale_responses" ("scale_request_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_total_score" ON "scale_responses" ("total_score") /*application='HopeEscalas'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE IF EXISTS "users" CASCADE /*application='HopeEscalas'*/[0m
+  [1m[35m (4.4ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp(6), "remember_created_at" timestamp(6), "deleted_at" timestamp(6), "force_password_reset" boolean DEFAULT FALSE NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "account_type" character varying, "account_id" bigint, "failed_attempts" integer DEFAULT 0 NOT NULL, "unlock_token" character varying, "locked_at" timestamp(6)) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE INDEX "index_users_on_account" ON "users" ("account_type", "account_id") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE INDEX "index_users_on_deleted_at" ON "users" ("deleted_at") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token") /*application='HopeEscalas'*/[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_unlock_token" ON "users" ("unlock_token") /*application='HopeEscalas'*/[0m
+  [1m[35m (3.9ms)[0m  [1m[35mALTER TABLE "psychometric_scale_items" ADD CONSTRAINT "fk_rails_058b855ca1"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (3.2ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_fa052d863e"
+FOREIGN KEY ("patient_id")
+  REFERENCES "patients" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.5ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_55fc33110f"
+FOREIGN KEY ("professional_id")
+  REFERENCES "professionals" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.0ms)[0m  [1m[35mALTER TABLE "scale_requests" ADD CONSTRAINT "fk_rails_c92af00ada"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.7ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_d790a3d23f"
+FOREIGN KEY ("patient_id")
+  REFERENCES "patients" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (1.9ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_8c013153ae"
+FOREIGN KEY ("psychometric_scale_id")
+  REFERENCES "psychometric_scales" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.0ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD CONSTRAINT "fk_rails_d696f52d3a"
+FOREIGN KEY ("scale_request_id")
+  REFERENCES "scale_requests" ("id")
+ /*application='HopeEscalas'*/[0m
+  [1m[35m (2.7ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[35m (1.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20250813173846) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20250813173836),
+(20250813173830),
+(20250813173818),
+(20250812192000),
+(20250811191500),
+(20250811191022),
+(20250811185355),
+(20250811184631); /*application='HopeEscalas'*/[0m
+  [1m[35m (3.2ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-08-13 23:13:53.188049', '2025-08-13 23:13:53.188052') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'schema_sha1' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.9ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('schema_sha1', '00cb88d909b93b452a161aed39939a007a560bfc', '2025-08-13 23:13:53.196271', '2025-08-13 23:13:53.196273') RETURNING "key" /*application='HopeEscalas'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+Migrating to AddResultsToScaleResponses (20250813190010)
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mBEGIN /*application='HopeEscalas'*/[0m
+  [1m[35m (1.0ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results" jsonb DEFAULT '{}' NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "results_schema_version" integer DEFAULT 1 NOT NULL /*application='HopeEscalas'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mALTER TABLE "scale_responses" ADD "computed_at" timestamp(6) /*application='HopeEscalas'*/[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCREATE INDEX "index_scale_responses_on_results" ON "scale_responses" USING gin ("results") /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250813190010') RETURNING "version" /*application='HopeEscalas'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT /*application='HopeEscalas'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_advisory_unlock(2248471872277036455) /*application='HopeEscalas'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Started GET "/scale_responses" for 127.0.0.1 at 2025-08-13 20:17:29 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+  
+ActionController::RoutingError (No route matches [GET] "/scale_responses"):
+  
+Started GET "/dashboard/patients" for 127.0.0.1 at 2025-08-13 20:17:33 -0300
+Processing by DashboardsController#patients as HTML
+  [1m[36mUser Load (1.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 15 ORDER BY "users"."id" ASC LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+Completed 401 Unauthorized in 90ms (ActiveRecord: 49.9ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-13 20:17:34 -0300
+Processing by Users::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 4.1ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 18.8ms | GC: 0.0ms)
+Completed 200 OK in 38ms (Views: 20.7ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_responses/new?scale_request_id=1" for 127.0.0.1 at 2025-08-13 20:17:36 -0300
+Processing by ScaleResponsesController#new as HTML
+  Parameters: {"scale_request_id" => "1"}
+Completed 401 Unauthorized in 12ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-13 20:17:36 -0300
+Processing by Users::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 1.8ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 2.9ms | GC: 0.0ms)
+Completed 200 OK in 16ms (Views: 3.5ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started POST "/users/sign_in" for 127.0.0.1 at 2025-08-13 20:17:45 -0300
+Processing by Users::SessionsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Entrar"}
+  [1m[36mUser Load (1.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'ana.oliveira@hope.local' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+Completed 401 Unauthorized in 15ms (ActiveRecord: 1.4ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Processing by Users::SessionsController#new as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Entrar"}
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'ana.oliveira@hope.local' LIMIT 1 /*action='new',application='HopeEscalas',controller='sessions'*/[0m
+  ↳ app/views/devise/sessions/new.html.erb:6
+  Rendered devise/shared/_links.html.erb (Duration: 0.1ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 3.8ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.7ms | GC: 0.0ms)
+Completed 200 OK in 261ms (Views: 4.2ms | ActiveRecord: 0.8ms (1 query, 0 cached) | GC: 0.0ms)
+
+
