@@ -1,5 +1,6 @@
 class PatientsController < ApplicationController
   before_action :set_patient, only: %i[ show edit update destroy ]
+  before_action :set_patient_with_deleted, only: %i[ restore ]
 
   # GET /patients or /patients.json
   def index
@@ -81,10 +82,24 @@ class PatientsController < ApplicationController
     end
   end
 
+  # PATCH /patients/:id/restore
+  def restore
+    authorize @patient, :update?
+    @patient.restore
+    respond_to do |format|
+      format.html { redirect_to @patient, notice: "Paciente restaurado com sucesso.", status: :see_other }
+      format.json { render :show, status: :ok, location: @patient }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_patient
       @patient = Patient.find(params.expect(:id))
+    end
+
+    def set_patient_with_deleted
+      @patient = Patient.with_deleted.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

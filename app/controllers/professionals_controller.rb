@@ -1,5 +1,6 @@
 class ProfessionalsController < ApplicationController
   before_action :set_professional, only: %i[ show edit update destroy ]
+  before_action :set_professional_with_deleted, only: %i[ restore ]
 
   # GET /professionals or /professionals.json
   def index
@@ -81,10 +82,24 @@ class ProfessionalsController < ApplicationController
     end
   end
 
+  # PATCH /professionals/:id/restore
+  def restore
+    authorize @professional, :update?
+    @professional.restore
+    respond_to do |format|
+      format.html { redirect_to @professional, notice: "Profissional restaurado com sucesso.", status: :see_other }
+      format.json { render :show, status: :ok, location: @professional }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_professional
       @professional = Professional.find(params.expect(:id))
+    end
+
+    def set_professional_with_deleted
+      @professional = Professional.with_deleted.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

@@ -3,11 +3,13 @@ Checklist atualizado
 [x] Migrações: deleted_at:datetime + índices em users, patients, professionals
 [x] Modelos com acts_as_paranoid
 [ ] UX de “Restaurar” item (opcional)
-[ ] Specs de soft delete/restore
-[ ] Autorização com Pundit
-[ ] Incluir Pundit::Authorization e callbacks no ApplicationController
-[ ] PatientPolicy e ProfessionalPolicy (+ Scope)
-[ ] Usar authorize/policy_scope nos controllers
+[x] Specs de soft delete/restore (models e requests)
+[x] Endpoints de restore em patients e professionals
+[x] Requests: index não lista deletados; show de deletado 404; restore funciona
+[x] Autorização com Pundit
+[x] Incluir Pundit::Authorization e callbacks no ApplicationController
+[x] PatientPolicy, ProfessionalPolicy e DashboardsPolicy (+ Scope)
+[x] Usar authorize/policy_scope nos controllers (Patients/Professionals/Dashboards)
 [ ] Specs de policies/authorization
 [x] Devise: primeiro login exige troca de senha
 [x] users.force_password_reset:boolean, null:false, default:false
@@ -15,28 +17,44 @@ Checklist atualizado
 [x] Users::RegistrationsController: troca sem senha atual no primeiro login, limpa flag, bypass_sign_in
 [x] View registrations#edit: esconder e-mail e senha atual durante reset forçado
 [x] I18n básico para mensagens
+[x] Redirecionamento pós-login por perfil (admin/profissional → lista de pacientes; paciente → próprio perfil)
 [ ] Opcional: habilitar :confirmable/:lockable
-[ ] API api/v1/users
-[ ] Controller index/show + Jbuilder
-[ ] Autenticação/autorização
-[ ] Specs de requests
-[ ] Magic link
-[ ] Model MagicLinkToken, service, mailer, rotas e controller de consumo
-[ ] Specs do ciclo (emitir/consumir/expirar)
-[~] Seeds/admin
-[x] Admin e exemplos Professional/Patient com User (dev)
-[ ] Revisar/ajustar dados finais conforme regras de autorização/magic link
-[ ] Testes
-[ ] Models (associações/validações)
-[ ] Requests (CRUD + Pundit)
-[ ] API e primeiro login
-[ ] Meta de cobertura
-[ ] Observabilidade
-[ ] Lograge em produção (e opcional em dev)
-[ ] Prometheus exporter simples
+[ ] Segurança de login (bloqueio após tentativas)
+
+- [ ] Habilitar Devise `:lockable` no `User`
+- [ ] Adicionar colunas na migração create users (ou nova migração se já aplicado):
+  - `failed_attempts:integer, default: 0, null: false`
+  - `unlock_token:string`
+  - `locked_at:datetime`
+- [ ] Configurar em `config/initializers/devise.rb`:
+  - `config.lock_strategy = :failed_attempts`
+  - `config.unlock_strategy = :time`
+  - `config.maximum_attempts = 3`
+  - `config.unlock_in = 5.minutes`
+  - `config.last_attempt_warning = true`
+- [ ] UX: mensagens na tela de login para bloqueio e aviso na última tentativa
+- [ ] Specs: bloqueio após 3 erros e desbloqueio automático após 5 minutos
+      [ ] API api/v1/users
+      [ ] Controller index/show + Jbuilder
+      [ ] Autenticação/autorização
+      [ ] Specs de requests
+      [ ] Magic link
+      [ ] Model MagicLinkToken, service, mailer, rotas e controller de consumo
+      [ ] Specs do ciclo (emitir/consumir/expirar)
+      [~] Seeds/admin
+      [x] Admin e exemplos Professional/Patient com User (dev)
+      [ ] Revisar/ajustar dados finais conforme regras de autorização/magic link
+      [ ] Testes
+      [ ] Models (associações/validações)
+      [ ] Requests (CRUD + Pundit)
+      [ ] API e primeiro login
+      [ ] Meta de cobertura
+      [ ] Observabilidade
+      [ ] Lograge em produção (e opcional em dev)
+      [ ] Prometheus exporter simples
 
 Próximos passos sugeridos
-Prioridade 1: Pundit (políticas e aplicação nos controllers).
-Prioridade 2: API api/v1/users ou iniciar o fluxo de magic link (conforme sua prioridade).
-Implementado: fluxo de primeiro login (migr., controller, view, i18n) e índices de soft delete.
-A fazer: Pundit, API, magic link, testes e observabilidade.
+Prioridade 1: API api/v1/users.
+Prioridade 2: Magic link.
+Implementado: Pundit (policies + controllers), fluxo de primeiro login (migr., controller, view, i18n), soft delete com endpoints e specs.
+À fazer: API, magic link, specs de policies e cobertura, observabilidade.

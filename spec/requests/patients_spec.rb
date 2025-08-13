@@ -13,31 +13,46 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/patients", type: :request do
-  
-  # This should return the minimal set of attributes required to create a valid
-  # Patient. As you add validations to Patient, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  let(:professional) { create(:professional) }
+  let(:user) { create(:user, account: professional) }
+  let(:valid_attributes) do
+    attributes_for(:patient)
+  end
+  let(:invalid_attributes) do
+    { full_name: "x", email: "invalid", cpf: "123", birthday: nil }
+  end
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  before { sign_in user }
 
   describe "GET /index" do
-    it "renders a successful response" do
-      Patient.create! valid_attributes
+    it "does not list soft-deleted records" do
+      kept = Patient.create! valid_attributes
+      deleted = Patient.create! valid_attributes.merge(cpf: '88888888888', email: 'deleted@hope.local')
+      deleted.destroy
       get patients_url
       expect(response).to be_successful
+      expect(response.body).to include(kept.full_name)
+      expect(response.body).not_to include(deleted.full_name)
     end
   end
 
   describe "GET /show" do
-    it "renders a successful response" do
+    it "returns 404 for soft-deleted record" do
       patient = Patient.create! valid_attributes
-      get patient_url(patient)
-      expect(response).to be_successful
+      patient.destroy
+      expect { get patient_url(patient) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "PATCH /restore" do
+    it "restores a soft-deleted patient" do
+      patient = Patient.create! valid_attributes
+      patient.destroy
+      expect(Patient.only_deleted.find(patient.id)).to be_present
+
+      patch restore_patient_url(patient)
+      expect(response).to redirect_to(patient_url(patient))
+      expect(Patient.find(patient.id)).to be_present
     end
   end
 
@@ -115,11 +130,12 @@ RSpec.describe "/patients", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested patient" do
+    it "soft-deletes the requested patient" do
       patient = Patient.create! valid_attributes
       expect {
         delete patient_url(patient)
       }.to change(Patient, :count).by(-1)
+      expect(Patient.only_deleted.find(patient.id)).to be_present
     end
 
     it "redirects to the patients list" do

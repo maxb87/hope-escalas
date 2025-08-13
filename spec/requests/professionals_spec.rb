@@ -13,31 +13,34 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/professionals", type: :request do
-  
-  # This should return the minimal set of attributes required to create a valid
-  # Professional. As you add validations to Professional, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  let(:professional) { create(:professional) }
+  let(:user) { create(:user, account: professional) }
+  let(:valid_attributes) do
+    attributes_for(:professional)
+  end
+  let(:invalid_attributes) do
+    { full_name: "x", email: "invalid", cpf: "123", birthday: nil }
+  end
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  before { sign_in user }
 
   describe "GET /index" do
-    it "renders a successful response" do
-      Professional.create! valid_attributes
+    it "does not list soft-deleted records" do
+      kept = Professional.create! valid_attributes
+      deleted = Professional.create! valid_attributes.merge(cpf: '99999999999', email: 'deleted-pro@hope.local')
+      deleted.destroy
       get professionals_url
       expect(response).to be_successful
+      expect(response.body).to include(kept.full_name)
+      expect(response.body).not_to include(deleted.full_name)
     end
   end
 
   describe "GET /show" do
-    it "renders a successful response" do
+    it "returns 404 for soft-deleted record" do
       professional = Professional.create! valid_attributes
-      get professional_url(professional)
-      expect(response).to be_successful
+      professional.destroy
+      expect { get professional_url(professional) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -115,17 +118,30 @@ RSpec.describe "/professionals", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested professional" do
+    it "soft-deletes the requested professional" do
       professional = Professional.create! valid_attributes
       expect {
         delete professional_url(professional)
       }.to change(Professional, :count).by(-1)
+      expect(Professional.only_deleted.find(professional.id)).to be_present
     end
 
     it "redirects to the professionals list" do
       professional = Professional.create! valid_attributes
       delete professional_url(professional)
       expect(response).to redirect_to(professionals_url)
+    end
+  end
+
+  describe "PATCH /restore" do
+    it "restores a soft-deleted professional" do
+      professional = Professional.create! valid_attributes
+      professional.destroy
+      expect(Professional.only_deleted.find(professional.id)).to be_present
+
+      patch restore_professional_url(professional)
+      expect(response).to redirect_to(professional_url(professional))
+      expect(Professional.find(professional.id)).to be_present
     end
   end
 end
