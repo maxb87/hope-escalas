@@ -3,6 +3,7 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["node"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -23,12 +24,13 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./app/javascript/*"],
-      "@/components/*": ["./app/javascript/components/*"],
-      "@/lib/*": ["./app/javascript/lib/*"]
+      "@/*": ["./app/frontend/*"],
+      "@/components/*": ["./app/frontend/components/*"],
+      "@/lib/*": ["./app/frontend/lib/*"]
     }
   },
   "include": [
+    "app/frontend/**/*",
     "app/javascript/**/*",
     "vite.config.mts"
   ],
