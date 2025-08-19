@@ -1,14 +1,14 @@
 FactoryBot.define do
   factory :patient do
-    full_name { "MyString" }
+    sequence(:full_name) { |n| "Paciente #{n}" }
     sex { 1 }
-    birthday { "2025-08-11" }
-    started_at { "2025-08-11" }
-    email { "MyString" }
-    cpf { "MyString" }
-    rg { "MyString" }
-    current_address { 1 }
-    current_phone { 1 }
-    deleted_at { "2025-08-11 15:53:55" }
+    birthday { Date.new(1990, 1, 1) }
+    started_at { Date.current }
+    sequence(:email) { |n| "paciente#{n}@test.com" }
+    sequence(:cpf) { |n| sprintf("%011d", n).chars.join }
+    rg { "123456789" }
+    current_address { "Endereço de teste" }
+    current_phone { "(11) 99999-9999" }
+    deleted_at { nil }
   end
 end

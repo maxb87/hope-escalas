@@ -1,15 +1,15 @@
 FactoryBot.define do
   factory :professional do
-    full_name { "MyString" }
-    sex { 1 }
-    birthday { "2025-08-11" }
-    started_at { "2025-08-11" }
-    email { "MyString" }
-    cpf { "MyString" }
-    rg { "MyString" }
-    current_address { 1 }
-    current_phone { 1 }
-    professional_id { "MyString" }
-    deleted_at { "2025-08-11 16:10:22" }
+    sequence(:full_name) { |n| "Dr. Profissional #{n}" }
+    sex { 0 }
+    birthday { Date.new(1980, 1, 1) }
+    started_at { Date.current }
+    sequence(:email) { |n| "profissional#{n}@test.com" }
+    sequence(:cpf) { |n| sprintf("%011d", 100000 + n).chars.join }
+    rg { "987654321" }
+    current_address { "Endereço profissional" }
+    current_phone { "(11) 88888-8888" }
+    sequence(:professional_id) { |n| "CRM#{n}" }
+    deleted_at { nil }
   end
 end

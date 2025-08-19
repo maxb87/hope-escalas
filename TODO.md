@@ -42,20 +42,46 @@
 
 ## Próximas etapas
 
+### 🔥 PRIORIDADE 1 - Regras de Negócio Críticas
+
+- [ ] **Impedir múltiplas solicitações ativas da mesma escala por paciente**
+
+  - Validação no modelo `ScaleRequest`
+  - Verificar antes de criar nova solicitação
+  - Exibir erro apropriado na UI
+
+- [ ] **Fluxo para refazer uma solicitação de preenchimento**
+
+  - Opção "Solicitar Novamente" que cancela a anterior automaticamente
+  - Quando profissional solicita escala já pendente, oferece substituir
+  - Manter histórico das solicitações canceladas
+
+- [ ] **Permitir paciente preencher escala somente quando solicitação estiver em aberto**
+
+  - Validação no controller `ScaleResponsesController#new`
+  - Bloquear acesso se não houver solicitação `pending`
+  - Exibir mensagem clara sobre o motivo
+
+- [ ] **Alertas de pendências no login do paciente**
+
+  - Contador visual no dashboard
+  - Notificação destacada após login
+  - Lista de escalas pendentes com links diretos
+
+- [ ] **Notificações para profissionais quando escalas são completadas**
+  - Callback no `ScaleResponse` após criação
+  - Sistema de notificações internas ou email
+  - Dashboard do profissional com indicadores
+
 ### Testes
 
 - [ ] Model: validações de `ScaleResponse` (estrutura/itens faltantes), cálculo/`results`, policies
 - [ ] Requests: `ScaleRequest` (criar/cancelar/filtrar) e `ScaleResponse` (criar/permissões)
 - [ ] Feature: profissional (solicitar → paciente preenche → visualizar), paciente (pendentes → preencher)
 
-### Regras de negócio
+### Regras de negócio (secundárias)
 
-- [ ] Impedir múltiplas solicitações ativas da mesma escala por paciente
 - [ ] (Opcional) expiração automática de solicitações antigas
-
-### Notificações
-
-- [ ] Alerta de pendências no login do paciente; notificar profissional na conclusão
 
 ### API / Integrações
 

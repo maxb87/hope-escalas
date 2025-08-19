@@ -22,6 +22,7 @@
     <thead>
       <tr>
         <th><%= t('dashboards.patients.scale_col') %></th>
+        <th><%= t('patients.show.professional_col') %></th>
         <th><%= t('dashboards.patients.requested_at_col') %></th>
         <th></th>
       </tr>
@@ -30,6 +31,7 @@
       <% @pending_requests.each do |req| %>
         <tr>
           <td><%= req.psychometric_scale.name %></td>
+          <td><%= req.professional.full_name %></td>
           <td><%= l(req.requested_at, format: :short) %></td>
           <td>
             <%= link_to t('actions.show'), scale_request_path(req), class: 'btn btn-sm btn-outline-primary' %>
@@ -53,7 +55,12 @@
     <thead>
       <tr>
         <th><%= t('dashboards.patients.scale_col') %></th>
+        <th><%= t('patients.show.professional_col') %></th>
+        <th><%= t('dashboards.patients.requested_at_col') %></th>
         <th><%= t('dashboards.patients.completed_at_col') %></th>
+        <th><%= t('patients.show.score_col') %></th>
+        <th><%= t('patients.show.result_col') %></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -61,7 +68,39 @@
         <% resp = req.scale_response %>
         <tr>
           <td><%= req.psychometric_scale.name %></td>
+          <td><%= req.professional.full_name %></td>
+          <td><%= l(req.requested_at, format: :short) %></td>
           <td><%= resp&.completed_at ? l(resp.completed_at, format: :short) : '-' %></td>
+          <td>
+            <% if resp&.total_score %>
+              <span class="badge bg-secondary"><%= resp.total_score %></span>
+            <% else %>
+              '-'
+            <% end %>
+          </td>
+          <td>
+            <% if resp&.interpretation %>
+              <% case resp.interpretation %>
+              <% when "Mínima" %>
+                <span class="badge bg-success"><%= resp.interpretation %></span>
+              <% when "Leve" %>
+                <span class="badge bg-warning text-dark"><%= resp.interpretation %></span>
+              <% when "Moderada" %>
+                <span class="badge bg-warning"><%= resp.interpretation %></span>
+              <% when "Grave" %>
+                <span class="badge bg-danger"><%= resp.interpretation %></span>
+              <% else %>
+                <span class="badge bg-secondary"><%= resp.interpretation %></span>
+              <% end %>
+            <% else %>
+              '-'
+            <% end %>
+          </td>
+          <td>
+            <% if resp %>
+              <%= link_to t('actions.show'), scale_response_path(resp), class: 'btn btn-sm btn-outline-primary' %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

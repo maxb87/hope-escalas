@@ -19,6 +19,9 @@ class ScaleRequest < ApplicationRecord
   # validates :expires_at, presence: true, if: :pending?
   # validate :expires_at_after_requested_at, if: :expires_at?
 
+  # Validação para impedir múltiplas solicitações ativas da mesma escala por paciente
+  validate :unique_active_request_per_patient_and_scale
+
   scope :recent, -> { order(requested_at: :desc) }
   scope :active, -> { pending }
 
@@ -66,4 +69,27 @@ class ScaleRequest < ApplicationRecord
   #     errors.add(:expires_at, "deve ser posterior à data de solicitação")
   #   end
   # end
+
+  # Validação para impedir múltiplas solicitações ativas da mesma escala por paciente
+  def unique_active_request_per_patient_and_scale
+    return unless patient_id.present? && psychometric_scale_id.present?
+
+    # Buscar solicitações ativas (pendentes) da mesma escala para o mesmo paciente
+    existing_requests = ScaleRequest.where(
+      patient_id: patient_id,
+      psychometric_scale_id: psychometric_scale_id,
+      status: :pending
+    )
+
+    # Excluir o próprio registro se estiver sendo atualizado
+    existing_requests = existing_requests.where.not(id: id) if persisted?
+
+    if existing_requests.exists?
+      scale_name = psychometric_scale&.name || "escala selecionada"
+      patient_name = patient&.full_name || "paciente selecionado"
+
+      errors.add(:base, I18n.t("activerecord.errors.models.scale_request.attributes.base.duplicate_active_request",
+                               scale: scale_name, patient: patient_name))
+    end
+  end
 end

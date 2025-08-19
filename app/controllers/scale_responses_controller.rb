@@ -52,24 +52,26 @@ class ScaleResponsesController < ApplicationController
   def scale_response_params
     # Permitir respostas para todos os itens (item_1, item_2, etc.)
     # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
-    # Convertemos para Parameters e permitimos answers vazio sem disparar ParameterMissing.
-    scale_hash = params[:scale_response] || {}
-    scale_params = ActionController::Parameters.new(scale_hash)
-    permitted_params = scale_params.permit(answers: {})
+    if params[:scale_response].present?
+      permitted_params = params.require(:scale_response).permit(answers: {})
 
-    # Converter answers para o formato esperado se necessário
-    if permitted_params[:answers].present?
-      answers = {}
-      permitted_params[:answers].each do |key, value|
-        if key.match?(/\Aitem_\d+\z/) && value.present?
-          answers[key] = value.to_i
+      # Converter answers para o formato esperado se necessário
+      if permitted_params[:answers].present?
+        answers = {}
+        permitted_params[:answers].each do |key, value|
+          if key.match?(/\Aitem_\d+\z/) && value.present?
+            answers[key] = value.to_s  # Manter como string para validação posterior
+          end
         end
+        permitted_params[:answers] = answers
+      else
+        permitted_params[:answers] = {}
       end
-      permitted_params[:answers] = answers
-    else
-      permitted_params[:answers] = {}
-    end
 
-    permitted_params
+      permitted_params
+    else
+      # Se não há parâmetros, retornar hash vazio
+      ActionController::Parameters.new(answers: {}).permit!
+    end
   end
 end

@@ -26,6 +26,12 @@ pt-BR:
 
   hello: "Olá"
 
+  actions:
+    show: "Ver"
+    edit: "Editar"
+    delete: "Excluir"
+    cancel: "Cancelar"
+
   date:
     formats:
       default: "%d/%m/%Y"
@@ -190,6 +196,11 @@ pt-BR:
         confirmation: "não confere"
         not_a_number: "não é um número"
         greater_than_or_equal_to: "deve ser maior ou igual a %{count}"
+      models:
+        scale_request:
+          attributes:
+            base:
+              duplicate_active_request: "Já existe uma solicitação pendente da escala '%{scale}' para %{patient}. Cancele a solicitação anterior ou aguarde sua conclusão antes de criar uma nova."
 
   patients:
     index:
@@ -204,6 +215,9 @@ pt-BR:
       completed_requests: "Solicitações concluídas"
       destroy: "Excluir paciente"
       confirm_destroy: "Tem certeza?"
+      professional_col: "Profissional"
+      result_col: "Resultado"
+      score_col: "Pontuação"
     new:
       title: "Novo paciente"
       back_link: "Voltar para pacientes"
