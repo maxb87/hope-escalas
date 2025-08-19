@@ -1,0 +1,26 @@
+<% if defined?(pending_count) && pending_count && pending_count > 0 %>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <strong><%= t('dashboards.patients.alert_title') %></strong>
+    <%= t('dashboards.patients.pending_alert', count: pending_count) %>
+    <% if defined?(pending_requests) && pending_requests.present? %>
+      <div class="mt-2">
+        <% pending_requests.limit(3).each do |req| %>
+          <div class="small">
+            <i class="bi bi-arrow-right me-1"></i>
+            <strong><%= req.psychometric_scale.name %></strong>
+            solicitada por <strong><%= req.professional.full_name %></strong>
+            em <%= l(req.requested_at, format: :short) %>
+          </div>
+        <% end %>
+        <% if pending_requests.count > 3 %>
+          <div class="small text-muted mt-1">
+            <i class="bi bi-three-dots me-1"></i>
+            e mais <%= pending_requests.count - 3 %> solicitação<%= 'ões' if pending_requests.count - 3 > 1 %>...
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>

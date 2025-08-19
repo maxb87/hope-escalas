@@ -1,6 +1,39 @@
-<h1><%= t('dashboards.patients.title') %></h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('dashboards.patients.title') %></h1>
+  <% if @pending_count && @pending_count > 0 %>
+    <span class="badge bg-warning fs-6">
+      <i class="bi bi-exclamation-circle me-1"></i>
+      <%= @pending_count %> pendente<%= 's' if @pending_count > 1 %>
+    </span>
+  <% else %>
+    <span class="badge bg-success fs-6">
+      <i class="bi bi-check-circle me-1"></i>
+      Em dia
+    </span>
+  <% end %>
+</div>
 
 <% if @patient %>
+  <!-- Alerta de notificações -->
+  <%= render 'shared/notification_alerts', 
+      pending_count: @pending_count, 
+      pending_requests: @pending_requests %>
+
+  <!-- Mensagem de boas-vindas ou resumo -->
+  <% if @pending_count && @pending_count > 0 %>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      <%= t('dashboards.patients.welcome_message') %>
+      Complete suas escalas pendentes para manter seu acompanhamento em dia.
+    </div>
+  <% else %>
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle me-2"></i>
+      <%= t('dashboards.patients.welcome_message') %>
+      Você não tem escalas pendentes no momento.
+    </div>
+  <% end %>
+
   <dl class="row">
     <dt class="col-sm-3"><%= t('activerecord.attributes.patient.full_name') %></dt>
     <dd class="col-sm-9"><%= @patient.full_name %></dd>
@@ -25,50 +58,91 @@
 
   <h2><%= t('dashboards.patients.pending_requests_title') %></h2>
   <% if @pending_requests.present? %>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th><%= t('dashboards.patients.scale_col') %></th>
-          <th><%= t('dashboards.patients.requested_at_col') %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @pending_requests.each do |req| %>
-          <tr>
-            <td><%= req.psychometric_scale.name %></td>
-            <td><%= l(req.requested_at, format: :short) %></td>
-            <td>
-              <%= link_to t('dashboards.patients.fill_scale'), new_scale_response_path(scale_request_id: req.id), class: 'btn btn-sm btn-primary' %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <div class="row">
+      <% @pending_requests.each do |req| %>
+        <div class="col-md-6 col-lg-4 mb-3">
+          <div class="card border-warning">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="bi bi-clipboard-pulse text-warning me-2"></i>
+                <%= req.psychometric_scale.name %>
+              </h5>
+              <p class="card-text">
+                <small class="text-muted">
+                  <i class="bi bi-person me-1"></i>
+                  Solicitado por: <strong><%= req.professional.full_name %></strong>
+                </small><br>
+                <small class="text-muted">
+                  <i class="bi bi-calendar me-1"></i>
+                  Em: <%= l(req.requested_at, format: :short) %>
+                </small>
+              </p>
+              <%= link_to t('dashboards.patients.fill_scale'), 
+                  new_scale_response_path(scale_request_id: req.id), 
+                  class: 'btn btn-warning btn-sm' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
   <% else %>
-    <p><%= t('dashboards.patients.no_pending') %></p>
+    <div class="alert alert-light">
+      <i class="bi bi-check-circle text-success me-2"></i>
+      <%= t('dashboards.patients.no_pending') %>
+    </div>
   <% end %>
 
-  <h2 class="mt-4"><%= t('dashboards.patients.completed_responses_title') %></h2>
+  <h2 class="mt-4">
+    <%= t('dashboards.patients.completed_responses_title') %>
+    <% if @completed_count && @completed_count > 0 %>
+      <span class="badge bg-secondary ms-2"><%= @completed_count %></span>
+    <% end %>
+  </h2>
   <% if @completed_responses.present? %>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th><%= t('dashboards.patients.scale_col') %></th>
-          <th><%= t('dashboards.patients.completed_at_col') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @completed_responses.each do |resp| %>
-          <tr>
-            <td><%= resp.psychometric_scale.name %></td>
-            <td><%= l(resp.completed_at, format: :short) %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <div class="row">
+      <% @completed_responses.limit(6).each do |resp| %>
+        <div class="col-md-6 col-lg-4 mb-3">
+          <div class="card border-success">
+            <div class="card-body">
+              <h6 class="card-title">
+                <i class="bi bi-check-circle text-success me-2"></i>
+                <%= resp.psychometric_scale.name %>
+              </h6>
+              <p class="card-text">
+                <small class="text-muted">
+                  <i class="bi bi-calendar-check me-1"></i>
+                  Concluída em: <%= l(resp.completed_at, format: :short) %>
+                </small>
+                <% if resp.total_score %>
+                  <br><small class="text-muted">
+                    <i class="bi bi-graph-up me-1"></i>
+                    Pontuação: <strong><%= resp.total_score %></strong>
+                  </small>
+                <% end %>
+                <% if resp.interpretation %>
+                  <br><small class="text-muted">
+                    <i class="bi bi-clipboard-data me-1"></i>
+                    Resultado: <strong><%= resp.interpretation %></strong>
+                  </small>
+                <% end %>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% if @completed_responses.count > 6 %>
+      <div class="text-center mt-3">
+        <small class="text-muted">
+          Mostrando as 6 escalas mais recentes de <%= @completed_responses.count %> total.
+        </small>
+      </div>
+    <% end %>
   <% else %>
-    <p><%= t('dashboards.patients.no_completed') %></p>
+    <div class="alert alert-light">
+      <i class="bi bi-info-circle text-info me-2"></i>
+      <%= t('dashboards.patients.no_completed') %>
+    </div>
   <% end %>
 <% else %>
   <p><%= t('dashboards.patients.not_found') %></p>

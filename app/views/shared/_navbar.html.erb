@@ -15,6 +15,20 @@
 
     <div class="d-flex align-items-center gap-3">
       <% if user_signed_in? %>
+        <% account = current_user.account %>
+        <% if account.is_a?(Patient) %>
+          <% pending_count = ScaleRequest.where(patient: account, status: "pending").count %>
+          <% if pending_count > 0 %>
+            <%= link_to patients_dashboard_path, 
+                class: "btn btn-warning btn-sm position-relative" do %>
+              <i class="bi bi-bell-fill"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <%= pending_count %>
+                <span class="visually-hidden">escalas pendentes</span>
+              </span>
+            <% end %>
+          <% end %>
+        <% end %>
         <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger d-flex align-items-center gap-2" do %>
           <span class="bi bi-box-arrow-right"></span>
           <span>Sair</span>

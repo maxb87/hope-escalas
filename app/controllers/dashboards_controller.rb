@@ -21,11 +21,15 @@ class DashboardsController < ApplicationController
     @patient = current_user.account if current_user.account.is_a?(Patient)
     if @patient
       @pending_requests = ScaleRequest.where(patient: @patient, status: "pending")
-                                      .includes(:psychometric_scale)
+                                      .includes(:psychometric_scale, :professional)
                                       .order(requested_at: :desc)
       @completed_responses = ScaleResponse.where(patient: @patient)
                                           .includes(:psychometric_scale)
                                           .order(completed_at: :desc)
+
+      # Contadores para notificações
+      @pending_count = @pending_requests.count
+      @completed_count = @completed_responses.count
     end
   end
 end

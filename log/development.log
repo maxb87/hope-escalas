@@ -13517,3 +13517,99 @@ Processing by DashboardsController#professionals as HTML
 Completed 200 OK in 34ms (Views: 9.0ms | ActiveRecord: 2.6ms (3 queries, 0 cached) | GC: 3.0ms)
 
 
+  [1m[36mPatient Load (1.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."id" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:8:in '<main>'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 1 AND "scale_requests"."status" = 0 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:14:in '<main>'
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 1 AND "scale_requests"."status" = 0 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:16:in '<main>'
+  [1m[36mPsychometricScale Load (0.5ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:16:in '<main>'
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:16:in '<main>'
+  [1m[36mScaleResponse Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:23:in '<main>'
+  [1m[36mScaleResponse Load (0.3ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:25:in '<main>'
+  [1m[36mPsychometricScale Load (0.4ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:25:in '<main>'
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 1 AND "scale_requests"."status" = 0 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:30:in '<main>'
+  [1m[36mScaleResponse Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 1 /*application='HopeEscalas'*/[0m
+  ↳ test_notifications.rb:31:in '<main>'
+Started GET "/dashboard/patients" for 127.0.0.1 at 2025-08-19 11:14:16 -0300
+Processing by DashboardsController#patients as HTML
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 14 ORDER BY "users"."id" ASC LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  [1m[36mPatient Load (1.2ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:21:in 'DashboardsController#patients'
+  [1m[36mScaleRequest Count (1.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:31:in 'DashboardsController#patients'
+  [1m[36mScaleResponse Count (1.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:32:in 'DashboardsController#patients'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/patients.html.erb within layouts/application
+  Rendered shared/_notification_alerts.html.erb (Duration: 0.5ms | GC: 0.0ms)
+  [1m[36mScaleRequest Load (1.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:60
+  [1m[36mScaleResponse Load (0.8ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 ORDER BY "scale_responses"."completed_at" DESC /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:101
+  [1m[36mPsychometricScale Load (1.1ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:101
+  [1m[36mScaleResponse Load (0.8ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 ORDER BY "scale_responses"."completed_at" DESC LIMIT 6 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:103
+  [1m[36mCACHE PsychometricScale Load (0.0ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1[0m
+  ↳ app/views/dashboards/patients.html.erb:103
+  [1m[36mCACHE ScaleResponse Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6[0m
+  ↳ app/views/dashboards/patients.html.erb:132
+  Rendered dashboards/patients.html.erb within layouts/application (Duration: 193.6ms | GC: 33.6ms)
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0[0m
+  ↳ app/views/shared/_navbar.html.erb:20
+  Rendered shared/_navbar.html.erb (Duration: 1.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 196.9ms | GC: 33.6ms)
+Completed 200 OK in 290ms (Views: 193.9ms | ActiveRecord: 16.0ms (11 queries, 3 cached) | GC: 53.7ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-08-19 11:14:16 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-08-19 11:14:16 -0300
+Started GET "/scale_responses/2" for 127.0.0.1 at 2025-08-19 11:14:26 -0300
+Processing by ScaleResponsesController#show as HTML
+  Parameters: {"id" => "2"}
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 14 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleResponse Load (0.9ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."id" = 2 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:49:in 'ScaleResponsesController#set_scale_response'
+Redirected to http://127.0.0.1:3000/dashboard/patients
+Completed 302 Found in 24ms (ActiveRecord: 1.9ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/dashboard/patients" for 127.0.0.1 at 2025-08-19 11:14:26 -0300
+Processing by DashboardsController#patients as HTML
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 14 ORDER BY "users"."id" ASC LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  [1m[36mPatient Load (0.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:21:in 'DashboardsController#patients'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:31:in 'DashboardsController#patients'
+  [1m[36mScaleResponse Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/controllers/dashboards_controller.rb:32:in 'DashboardsController#patients'
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/patients.html.erb within layouts/application
+  Rendered shared/_notification_alerts.html.erb (Duration: 0.0ms | GC: 0.0ms)
+  [1m[36mScaleRequest Load (0.8ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:60
+  [1m[36mScaleResponse Load (0.8ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 ORDER BY "scale_responses"."completed_at" DESC /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:101
+  [1m[36mPsychometricScale Load (0.7ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:101
+  [1m[36mScaleResponse Load (0.8ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6 ORDER BY "scale_responses"."completed_at" DESC LIMIT 6 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/patients.html.erb:103
+  [1m[36mCACHE PsychometricScale Load (0.0ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1[0m
+  ↳ app/views/dashboards/patients.html.erb:103
+  [1m[36mCACHE ScaleResponse Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."patient_id" = 6[0m
+  ↳ app/views/dashboards/patients.html.erb:132
+  Rendered dashboards/patients.html.erb within layouts/application (Duration: 13.3ms | GC: 0.0ms)
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 6 AND "scale_requests"."status" = 0[0m
+  ↳ app/views/shared/_navbar.html.erb:20
+  Rendered shared/_navbar.html.erb (Duration: 1.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 16.2ms | GC: 0.0ms)
+Completed 200 OK in 64ms (Views: 13.6ms | ActiveRecord: 6.2ms (11 queries, 3 cached) | GC: 17.1ms)
+
+

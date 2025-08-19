@@ -270,6 +270,12 @@ pt-BR:
       fill_scale: "Preencher"
       no_pending: "Você não tem escalas pendentes."
       no_completed: "Você ainda não preencheu escalas."
+      alert_title: "Atenção!"
+      pending_alert:
+        one: "Você tem 1 escala psicométrica pendente para preenchimento."
+        other: "Você tem %{count} escalas psicométricas pendentes para preenchimento."
+      welcome_message: "Bem-vindo ao seu painel de escalas psicométricas!"
+      professional_col: "Solicitado por"
 
   scale_responses:
     create:
