@@ -4,8 +4,8 @@ module.exports = {
     content: [
     './app/views/**/*.{erb,haml,html,slim}',
     './app/helpers/**/*.rb',
-    './app/frontend/entrypoints/**/*.css',
-    './app/frontend/**/*.{js,ts,jsx,tsx}',
+    './app/assets/stylesheets/**/*.css',
+    './app/javascript/**/*.{js,ts,jsx,tsx}',
     './config/initializers/simple_form_tailwind.rb',
     './lib/tasks/**/*.rake',
     './lib/generators/**/*',

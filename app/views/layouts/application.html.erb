@@ -17,9 +17,11 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Vite client and application bundle %>
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
     <%= vite_client_tag %>
-    <%= vite_javascript_tag 'application.tsx' %>
+    <%= vite_javascript_tag 'application' %>
     <!--
       If using a TypeScript entrypoint file:
         vite_typescript_tag 'application'
@@ -42,7 +44,6 @@
         </div>
       <% end %>
     <% end %>
-    <div id="react-root"></div>
     <main class="container mx-auto px-4 py-8">
       <%= yield %>
     </main>

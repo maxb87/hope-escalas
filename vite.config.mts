@@ -11,8 +11,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./app/frontend', import.meta.url)),
-      '@/components': fileURLToPath(new URL('./app/frontend/components', import.meta.url)),
-      '@/lib': fileURLToPath(new URL('./app/frontend/lib', import.meta.url)),
+      '@/components': fileURLToPath(new URL('./app/javascript/components', import.meta.url)),
+      '@/lib': fileURLToPath(new URL('./app/javascript/lib', import.meta.url)),
     },  
   },
 })
