@@ -14,8 +14,7 @@ gem "jsbundling-rails"
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
-# Bundle and process CSS [https://github.com/rails/cssbundling-rails]
-gem "cssbundling-rails"
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -31,6 +30,9 @@ gem "pundit"
 # Logging and metrics
 gem "lograge"
 gem "prometheus_exporter"
+
+# Vite.js for frontend
+gem "vite_rails"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
@@ -68,7 +70,7 @@ group :development, :test do
   # Ruby language server for IDEs
   gem "solargraph", require: false
 
-   # Testing stack
+  # Testing stack
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "faker"

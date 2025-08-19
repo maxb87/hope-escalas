@@ -1,60 +1,85 @@
-<h2>Entrar</h2>
+<div class="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-md space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+        Entrar
+      </h2>
+    </div>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <%# Lógica personalizada para mensagens de tentativas restantes e bloqueio %>
-  <% if resource.respond_to?(:email) && resource.email.present? %>
-    <% user = User.find_by(email: resource.email) %>
-    <% if user %>
-      <% if user.access_locked? %>
-        <% remaining_time = distance_of_time_in_words(Time.current, user.locked_at + Devise.unlock_in) %>
-        <div class="alert alert-danger">
-          <%= I18n.t("devise.failure.locked_with_time", time: remaining_time) %>
-        </div>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-8 space-y-6" }) do |f| %>
+      <%# Lógica personalizada para mensagens de tentativas restantes e bloqueio %>
+      <% if resource.respond_to?(:email) && resource.email.present? %>
+        <% user = User.find_by(email: resource.email) %>
+        <% if user %>
+          <% if user.access_locked? %>
+            <% remaining_time = distance_of_time_in_words(Time.current, user.locked_at + Devise.unlock_in) %>
+            <div class="rounded-md bg-red-50 p-4">
+              <div class="text-sm text-red-700">
+                <%= I18n.t("devise.failure.locked_with_time", time: remaining_time) %>
+              </div>
+            </div>
+          <% else %>
+            <% remaining_attempts = [Devise.maximum_attempts - user.failed_attempts.to_i, 0].max %>
+            <% if remaining_attempts == 1 %>
+              <div class="rounded-md bg-red-50 p-4">
+                <div class="text-sm text-red-700">
+                  <%= I18n.t("devise.failure.last_attempt") %>
+                </div>
+              </div>
+            <% elsif remaining_attempts < Devise.maximum_attempts %>
+              <div class="rounded-md bg-red-50 p-4">
+                <div class="text-sm text-red-700">
+                  <%= I18n.t("devise.failure.invalid_with_attempts", attempts: remaining_attempts) %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%# Fallback: mensagem genérica apenas quando o usuário não existe %>
+          <% if flash[:alert].present? %>
+            <div class="rounded-md bg-red-50 p-4">
+              <div class="text-sm text-red-700"><%= flash[:alert] %></div>
+            </div>
+          <% end %>
+        <% end %>
       <% else %>
-        <% remaining_attempts = [Devise.maximum_attempts - user.failed_attempts.to_i, 0].max %>
-        <% if remaining_attempts == 1 %>
-          <div class="alert alert-danger">
-            <%= I18n.t("devise.failure.last_attempt") %>
-          </div>
-        <% elsif remaining_attempts < Devise.maximum_attempts %>
-          <div class="alert alert-danger">
-            <%= I18n.t("devise.failure.invalid_with_attempts", attempts: remaining_attempts) %>
+        <%# Fallback: mensagem genérica quando não há e-mail preenchido %>
+        <% if flash[:alert].present? %>
+          <div class="rounded-md bg-red-50 p-4">
+            <div class="text-sm text-red-700"><%= flash[:alert] %></div>
           </div>
         <% end %>
       <% end %>
-    <% else %>
-      <%# Fallback: mensagem genérica apenas quando o usuário não existe %>
-      <% if flash[:alert].present? %>
-        <div class="alert alert-danger"><%= flash[:alert] %></div>
-      <% end %>
-    <% end %>
-  <% else %>
-    <%# Fallback: mensagem genérica quando não há e-mail preenchido %>
-    <% if flash[:alert].present? %>
-      <div class="alert alert-danger"><%= flash[:alert] %></div>
-    <% end %>
-  <% end %>
-  
-  <div class="field">
-    <%= f.label :email, "E-mail" %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+      
+      <div class="space-y-4">
+        <div>
+          <%= f.label :email, "E-mail", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        </div>
 
-  <div class="field">
-    <%= f.label :password, "Senha" %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
+        <div>
+          <%= f.label :password, "Senha", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.password_field :password, autocomplete: "current-password",
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        </div>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me, "Lembrar-me" %>
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center">
+            <%= f.check_box :remember_me, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
+            <%= f.label :remember_me, "Lembrar-me", class: "ml-2 block text-sm text-gray-900" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.submit "Entrar", 
+            class: "group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+      </div>
+    <% end %>
+
+    <div class="text-center">
+      <%= render "devise/shared/links" %>
     </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Entrar" %>
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

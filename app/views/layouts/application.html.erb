@@ -20,16 +20,32 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'application' %>
+    <!--
+      If using a TypeScript entrypoint file:
+        vite_typescript_tag 'application'
+
+      If using a .jsx or .tsx entrypoint, add the extension:
+        vite_javascript_tag 'application.jsx'
+
+      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
+    -->
+
   </head>
 
-  <body class="m-4">
+  <body class="min-h-screen bg-background font-sans antialiased">
     <%= render partial: "shared/navbar" %>
     <%# Não exibir flash messages nas views do Devise para evitar duplicação %>
     <% unless devise_controller? %>
       <% flash.each do |type, message| %>
-        <div class="alert alert-<%= type == 'alert' ? 'danger' : 'info' %>"><%= message %></div>
+        <div class="<%= type == 'alert' ? 'bg-destructive text-destructive-foreground' : 'bg-primary text-primary-foreground' %> p-4 rounded-md mb-4">
+          <%= message %>
+        </div>
       <% end %>
     <% end %>
-    <%= yield %>
+    <main class="container mx-auto px-4 py-8">
+      <%= yield %>
+    </main>
   </body>
 </html>

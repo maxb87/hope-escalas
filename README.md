@@ -8,6 +8,7 @@ Sistema para solicitação e registro de escalas psicométricas de pacientes da 
 - Setup com mise (Ruby/Node) e inicialização
 - Ambiente de desenvolvimento (PostgreSQL/Redis via Docker Compose)
 - Execução
+- Frontend (Vite/React/TypeScript/Tailwind CSS)
 - Domínio e fluxos (Professionals/Patients, Devise e magic link)
 - Testes e qualidade
 - Arquitetura de software (boas práticas)
@@ -24,7 +25,13 @@ Sistema para solicitação e registro de escalas psicométricas de pacientes da 
 - Rails: 8.0.x (recomendado: 8.0.2)
 - Banco de dados: PostgreSQL 17.x
 - Redis: 7.x (opcional no início; necessário para Sidekiq/Action Cable/Cache centralizado)
-- Node.js: 20 LTS (se usar jsbundling), opcional com `importmap-rails`
+- Node.js: 20 LTS (recomendado: 20.19+ para Vite)
+- Yarn: 4.x (gerenciador de pacotes)
+- Vite: 7.x (bundler e dev server)
+- React: 19.x (biblioteca de UI)
+- TypeScript: 5.x (tipagem estática)
+- Tailwind CSS: 3.x (framework CSS utilitário)
+- shadcn/ui: componentes React reutilizáveis
 
 Notas sobre banco de dados:
 
@@ -40,7 +47,7 @@ cd /home/gilgamesh/code/hope/hope-escalas
 # Plugins e versões
 mise plugin add ruby || true
 mise plugin add nodejs || true
-printf "ruby 3.4.4\nnodejs 20.15.0\n" > .tool-versions
+printf "ruby 3.4.4\nnodejs 20.19.0\n" > .tool-versions
 mise install
 
 # Bundler e Rails
@@ -52,6 +59,7 @@ corepack enable
 
 # Instalar dependências do app (se já criado)
 bundle install || true
+yarn install
 ```
 
 Inicialização de app Rails (se ainda não existir esqueleto):
@@ -119,8 +127,9 @@ mise install
 cp .env.example .env
 source .env
 
-# 3) Instalar gems
+# 3) Instalar gems e dependências Node
 bundle install
+yarn install
 
 # 4) Subir Postgres e Redis
 docker compose up -d
@@ -170,19 +179,17 @@ source .env
 # 3) Serviços locais
 docker compose up -d
 
-# 4) Node/Yarn e dependências (o projeto usa Yarn via Corepack)
+# 4) Node/Yarn e dependências
 corepack enable
 yarn install
-
-# Se o bin/dev acusar 'command not found: nodemon' ou falhas de Sass/PostCSS, rode:
-# yarn add -D nodemon sass postcss postcss-cli autoprefixer
 
 # 5) Compilação/Watch de assets (dev)
 bin/dev  # (sobe web, js e css watchers)
 
 # Alternativas pontuais
-yarn build       # JS
+yarn build       # JS/TS
 yarn build:css   # CSS
+yarn type-check  # Verificação de tipos TypeScript
 ```
 
 Notas de assets:
@@ -190,7 +197,79 @@ Notas de assets:
 - Layout deve referenciar apenas `application`:
   - `<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>`
   - `<%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>`
+  - `<%= vite_client_tag %>` e `<%= vite_javascript_tag 'application' %>` (para Vite)
 - `config/initializers/assets.rb` precisa incluir `app/assets/builds` no load path (já configurado).
+
+## Frontend (Vite/React/TypeScript/Tailwind CSS)
+
+### Estrutura do Frontend
+
+```
+app/javascript/
+├── application.tsx          # Entry point TypeScript
+├── application.js           # Entry point JavaScript (legacy)
+├── components/
+│   ├── ui/                  # shadcn/ui components
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   └── card.tsx
+│   └── LoginForm.tsx        # Exemplo de componente React
+├── lib/
+│   └── utils.ts             # Utilitários (cn function)
+└── controllers/             # Stimulus controllers
+```
+
+### Comandos Frontend
+
+```bash
+# Desenvolvimento
+yarn dev                    # Vite dev server
+yarn watch:css             # Watch Tailwind CSS
+yarn type-check            # Verificação TypeScript
+
+# Build
+yarn build                 # Build completo (JS/TS + CSS)
+yarn build:css             # Build apenas CSS
+
+# Preview
+yarn preview               # Preview do build
+```
+
+### Usando shadcn/ui Components
+
+```tsx
+// Em componentes React
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const MyComponent = () => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Título</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Input placeholder="Digite algo..." />
+        <Button>Clique aqui</Button>
+      </CardContent>
+    </Card>
+  );
+};
+```
+
+### Tailwind CSS em Views Rails
+
+```erb
+<!-- Em views ERB -->
+<div class="flex min-h-screen items-center justify-center bg-gray-50">
+  <div class="w-full max-w-md space-y-8">
+    <h2 class="text-center text-3xl font-bold">Título</h2>
+    <!-- Seu conteúdo -->
+  </div>
+</div>
+```
 
 ### Pós-setup (Devise, Pundit, RSpec e Solargraph)
 
@@ -266,14 +345,19 @@ end
 - Cobertura: SimpleCov (meta ≥ 90%)
 - Estilo: RuboCop (Rails/Performance), reek (opcional)
 - Segurança: Brakeman, bundler-audit
+- Frontend: TypeScript strict mode, ESLint (opcional)
 
 Comandos úteis:
 
 ```bash
+# Backend
 bundle exec rspec
 bundle exec rubocop
 bundle exec brakeman -A -q
 bundle exec bundler-audit check --update
+
+# Frontend
+yarn type-check
 ```
 
 ## Arquitetura de software (boas práticas)
@@ -284,6 +368,7 @@ bundle exec bundler-audit check --update
 - I18n/TZ: `default_locale: 'pt-BR'`, `time_zone: 'UTC-3'`
 - Performance: evitar N+1 (`includes`, bullet em dev), cache com chaves compostas
 - ADRs em `docs/adr`
+- Frontend: Componentes React reutilizáveis, TypeScript para type safety, Tailwind CSS para styling
 
 Subdomínio de escalas psicométricas (alto nível):
 
@@ -314,7 +399,7 @@ Subdomínio de escalas psicométricas (alto nível):
 
 ## CI/CD
 
-- CI (ex.: GitHub Actions): lint → segurança → testes → cobertura; cache do bundler
+- CI (ex.: GitHub Actions): lint → segurança → testes → cobertura; cache do bundler e Yarn
 - CD: migrations com `db:prepare`; feature flags para mudanças arriscadas
 - Railway: configure um comando de `release` para `rails db:migrate` a cada deploy
 - Versionamento: Conventional Commits + CHANGELOG; tags semânticas
@@ -330,7 +415,7 @@ Subdomínio de escalas psicométricas (alto nível):
   - `REDIS_URL` (se usar Sidekiq/Action Cable)
   - `MAILER_URL_HOST`, `MAILER_FROM`
 - Build/Release/Start:
-  - Build: `bundle exec rails assets:precompile`
+  - Build: `yarn build && bundle exec rails assets:precompile`
   - Release: `bundle exec rails db:migrate`
   - Web: `bundle exec puma -C config/puma.rb`
 - Opcional `Procfile`:
@@ -345,6 +430,8 @@ Subdomínio de escalas psicométricas (alto nível):
 - Painel do paciente: solicitações pendentes e histórico de escalas preenchidas
 - Sistema de notificações para alertas e lembretes
 - Expansão do catálogo de escalas psicométricas
+- Melhorias de UI/UX com componentes React avançados
+- PWA (Progressive Web App) para acesso mobile
 
 ## Licença
 
