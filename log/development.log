@@ -20923,3 +20923,276 @@ Processing by ScaleRequestsController#new as HTML
 Completed 200 OK in 40ms (Views: 10.0ms | ActiveRecord: 3.6ms (4 queries, 0 cached) | GC: 14.7ms)
 
 
+Started GET "/users/sign_in" for 127.0.0.1 at 2025-08-19 18:19:37 -0300
+  [1m[36mActiveRecord::SchemaMigration Load (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
+Processing by Users::SessionsController#new as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering devise/sessions/new.html.erb within layouts/application
+  Rendered devise/shared/_links.html.erb (Duration: 0.7ms | GC: 0.0ms)
+  Rendered devise/sessions/new.html.erb within layouts/application (Duration: 5.6ms | GC: 0.0ms)
+  Rendered shared/_navbar.html.erb (Duration: 0.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 20.7ms | GC: 0.0ms)
+Completed 200 OK in 104ms (Views: 25.9ms | ActiveRecord: 13.5ms (0 queries, 0 cached) | GC: 3.1ms)
+
+
+Started POST "/users/sign_in" for 127.0.0.1 at 2025-08-19 18:19:43 -0300
+Processing by Users::SessionsController#create as TURBO_STREAM
+  Parameters: {"authenticity_token" => "[FILTERED]", "user" => {"email" => "[FILTERED]", "password" => "[FILTERED]", "remember_me" => "0"}, "commit" => "Entrar"}
+  [1m[36mUser Load (2.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  [1m[36mProfessional Load (1.2ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='create',application='HopeEscalas',controller='sessions'*/[0m
+  ↳ app/controllers/application_controller.rb:52:in 'ApplicationController#after_sign_in_path_for'
+Redirected to http://127.0.0.1:3000/dashboard/professionals
+Completed 303 See Other in 498ms (ActiveRecord: 9.8ms (2 queries, 0 cached) | GC: 50.2ms)
+
+
+Started GET "/dashboard/professionals" for 127.0.0.1 at 2025-08-19 18:19:44 -0300
+Processing by DashboardsController#professionals as TURBO_STREAM
+  [1m[36mUser Load (0.8ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  Rendering layout layouts/application.html.erb
+  Rendering dashboards/professionals.html.erb within layouts/application
+  [1m[36mPatient Load (1.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."full_name" ASC /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/dashboards/professionals.html.erb:20:in 'Enumerable#each_with_index'
+  Rendered dashboards/professionals.html.erb within layouts/application (Duration: 12.1ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.7ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='professionals',application='HopeEscalas',controller='dashboards'*/[0m
+  ↳ app/views/shared/_navbar.html.erb:5
+  Rendered shared/_navbar.html.erb (Duration: 3.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 16.1ms | GC: 0.0ms)
+Completed 200 OK in 38ms (Views: 12.1ms | ActiveRecord: 9.0ms (3 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-08-19 18:19:44 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-08-19 18:19:44 -0300
+Started GET "/scale_requests" for 127.0.0.1 at 2025-08-19 18:19:46 -0300
+Processing by ScaleRequestsController#index as HTML
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (1.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/index.html.erb within layouts/application
+  [1m[36mScaleRequest Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (1.2ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL ORDER BY "scale_requests"."requested_at" DESC /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (1.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" IN (7, 5, 1, 6) /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.8ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" IN (6, 1) /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (1.1ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (1.6ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" IN (6, 5, 4, 3, 2, 1) /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 83.6ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/application (Duration: 86.8ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.9ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/shared/_navbar.html.erb:5
+  Rendered shared/_navbar.html.erb (Duration: 3.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 91.1ms | GC: 0.0ms)
+Completed 200 OK in 133ms (Views: 68.1ms | ActiveRecord: 32.1ms (13 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/pending" for 127.0.0.1 at 2025-08-19 18:19:49 -0300
+Processing by ScaleRequestsController#pending as HTML
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.8ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" IN (7, 5) /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.8ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.7ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" IN (6, 4) /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 19.9ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 21.2ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 22.2ms | GC: 0.0ms)
+Completed 200 OK in 56ms (Views: 19.1ms | ActiveRecord: 8.9ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/pending" for 127.0.0.1 at 2025-08-19 18:19:49 -0300
+Processing by ScaleRequestsController#pending as HTML
+  [1m[36mUser Load (0.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.7ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" IN (7, 5) /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.7ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.7ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.6ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" IN (6, 4) /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 20.7ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 22.1ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 22.7ms | GC: 0.0ms)
+Completed 200 OK in 46ms (Views: 19.2ms | ActiveRecord: 7.3ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/completed" for 127.0.0.1 at 2025-08-19 18:19:49 -0300
+Processing by ScaleRequestsController#completed as HTML
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.7ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.8ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 ORDER BY "scale_requests"."requested_at" DESC /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.7ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.9ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 2 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 22.5ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 24.6ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 25.3ms | GC: 0.0ms)
+Completed 200 OK in 62ms (Views: 21.4ms | ActiveRecord: 8.5ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/completed" for 127.0.0.1 at 2025-08-19 18:19:49 -0300
+Processing by ScaleRequestsController#completed as HTML
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.9ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 ORDER BY "scale_requests"."requested_at" DESC /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 6 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.8ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.8ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 2 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 28.1ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 30.7ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 31.7ms | GC: 0.0ms)
+Completed 200 OK in 73ms (Views: 27.9ms | ActiveRecord: 8.7ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/cancelled" for 127.0.0.1 at 2025-08-19 18:19:50 -0300
+Processing by ScaleRequestsController#cancelled as HTML
+  [1m[36mUser Load (1.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.8ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (1.1ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 ORDER BY "scale_requests"."requested_at" DESC /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (1.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" IN (7, 1, 6) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.9ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" IN (6, 1) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.9ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" IN (5, 3, 1) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 23.4ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 25.1ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 25.8ms | GC: 0.0ms)
+Completed 200 OK in 58ms (Views: 21.1ms | ActiveRecord: 9.3ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/cancelled" for 127.0.0.1 at 2025-08-19 18:19:50 -0300
+Processing by ScaleRequestsController#cancelled as HTML
+  [1m[36mUser Load (1.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:100:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:101:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.9ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.8ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.9ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 ORDER BY "scale_requests"."requested_at" DESC /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (1.2ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" IN (7, 1, 6) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.9ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" IN (6, 1) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (1.0ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" IN (5, 3, 1) /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:168
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 28.0ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 30.2ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 31.2ms | GC: 0.0ms)
+Completed 200 OK in 66ms (Views: 26.5ms | ActiveRecord: 10.0ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
