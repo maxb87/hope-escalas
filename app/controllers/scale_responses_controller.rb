@@ -5,6 +5,20 @@ class ScaleResponsesController < ApplicationController
     @scale_request = ScaleRequest.find(params[:scale_request_id])
     authorize @scale_request, :respond?
 
+    # Verificação adicional: se já existe resposta, redirecionar
+    if @scale_request.scale_response.present?
+      redirect_to patients_dashboard_path,
+                  alert: I18n.t("scale_responses.errors.already_completed")
+      return
+    end
+
+    # Verificação adicional: se não está pendente, redirecionar
+    unless @scale_request.pending?
+      redirect_to patients_dashboard_path,
+                  alert: I18n.t("scale_responses.errors.not_pending")
+      return
+    end
+
     @scale_response = ScaleResponse.new
     @scale_response.scale_request = @scale_request
     @scale_response.patient = current_user.account
@@ -17,6 +31,20 @@ class ScaleResponsesController < ApplicationController
   def create
     @scale_request = ScaleRequest.find(params[:scale_request_id])
     authorize @scale_request, :respond?
+
+    # Verificação adicional: se já existe resposta, redirecionar
+    if @scale_request.scale_response.present?
+      redirect_to patients_dashboard_path,
+                  alert: I18n.t("scale_responses.errors.already_completed")
+      return
+    end
+
+    # Verificação adicional: se não está pendente, redirecionar
+    unless @scale_request.pending?
+      redirect_to patients_dashboard_path,
+                  alert: I18n.t("scale_responses.errors.not_pending")
+      return
+    end
 
     @scale_response = ScaleResponse.new(scale_response_params)
     @scale_response.scale_request = @scale_request

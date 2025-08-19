@@ -56,6 +56,14 @@ class ScaleRequestPolicy < ApplicationPolicy
   end
 
   def respond?
-    user.account_type == "Patient" && record.patient == user.account && record.pending?
+    # Só permite responder se:
+    # 1. Usuário é paciente
+    # 2. A solicitação pertence ao paciente logado
+    # 3. A solicitação está pendente (não foi completada, cancelada ou expirada)
+    # 4. Ainda não existe uma resposta para esta solicitação
+    user.account_type == "Patient" && 
+    record.patient == user.account && 
+    record.pending? && 
+    record.scale_response.nil?
   end
 end

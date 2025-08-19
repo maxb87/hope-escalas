@@ -1,38 +1,81 @@
-<h1><%= t('scale_requests.index.title') %></h1>
-
-<div class="mb-3 d-flex gap-2">
-  <%= link_to t('scale_requests.filters.all'), scale_requests_path, class: 'btn btn-outline-secondary' %>
-  <%= link_to t('scale_requests.filters.pending'), pending_scale_requests_path, class: 'btn btn-outline-secondary' %>
-  <%= link_to t('scale_requests.filters.completed'), completed_scale_requests_path, class: 'btn btn-outline-secondary' %>
-  <%= link_to t('scale_requests.filters.cancelled'), cancelled_scale_requests_path, class: 'btn btn-outline-secondary' %>
-  <%= link_to t('scale_requests.new.link'), new_scale_request_path, class: 'btn btn-primary ms-auto' %>
+<!-- Header com título e botão de ação -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1">
+      <i class="bi bi-clipboard-data me-2"></i>
+      <%= t('scale_requests.index.title') %>
+    </h1>
+    <p class="text-muted mb-0">
+      <%= t('scale_requests.index.subtitle') %>
+    </p>
+  </div>
   
+  <%= link_to new_scale_request_path, 
+      class: 'btn btn-warning d-flex align-items-center gap-2',
+      data: { turbo_frame: "_top" } do %>
+    <i class="bi bi-plus-circle"></i>
+    <span><%= t('scale_requests.new.button') %></span>
+  <% end %>
 </div>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th><%= t('scale_requests.table.patient') %></th>
-      <th><%= t('scale_requests.table.scale') %></th>
-      <th><%= t('scale_requests.table.status') %></th>
-      <th><%= t('scale_requests.table.requested_at') %></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @scale_requests.each do |req| %>
-      <tr>
-        <td><%= req.patient.full_name %></td>
-        <td><%= req.psychometric_scale.name %></td>
-        <td><%= req.status %></td>
-        <td><%= l(req.requested_at, format: :short) %></td>
-        <td>
-          <%= link_to t('actions.show'), scale_request_path(req), class: 'btn btn-sm btn-outline-primary' %>
-        </td>
-      </tr>
+<!-- Navegação por Abas -->
+<div class="card">
+  <div class="card-header p-0">
+    <ul class="nav nav-tabs card-header-tabs" id="scale-requests-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <%= link_to scale_requests_path, 
+            class: "nav-link #{'active' if current_page?(scale_requests_path)}", 
+            data: { 
+              turbo_method: :get,
+              turbo_frame: 'scale_requests_content' 
+            } do %>
+          <i class="bi bi-list-ul me-1"></i>
+          <%= t('scale_requests.filters.all') %>
+          <span class="badge bg-secondary ms-1"><%= @all_count %></span>
+        <% end %>
+      </li>
+      <li class="nav-item" role="presentation">
+        <%= link_to pending_scale_requests_path, 
+            class: "nav-link #{'active' if current_page?(pending_scale_requests_path)}", 
+            data: { 
+              turbo_method: :get,
+              turbo_frame: 'scale_requests_content' 
+            } do %>
+          <i class="bi bi-clock me-1"></i>
+          <%= t('scale_requests.filters.pending') %>
+          <span class="badge bg-warning ms-1"><%= @pending_count %></span>
+        <% end %>
+      </li>
+      <li class="nav-item" role="presentation">
+        <%= link_to completed_scale_requests_path, 
+            class: "nav-link #{'active' if current_page?(completed_scale_requests_path)}", 
+            data: { 
+              turbo_method: :get,
+              turbo_frame: 'scale_requests_content' 
+            } do %>
+          <i class="bi bi-check-circle me-1"></i>
+          <%= t('scale_requests.filters.completed') %>
+          <span class="badge bg-success ms-1"><%= @completed_count %></span>
+        <% end %>
+      </li>
+      <li class="nav-item" role="presentation">
+        <%= link_to cancelled_scale_requests_path, 
+            class: "nav-link #{'active' if current_page?(cancelled_scale_requests_path)}", 
+            data: { 
+              turbo_method: :get,
+              turbo_frame: 'scale_requests_content' 
+            } do %>
+          <i class="bi bi-x-circle me-1"></i>
+          <%= t('scale_requests.filters.cancelled') %>
+          <span class="badge bg-danger ms-1"><%= @cancelled_count %></span>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="card-body p-0">
+    <%= turbo_frame_tag 'scale_requests_content' do %>
+      <%= render 'scale_requests_table', scale_requests: @scale_requests %>
     <% end %>
-  </tbody>
-</table>
-
-<h1>ScaleRequests#index</h1>
-<p>Find me in app/views/scale_requests/index.html.erb</p>
+  </div>
+</div>

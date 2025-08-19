@@ -77,9 +77,20 @@
                   Em: <%= l(req.requested_at, format: :short) %>
                 </small>
               </p>
-              <%= link_to t('dashboards.patients.fill_scale'), 
-                  new_scale_response_path(scale_request_id: req.id), 
-                  class: 'btn btn-warning btn-sm' %>
+              <% if req.pending? && req.scale_response.nil? %>
+                <%= link_to t('dashboards.patients.fill_scale'), 
+                    new_scale_response_path(scale_request_id: req.id), 
+                    class: 'btn btn-warning btn-sm' %>
+              <% elsif req.scale_response.present? %>
+                <span class="btn btn-outline-success btn-sm disabled">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Concluída
+                </span>
+              <% else %>
+                <span class="btn btn-outline-secondary btn-sm disabled">
+                  Indisponível
+                </span>
+              <% end %>
             </div>
           </div>
         </div>

@@ -41,7 +41,8 @@ class ScaleRequest < ApplicationRecord
   end
 
   def complete!
-    completed! if can_be_completed?
+    # Marcar como completa se estiver pendente
+    completed! if pending?
   end
 
   def cancel!

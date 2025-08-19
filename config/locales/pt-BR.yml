@@ -259,6 +259,7 @@ pt-BR:
       title: "Pacientes"
       new_patient: "Cadastrar paciente"
       age_col: "Idade (nascimento)"
+      manage_scales: "Gerenciar Escalas"
     patients:
       title: "Meu perfil"
       not_found: "Perfil não encontrado."
@@ -287,6 +288,8 @@ pt-BR:
       missing_required_items: "Itens obrigatórios não respondidos: %{items}"
       invalid_key: "Estrutura inválida nas respostas: %{key}"
       invalid_value: "Valor inválido em %{key}: %{value} (permitidos: 0, 1, 2, 3)"
+      already_completed: "Esta escala já foi preenchida. Você não pode preenchê-la novamente."
+      not_pending: "Esta solicitação não está mais disponível para preenchimento. Ela pode ter sido cancelada ou já foi completada."
   psychometric_scales:
     index:
       notice: "Selecione uma escala para solicitar."
@@ -294,28 +297,46 @@ pt-BR:
     new:
       title: "Nova solicitação de escala"
       link: "Nova solicitação"
+      button: "Solicitar Preenchimento"
     form:
       patient: "Paciente"
       scale: "Escala"
       notes: "Observações"
       submit: "Criar solicitação"
     index:
-      title: "Solicitações de escalas"
+      title: "Escalas Psicométricas"
+      subtitle: "Gerencie solicitações de preenchimento de escalas"
     filters:
       all: "Todas"
       pending: "Pendentes"
       completed: "Concluídas"
       cancelled: "Canceladas"
+    status:
+      pending: "Pendente"
+      completed: "Concluída"
+      cancelled: "Cancelada"
+      expired: "Expirada"
     table:
       patient: "Paciente"
       scale: "Escala"
+      professional: "Profissional"
       status: "Status"
       requested_at: "Solicitada em"
+      result: "Resultado"
+      actions: "Ações"
+      no_result: "Sem resultado"
+      showing_count:
+        one: "Mostrando 1 solicitação"
+        other: "Mostrando %{count} solicitações"
+      empty_title: "Nenhuma solicitação encontrada"
+      empty_description: "Não há solicitações de escala neste filtro. Que tal criar uma nova?"
     show:
-      title: "Detalhe da solicitação"
+      title: "Detalhes da Solicitação"
     actions:
       cancel: "Cancelar solicitação"
       confirm_cancel: "Tem certeza que deseja cancelar esta solicitação?"
+      view_response: "Ver resultado"
+      cancel_confirm: "Tem certeza que deseja cancelar esta solicitação?"
     create:
       success: "Solicitação criada com sucesso."
     destroy:

@@ -44,6 +44,11 @@ class ScaleResponse < ApplicationRecord
     completion_percentage == 100
   end
 
+  # Método para acessar a interpretação dos resultados
+  def interpretation_level
+    results.dig("interpretation", "level") || "Não disponível"
+  end
+
   private
 
   def calculate_score

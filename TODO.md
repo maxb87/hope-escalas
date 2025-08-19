@@ -32,23 +32,72 @@
 
 - Solicitações de escalas
   - `new/create`: associa profissional logado, redireciona ao perfil do paciente
-  - Index com filtros (todas/pendentes/concluídas/canceladas) e botão “Cancelar”
-  - Perfil do paciente: tabelas de pendentes e concluídas
+  - Index com filtros (todas/pendentes/concluídas/canceladas) e ações (ver/cancelar)
+  - Perfil do paciente: tabelas de pendentes e concluídas com informações detalhadas
+- Visualização de escalas (Admin/Profissionais)
+  - Interface moderna com navegação por abas (Turbo Frames)
+  - Contadores precisos por status com badges coloridos
+  - Tabela detalhada com avatar, status visual, resultados e ações
+  - Página de detalhes da solicitação com layout card-based
+  - Botão "Solicitar Preenchimento" posicionado no header
 
 ## Notas operacionais
 
 - Usar `docker compose down` (sem `-v`) para não apagar o volume `pgdata`.
 - Migração de `results` cria índices apenas se não existirem (`index_exists?`).
 
+## Melhorias Técnicas Implementadas
+
+- **Turbo Rails & UX Moderna**
+
+  - Navegação por abas com carregamento dinâmico (Turbo Frames)
+  - Actions que escapam do frame (`data: { turbo_frame: "_top" }`)
+  - Interface responsiva com Bootstrap e ícones Bootstrap Icons
+  - Estados visuais claros (badges, avatars, hover effects)
+
+- **Validações e Segurança**
+
+  - Políticas Pundit robustas com verificações múltiplas
+  - Validações no modelo, controller e policy
+  - Redirecionamentos inteligentes com `redirect_back_or_to`
+  - Mensagens de erro contextuais e traduzidas
+
+- **Performance e Dados**
+
+  - Eager loading com `.includes()` para evitar N+1 queries
+  - Método `interpretation_level` público para acesso aos resultados
+  - Contadores eficientes com queries otimizadas
+  - Estrutura `results:jsonb` para flexibilidade
+
+- **Internacionalização**
+  - Traduções completas em pt-BR para toda a interface
+  - Mensagens de erro personalizadas e contextuais
+  - Formatação de datas e pluralização adequadas
+
 ## Próximas etapas
 
-### 🔥 PRIORIDADE 1 - Regras de Negócio Críticas
+### ✅ CONCLUÍDO - Regras de Negócio Críticas
 
-- [ ] **Impedir múltiplas solicitações ativas da mesma escala por paciente**
+- [x] **Impedir múltiplas solicitações ativas da mesma escala por paciente**
 
-  - Validação no modelo `ScaleRequest`
-  - Verificar antes de criar nova solicitação
-  - Exibir erro apropriado na UI
+  - ✅ Validação no modelo `ScaleRequest` com método `unique_active_request_per_patient_and_scale`
+  - ✅ Verificação antes de criar nova solicitação
+  - ✅ Mensagem de erro personalizada na UI em pt-BR
+
+- [x] **Permitir paciente preencher escala somente quando solicitação estiver em aberto**
+
+  - ✅ Validação na policy `ScaleRequestPolicy#respond?`
+  - ✅ Validação dupla no controller `ScaleResponsesController` (new/create)
+  - ✅ Redirecionamento com mensagens de erro claras
+  - ✅ Interface adaptativa (botões condicionais)
+
+- [x] **Alertas de pendências no login do paciente**
+  - ✅ Contador visual no dashboard com badge de status
+  - ✅ Notificação destacada após login (alert dismissível)
+  - ✅ Badge na navbar com contagem de pendentes
+  - ✅ Layout modernizado com cards para escalas
+
+### 🔥 PRIORIDADE 1 - Funcionalidades Restantes
 
 - [ ] **Fluxo para refazer uma solicitação de preenchimento**
 
@@ -56,55 +105,91 @@
   - Quando profissional solicita escala já pendente, oferece substituir
   - Manter histórico das solicitações canceladas
 
-- [ ] **Permitir paciente preencher escala somente quando solicitação estiver em aberto**
-
-  - Validação no controller `ScaleResponsesController#new`
-  - Bloquear acesso se não houver solicitação `pending`
-  - Exibir mensagem clara sobre o motivo
-
-- [ ] **Alertas de pendências no login do paciente**
-
-  - Contador visual no dashboard
-  - Notificação destacada após login
-  - Lista de escalas pendentes com links diretos
-
 - [ ] **Notificações para profissionais quando escalas são completadas**
   - Callback no `ScaleResponse` após criação
   - Sistema de notificações internas ou email
   - Dashboard do profissional com indicadores
 
-### Testes
+### 🧪 Testes (Prioridade Alta)
 
-- [ ] Model: validações de `ScaleResponse` (estrutura/itens faltantes), cálculo/`results`, policies
-- [ ] Requests: `ScaleRequest` (criar/cancelar/filtrar) e `ScaleResponse` (criar/permissões)
-- [ ] Feature: profissional (solicitar → paciente preenche → visualizar), paciente (pendentes → preencher)
+- [ ] **Model Tests**: Validações de `ScaleResponse` (estrutura/itens faltantes), `ScaleRequest` (duplicatas)
+- [ ] **Request Tests**: CRUD completo de `ScaleRequest` e `ScaleResponse` com autorização
+- [ ] **Feature Tests**: Fluxos completos (profissional → paciente → resultados)
+- [ ] **Policy Tests**: Cobertura completa das regras de autorização
 
-### Regras de negócio (secundárias)
+### 📈 Funcionalidades Avançadas (Futuro)
 
-- [ ] (Opcional) expiração automática de solicitações antigas
+- [ ] **Segunda Escala Psicométrica**
 
-### API / Integrações
+  - Implementar BAI (Inventário de Ansiedade de Beck)
+  - Serviço `Scoring::BAI` com interpretação
+  - Selector de escala na interface
 
-- [ ] `api/v1/users` (index/show + autorização)
-- [ ] Magic link (modelo/token, mailer, consumo)
+- [ ] **Relatórios e Analytics**
 
-### Observabilidade
+  - Dashboard com estatísticas de uso
+  - Relatórios por período e profissional
+  - Exportação em PDF/Excel
 
-- [ ] Lograge em produção (opcional em dev)
-- [ ] `prometheus_exporter` simples
+- [ ] **Notificações por Email**
+  - Templates responsivos para pacientes
+  - Lembretes automáticos de escalas pendentes
+  - Confirmações de preenchimento
 
-### UX / I18n
+### 🔧 Melhorias Técnicas (Secundárias)
 
-- [ ] UX de restore (opcional)
-- [ ] Revisão final de textos pt‑BR
+- [ ] **Regras de Negócio**
 
-### Seeds / Dados
+  - Expiração automática de solicitações antigas
+  - Histórico detalhado de alterações
+  - Soft delete com restore UI
 
-- [ ] Garantir que os seeds não sobrescrevem senhas existentes
+- [ ] **API REST**
 
-## 📊 Implementação de Escalas (histórico)
+  - Endpoints `api/v1/scale_requests` e `api/v1/scale_responses`
+  - Autenticação via token
+  - Documentação com Swagger
 
-- Modelo de domínio + migrações e associações concluídos
-- Implementação BDI (itens, cálculo e `results:jsonb`)
-- Controllers básicos + autorização ok
-- Views e formulários de preenchimento em andamento
+- [ ] **Observabilidade**
+
+  - Lograge em produção
+  - Métricas com Prometheus
+  - Health checks detalhados
+
+- [ ] **Polimentos**
+  - Revisão final de textos pt-BR
+  - Seeds que não sobrescrevem dados existentes
+  - Otimizações de performance
+
+## 📊 Estado Atual da Aplicação
+
+### ✅ Core Funcional (100% Completo)
+
+- **Domínio**: Modelos, migrações, associações e soft delete
+- **BDI**: 21 itens, cálculo automático, interpretação visual
+- **Autenticação**: Devise com lockable e primeiro login
+- **Autorização**: Pundit com policies robustas
+- **Solicitações**: CRUD completo com filtros e cancelamento
+- **Escalas**: Preenchimento, validação e cálculo de resultados
+
+### ✅ Interface Moderna (100% Completo)
+
+- **Admin/Profissional**: Visualização completa com Turbo
+- **Paciente**: Dashboard com notificações e cards
+- **Responsividade**: Bootstrap com componentes modernos
+- **UX**: Estados visuais, confirmações e feedback
+
+### ✅ Regras de Negócio Críticas (90% Completo)
+
+- **Duplicatas**: Prevenção de solicitações múltiplas ✅
+- **Acesso**: Restrição de preenchimento por status ✅
+- **Notificações**: Sistema completo para pacientes ✅
+- **Refazer**: Fluxo para nova solicitação (pendente)
+- **Profissionais**: Alertas de conclusão (pendente)
+
+### 🎯 Próximas Prioridades
+
+1. **Testes**: Cobertura completa das funcionalidades
+2. **Fluxo Refazer**: Cancelar anterior + nova solicitação
+3. **Notificações**: Sistema para profissionais
+4. **Segunda Escala**: BAI (Ansiedade)

@@ -1,6 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1><%= t('dashboards.professionals.title') %></h1>
-  <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
+  <div class="d-flex gap-2">
+    <%= link_to scale_requests_path, class: "btn btn-warning d-flex align-items-center gap-2" do %>
+      <i class="bi bi-clipboard-data"></i>
+      <span><%= t('dashboards.professionals.manage_scales') %></span>
+    <% end %>
+    <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
+  </div>
 </div>
 
 <table class="table table-striped">
