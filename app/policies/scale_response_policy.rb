@@ -18,7 +18,8 @@ class ScaleResponsePolicy < ApplicationPolicy
 
   def show?
     user.email == "admin@admin.com" ||
-    (user.account_type == "Professional" && record.scale_request.professional == user.account)
+    (user.account_type == "Professional" && record.scale_request.professional == user.account) ||
+    (user.account_type == "Patient" && record.patient == user.account)
   end
 
   def create?

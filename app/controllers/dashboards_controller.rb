@@ -14,6 +14,27 @@ class DashboardsController < ApplicationController
   def professionals
     authorize :dashboards, :professionals?
     @patients = policy_scope(Patient).order(:full_name)
+
+    # Otimizar queries para evitar N+1
+    # Buscar todas as contagens em queries únicas
+    patient_ids = @patients.pluck(:id)
+
+    completed_counts = ScaleResponse.where(patient_id: patient_ids)
+                                   .group(:patient_id)
+                                   .count
+
+    pending_counts = ScaleRequest.where(patient_id: patient_ids, status: "pending")
+                                 .group(:patient_id)
+                                 .count
+
+    # Combinar dados de forma eficiente
+    @patients_with_counts = @patients.map do |patient|
+      {
+        patient: patient,
+        completed_count: completed_counts[patient.id] || 0,
+        pending_count: pending_counts[patient.id] || 0
+      }
+    end
   end
 
   def patients

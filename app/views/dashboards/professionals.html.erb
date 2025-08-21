@@ -1,11 +1,14 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1><%= t('dashboards.professionals.title') %></h1>
+  <div>
+    <h1>Pacientes</h1>
+    <span class="text-muted">Clique em um paciente para ver suas escalas</span>
+  </div>
   <div class="d-flex gap-2">
+    <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
     <%= link_to scale_requests_path, class: "btn btn-warning d-flex align-items-center gap-2" do %>
       <i class="bi bi-clipboard-data"></i>
       <span><%= t('dashboards.professionals.manage_scales') %></span>
     <% end %>
-    <%= link_to t('dashboards.professionals.new_patient'), new_patient_path, class: "btn btn-primary" %>
   </div>
 </div>
 
@@ -14,10 +17,12 @@
     <tr>
       <th><%= t('activerecord.attributes.patient.full_name') %></th>
       <th><%= t('dashboards.professionals.age_col') %></th>
+      <th>Escalas</th>
     </tr>
   </thead>
   <tbody>
-    <% @patients.each_with_index do |patient, idx| %>
+    <% @patients_with_counts.each_with_index do |patient_data, idx| %>
+      <% patient = patient_data[:patient] %>
       <% birth = patient.birthday %>
       <% age = birth.present? ? ((Time.zone.today.year - birth.year) - ((Time.zone.today.month > birth.month || (Time.zone.today.month == birth.month && Time.zone.today.day >= birth.day)) ? 0 : 1)) : nil %>
       <tr class="<%= idx.even? ? 'bg-white' : 'bg-light' %>" onclick="window.location='<%= patient_path(patient) %>'" style="cursor: pointer;">
@@ -27,6 +32,16 @@
             <%= age %> (<%= l(birth) %>)
           <% else %>
             —
+          <% end %>
+        </td>
+        <td>
+          <% if patient_data[:completed_count] > 0 || patient_data[:pending_count] > 0 %>
+            <span class="badge bg-success me-1"><%= patient_data[:completed_count] %> respondidas</span>
+            <% if patient_data[:pending_count] > 0 %>
+              <span class="badge bg-warning"><%= patient_data[:pending_count] %> pendentes</span>
+            <% end %>
+          <% else %>
+            <span class="text-muted">—</span>
           <% end %>
         </td>
       </tr>

@@ -5,8 +5,6 @@
         <% account = current_user.account %>
         <% if account.is_a?(Patient) %>
           <%= link_to t('dashboards.patients.title'), patients_dashboard_path, class: 'text-decoration-none' %>
-        <% else %>
-          <%= link_to t('dashboards.professionals.title'), professionals_dashboard_path, class: 'text-decoration-none' %>
         <% end %>
       <% else %>
         Hope Escalas
@@ -27,6 +25,18 @@
                 <span class="visually-hidden">escalas pendentes</span>
               </span>
             <% end %>
+          <% end %>
+        <% elsif account.is_a?(Professional) || current_user.email == "admin@admin.com" %>
+          <%= link_to professionals_dashboard_path, 
+            class: "btn btn-outline-primary d-flex align-items-center gap-2" do %>
+            <span class="bi bi-people-fill"></span>
+            <span> Lista de Pacientes</span>
+          <% end %>
+          
+          <%= link_to scale_requests_path, 
+              class: "btn btn-outline-primary d-flex align-items-center gap-2" do %>
+            <span class="bi bi-list-check"></span>
+            <span><%= t('menu.solicitacoes') %></span>
           <% end %>
         <% end %>
         <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger d-flex align-items-center gap-2" do %>

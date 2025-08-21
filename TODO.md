@@ -19,7 +19,7 @@
   - Primeiro login exige troca de senha (`force_password_reset`)
   - `Users::RegistrationsController`: troca sem senha atual no primeiro login, limpa flag, `bypass_sign_in`
   - `:lockable` habilitado (3 tentativas, 5min) e UX de mensagens (I18n pt‑BR, incl. `registrations.updated`)
-  - Redirecionamento pós‑login por perfil (admin/profissional → pacientes; paciente → próprio perfil)
+  - Redirecionamento pós‑login por perfil (admin/profissional → lista de pacientes; paciente → próprio perfil)
 
 - Escalas (BDI – MVP)
 
@@ -76,90 +76,89 @@
 
 ## Próximas etapas
 
-### ✅ CONCLUÍDO - Regras de Negócio Críticas
+### 🔥 PRIORIDADE 1 - Estabilidade e Testes (MVP Core)
 
-- [x] **Impedir múltiplas solicitações ativas da mesma escala por paciente**
+- [ ] **Menu Lateral**
 
-  - ✅ Validação no modelo `ScaleRequest` com método `unique_active_request_per_patient_and_scale`
-  - ✅ Verificação antes de criar nova solicitação
-  - ✅ Mensagem de erro personalizada na UI em pt-BR
+  - [ ] Implementar menu lateral esquerdo moderno e responsivo
+  - [ ] Substituir navbar atual por layout com sidebar
+  - [ ] Adicionar ícones e texto para cada item do menu
+  - [ ] Implementar toggle para mobile (hamburger menu)
+  - [ ] Manter funcionalidade de navegação intacta
+  - [ ] Design responsivo para desktop e mobile
 
-- [x] **Permitir paciente preencher escala somente quando solicitação estiver em aberto**
+- [ ] **Filtros e Busca de Pacientes**
 
-  - ✅ Validação na policy `ScaleRequestPolicy#respond?`
-  - ✅ Validação dupla no controller `ScaleResponsesController` (new/create)
-  - ✅ Redirecionamento com mensagens de erro claras
-  - ✅ Interface adaptativa (botões condicionais)
+  - [ ] Implementar filtros para exibição de pacientes:
+    - [ ] Ordenação alfabética (A-Z, Z-A)
+    - [ ] Ordenação por idade (mais novo, mais velho)
+    - [ ] Ordenação por escalas pendentes (mais, menos)
+  - [ ] Implementar busca dinâmica em tempo real:
+    - [ ] Busca pelo nome do paciente
+    - [ ] Interface responsiva com autocomplete
+    - [ ] Debounce para otimizar performance
+    - [ ] Filtros combinados (busca + ordenação)
 
-- [x] **Alertas de pendências no login do paciente**
-  - ✅ Contador visual no dashboard com badge de status
-  - ✅ Notificação destacada após login (alert dismissível)
-  - ✅ Badge na navbar com contagem de pendentes
-  - ✅ Layout modernizado com cards para escalas
+- [ ] **Cobertura de Testes (Meta: ≥90%)**
 
-### 🔥 PRIORIDADE 1 - Funcionalidades Restantes
+  - [ ] **Model Specs**: Adicionar/expandir validações, associações e regras de negócio.
+    - [ ] `ScaleRequest`: Prevenção de duplicatas ativas.
+    - [ ] `ScaleResponse`: Validação da estrutura `results`, itens obrigatórios.
+    - [ ] `User`/`Patient`/`Professional`: Associações e `dependent` rules.
+  - [ ] **Request Specs**: Garantir fluxos de CRUD, autorização e casos de falha.
+    - [ ] `ScaleRequestsController`: Acesso restrito a profissionais/admins.
+    - [ ] `ScaleResponsesController`: Acesso restrito a pacientes e validações de input.
+  - [ ] **Policy Specs**: Cobertura completa das regras de Pundit para todos os papéis.
+  - [ ] **Feature Specs**: Testar fluxos de ponta a ponta.
+    - [ ] Fluxo principal: Profissional solicita → Paciente preenche → Profissional vê resultados.
+
+- [ ] **Integridade de Dados (Nível Banco de Dados)**
+
+  - [ ] Adicionar `foreign_key_constraints` e `null: false` onde aplicável.
+  - [ ] Adicionar índice único composto parcial em `scale_requests` (`patient_id`, `psychometric_scale_id`, `status='pending'`) para garantir uma única solicitação ativa.
+  - [ ] Implementar `CHECK constraint` para status em `scale_requests` e `scale_responses`.
+  - [ ] Adicionar validação customizada para a estrutura do JSONB `results` no `ScaleResponse`.
+
+- [ ] **Refatoração e Boas Práticas**
+  - [ ] **Controllers**: Manter controllers "magros" (skinny).
+    - [ ] Mover lógica de negócio para models/serviços.
+    - [ ] Envolver `create`/`update` em transações (`ApplicationRecord.transaction`).
+    - [ ] Auditar `strong_params` em todos os controllers.
+  - [ ] **Models**: Centralizar regras de negócio.
+    - [ ] Criar scopes (`.pending`, `.completed`) para consultas comuns.
+    - [ ] Garantir que `Scoring::BDI` seja idempotente e totalmente testado.
+    - [ ] Cálculo de `results` e `computed_at` deve ser atômico no `ScaleResponse`.
+  - [ ] **Segurança**:
+    - [ ] Auditar `before_action :authenticate_user!`, `policy_scope` e `authorize` em todos os controllers.
+    - [ ] Revisar Content Security Policy (`config/initializers/content_security_policy.rb`).
+    - [ ] Confirmar que Devise (`:lockable`, reset de senha) está configurado corretamente.
+
+### 📈 Funcionalidades (Pós-MVP)
 
 - [ ] **Fluxo para refazer uma solicitação de preenchimento**
-
-  - Opção "Solicitar Novamente" que cancela a anterior automaticamente
-  - Quando profissional solicita escala já pendente, oferece substituir
-  - Manter histórico das solicitações canceladas
-
+  - [ ] Opção "Solicitar Novamente" que cancela a anterior automaticamente.
+  - [ ] Manter histórico das solicitações canceladas.
 - [ ] **Notificações para profissionais quando escalas são completadas**
-  - Callback no `ScaleResponse` após criação
-  - Sistema de notificações internas ou email
-  - Dashboard do profissional com indicadores
+  - [ ] Callback no `ScaleResponse` após criação para disparar notificação.
+  - [ ] Sistema de notificações internas ou por email (a definir).
 
-### 🧪 Testes (Prioridade Alta)
+### 🔧 Melhorias Técnicas (Contínuas)
 
-- [ ] **Model Tests**: Validações de `ScaleResponse` (estrutura/itens faltantes), `ScaleRequest` (duplicatas)
-- [ ] **Request Tests**: CRUD completo de `ScaleRequest` e `ScaleResponse` com autorização
-- [ ] **Feature Tests**: Fluxos completos (profissional → paciente → resultados)
-- [ ] **Policy Tests**: Cobertura completa das regras de autorização
-
-### 📈 Funcionalidades Avançadas (Futuro)
-
-- [ ] **Segunda Escala Psicométrica**
-
-  - Implementar BAI (Inventário de Ansiedade de Beck)
-  - Serviço `Scoring::BAI` com interpretação
-  - Selector de escala na interface
-
-- [ ] **Relatórios e Analytics**
-
-  - Dashboard com estatísticas de uso
-  - Relatórios por período e profissional
-  - Exportação em PDF/Excel
-
-- [ ] **Notificações por Email**
-  - Templates responsivos para pacientes
-  - Lembretes automáticos de escalas pendentes
-  - Confirmações de preenchimento
-
-### 🔧 Melhorias Técnicas (Secundárias)
-
-- [ ] **Regras de Negócio**
-
-  - Expiração automática de solicitações antigas
-  - Histórico detalhado de alterações
-  - Soft delete com restore UI
-
-- [ ] **API REST**
-
-  - Endpoints `api/v1/scale_requests` e `api/v1/scale_responses`
-  - Autenticação via token
-  - Documentação com Swagger
-
+- [ ] **Performance**
+  - [ ] Auditar e corrigir N+1 queries com `bullet` e `includes()`.
+  - [ ] Adicionar índices em colunas usadas para filtros e ordenação.
+- [ ] **Internacionalização (I18n)**
+  - [ ] Auditar todas as strings da UI para garantir que estão no `pt-BR.yml`.
+  - [ ] Unificar mensagens de flash e validação.
+- [ ] **Tooling e Ambiente**
+  - [ ] Sincronizar `README.md` com as versões de Node/Ruby/`mise` e comandos `yarn`.
+  - [ ] Remover `package-lock.json` para forçar uso do `yarn.lock`.
+  - [ ] Configurar linters para ignorar `README.md` e `TODO.md`.
+- [ ] **Seeds**
+  - [ ] Tornar seeds idempotentes (`find_or_create_by`) para evitar duplicatas.
 - [ ] **Observabilidade**
-
-  - Lograge em produção
-  - Métricas com Prometheus
-  - Health checks detalhados
-
-- [ ] **Polimentos**
-  - Revisão final de textos pt-BR
-  - Seeds que não sobrescrevem dados existentes
-  - Otimizações de performance
+  - [ ] Configurar `Lograge` para logs estruturados em produção.
+  - [ ] Expor endpoint básico de métricas com `prometheus_exporter`.
 
 ## 📊 Estado Atual da Aplicação
 
@@ -184,8 +183,6 @@
 - **Duplicatas**: Prevenção de solicitações múltiplas ✅
 - **Acesso**: Restrição de preenchimento por status ✅
 - **Notificações**: Sistema completo para pacientes ✅
-- **Refazer**: Fluxo para nova solicitação (pendente)
-- **Profissionais**: Alertas de conclusão (pendente)
 
 ### 🎯 Próximas Prioridades
 

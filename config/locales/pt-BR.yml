@@ -26,6 +26,9 @@ pt-BR:
 
   hello: "Olá"
 
+  menu:
+    solicitacoes: "Solicitações"
+
   actions:
     show: "Ver"
     edit: "Editar"
@@ -260,6 +263,7 @@ pt-BR:
       new_patient: "Cadastrar paciente"
       age_col: "Idade (nascimento)"
       manage_scales: "Gerenciar Escalas"
+      scales_completed_col: "Escalas preenchidas"
     patients:
       title: "Meu perfil"
       not_found: "Perfil não encontrado."

@@ -1,11 +1,11 @@
 <% content_for :title, t('patients.new.title') %>
 
-<h1><%= t('patients.new.title') %></h1>
+<h1>Cadastro de Paciente</h1>
 
 <%= render "form", patient: @patient %>
 
 <br>
 
 <div>
-  <%= link_to t('patients.new.back_link'), patients_path %>
+  <%= link_to t('patients.new.back_link'), dashboard_path, class: "btn btn-secondary" %>
 </div>
