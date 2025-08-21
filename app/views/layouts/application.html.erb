@@ -22,14 +22,19 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="m-4">
-    <%= render partial: "shared/navbar" %>
-    <%# Não exibir flash messages nas views do Devise para evitar duplicação %>
-    <% unless devise_controller? %>
-      <% flash.each do |type, message| %>
-        <div class="alert alert-<%= type == 'alert' ? 'danger' : 'info' %>"><%= message %></div>
-      <% end %>
-    <% end %>
-    <%= yield %>
+  <body>
+    <%= render partial: "shared/sidebar" %>
+
+    <div class="main-content">
+      <div class="container-fluid p-4">
+        <%# Não exibir flash messages nas views do Devise para evitar duplicação %>
+        <% unless devise_controller? %>
+          <% flash.each do |type, message| %>
+            <div class="alert alert-<%= type == 'alert' ? 'danger' : 'info' %> mb-4"><%= message %></div>
+          <% end %>
+        <% end %> 
+        <%= yield %>
+      </div>
+    </div>
   </body>
 </html>

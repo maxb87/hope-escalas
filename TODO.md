@@ -78,14 +78,14 @@
 
 ### 🔥 PRIORIDADE 1 - Estabilidade e Testes (MVP Core)
 
-- [ ] **Menu Lateral**
+- [x] **Menu Lateral**
 
-  - [ ] Implementar menu lateral esquerdo moderno e responsivo
-  - [ ] Substituir navbar atual por layout com sidebar
-  - [ ] Adicionar ícones e texto para cada item do menu
-  - [ ] Implementar toggle para mobile (hamburger menu)
-  - [ ] Manter funcionalidade de navegação intacta
-  - [ ] Design responsivo para desktop e mobile
+  - [x] Implementar menu lateral esquerdo moderno e responsivo
+  - [x] Substituir navbar atual por layout com sidebar
+  - [x] Adicionar ícones e texto para cada item do menu
+  - [x] Implementar toggle para mobile (hamburger menu)
+  - [x] Manter funcionalidade de navegação intacta
+  - [x] Design responsivo para desktop e mobile
 
 - [ ] **Filtros e Busca de Pacientes**
 
