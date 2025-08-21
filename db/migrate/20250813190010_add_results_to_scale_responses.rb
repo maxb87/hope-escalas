@@ -1,4 +1,4 @@
-class AddResultsToScaleResponses < ActiveRecord::Migration[8.0]
+gitclass AddResultsToScaleResponses < ActiveRecord::Migration[8.0]
   def change
     add_column :scale_responses, :results, :jsonb, default: {}, null: false
     add_column :scale_responses, :results_schema_version, :integer, default: 1, null: false

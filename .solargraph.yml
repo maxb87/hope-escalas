@@ -1,19 +1,29 @@
 ---
 include:
-- Rakefile
-- Gemfile
-- "*.gemspec"
-- "**/*.rb"
+  - "**/*.rb"
+  - "Rakefile"
+  - "Gemfile"
+  - "*.gemspec"
+  - "config/**/*.rb"
+  - "app/**/*.rb"
+  - "lib/**/*.rb"
+  - "db/**/*.rb"
 exclude:
-- spec/**/*
-- test/**/*
-- vendor/**/*
-- ".bundle/**/*"
+  - "spec/**/*"
+  - "test/**/*"
+  - "vendor/**/*"
+  - ".bundle/**/*"
+  - "node_modules/**/*"
+  - "tmp/**/*"
+  - "log/**/*"
+  - "storage/**/*"
+  - "public/**/*"
 require: []
 domains: []
 reporters:
-- rubocop
-- require_not_found
+  - rubocop
+  - require_not_found
+  - typecheck
 formatter:
   rubocop:
     cops: safe
@@ -23,3 +33,7 @@ formatter:
 require_paths: []
 plugins: []
 max_files: 5000
+diagnostics:
+  require_not_found: true
+  require_paths: true
+  typecheck: true
