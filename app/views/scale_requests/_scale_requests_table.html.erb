@@ -97,6 +97,14 @@
               </div>
             </td>
             <td class="py-3">
+                <% if req.pending? && policy(req).respond? %>
+                  <%= link_to new_scale_response_path(scale_request_id: req.id), 
+                      class: 'btn btn-sm btn-outline-warning',
+                      title: t('scale_requests.actions.fill_scale'),
+                      data: { turbo_frame: "_top" } do %>
+                    <i class="bi bi-clipboard-check"></i>
+                  <% end %>
+                <% end %>
               <% if req.scale_response.present? %>
                 <div>
                   <span class="badge bg-light text-dark">
@@ -133,6 +141,14 @@
                   <i class="bi bi-eye"></i>
                 <% end %>
                 
+                <% if req.pending? && policy(req).respond? %>
+                  <%= link_to new_scale_response_path(scale_request_id: req.id), 
+                      class: 'btn btn-sm btn-outline-warning',
+                      title: t('scale_requests.actions.fill_scale'),
+                      data: { turbo_frame: "_top" } do %>
+                    <i class="bi bi-clipboard-check"></i>
+                  <% end %>
+                <% end %>
                 <% if req.scale_response.present? %>
                   <%= link_to scale_response_path(req.scale_response), 
                       class: 'btn btn-sm btn-outline-success',

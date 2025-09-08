@@ -7,21 +7,19 @@ class ScaleResponsesController < ApplicationController
 
     # Verificação adicional: se já existe resposta, redirecionar
     if @scale_request.scale_response.present?
-      redirect_to patients_dashboard_path,
-                  alert: I18n.t("scale_responses.errors.already_completed")
+      redirect_back_with_alert(I18n.t("scale_responses.errors.already_completed"))
       return
     end
 
     # Verificação adicional: se não está pendente, redirecionar
     unless @scale_request.pending?
-      redirect_to patients_dashboard_path,
-                  alert: I18n.t("scale_responses.errors.not_pending")
+      redirect_back_with_alert(I18n.t("scale_responses.errors.not_pending"))
       return
     end
 
     @scale_response = ScaleResponse.new
     @scale_response.scale_request = @scale_request
-    @scale_response.patient = current_user.account
+    @scale_response.patient = @scale_request.patient
     @scale_response.psychometric_scale = @scale_request.psychometric_scale
 
     @scale_items = @scale_request.psychometric_scale.scale_items.ordered
@@ -34,32 +32,26 @@ class ScaleResponsesController < ApplicationController
 
     # Verificação adicional: se já existe resposta, redirecionar
     if @scale_request.scale_response.present?
-      redirect_to patients_dashboard_path,
-                  alert: I18n.t("scale_responses.errors.already_completed")
+      redirect_back_with_alert(I18n.t("scale_responses.errors.already_completed"))
       return
     end
 
     # Verificação adicional: se não está pendente, redirecionar
     unless @scale_request.pending?
-      redirect_to patients_dashboard_path,
-                  alert: I18n.t("scale_responses.errors.not_pending")
+      redirect_back_with_alert(I18n.t("scale_responses.errors.not_pending"))
       return
     end
 
     @scale_response = ScaleResponse.new(scale_response_params)
     @scale_response.scale_request = @scale_request
-    @scale_response.patient = current_user.account
+    @scale_response.patient = @scale_request.patient
     @scale_response.psychometric_scale = @scale_request.psychometric_scale
 
     authorize @scale_response
 
     if @scale_response.save
       @scale_request.complete!
-      if current_user.account_type == "Patient"
-        redirect_to patients_dashboard_path, notice: I18n.t("scale_responses.create.success")
-      else
-        redirect_to @scale_response, notice: I18n.t("scale_responses.create.success")
-      end
+      redirect_after_success
     else
       @scale_items = @scale_request.psychometric_scale.scale_items.ordered
       flash.now[:alert] = I18n.t("errors.messages.not_saved", count: @scale_response.errors.count, resource: @scale_response.class.model_name.human.downcase)
@@ -100,6 +92,22 @@ class ScaleResponsesController < ApplicationController
     else
       # Se não há parâmetros, retornar hash vazio
       ActionController::Parameters.new(answers: {}).permit!
+    end
+  end
+
+  def redirect_back_with_alert(message)
+    if current_user.account_type == "Patient"
+      redirect_to patients_dashboard_path, alert: message
+    else
+      redirect_to scale_requests_path, alert: message
+    end
+  end
+
+  def redirect_after_success
+    if current_user.account_type == "Patient"
+      redirect_to patients_dashboard_path, notice: I18n.t("scale_responses.create.success")
+    else
+      redirect_to @scale_response, notice: I18n.t("scale_responses.create.success")
     end
   end
 end

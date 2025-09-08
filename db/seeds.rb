@@ -90,12 +90,6 @@ end
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# Create admin user
-admin_user = User.find_or_create_by!(email: "admin@admin.com") do |user|
-  user.password = "admin123"
-  user.password_confirmation = "admin123"
-  user.force_password_reset = false
-end
 
 # Create admin professional
 admin_professional = Professional.find_or_create_by!(email: "admin@admin.com") do |professional|

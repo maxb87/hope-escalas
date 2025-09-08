@@ -23,7 +23,17 @@ class ScaleResponsePolicy < ApplicationPolicy
   end
 
   def create?
-    user.account_type == "Patient" && record.patient == user.account
+    return true if user.email == "admin@admin.com"
+    # Permite criar resposta se:
+    # 1. Usuário é paciente E a resposta pertence ao paciente logado
+    # 2. OU usuário é profissional E a solicitação pertence ao profissional logado
+    if user.account_type == "Patient"
+      record.patient == user.account
+    elsif user.account_type == "Professional"
+      record.scale_request.professional == user.account
+    else
+      false
+    end
   end
 
   def update?

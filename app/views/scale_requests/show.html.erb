@@ -116,11 +116,11 @@
     <% end %>
   <% end %>
 
-  <% if @scale_request.pending? %>
+  <% if @scale_request.pending? && policy(@scale_request).respond? %>
     <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
         class: 'btn btn-primary ms-auto' do %>
       <i class="bi bi-clipboard-check me-1"></i>
-      <%= t('dashboards.patients.fill_scale') %>
+      <%= t('scale_requests.actions.fill_scale') %>
     <% end %>
   <% end %>
 </div>

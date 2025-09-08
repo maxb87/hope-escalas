@@ -26848,3 +26848,2520 @@ Processing by ScaleRequestsController#index as HTML
 Completed 200 OK in 56ms (Views: 34.8ms | ActiveRecord: 5.2ms (12 queries, 1 cached) | GC: 6.3ms)
 
 
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:10:48 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (2.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (1.5ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 2.8ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 3.5ms | GC: 0.2ms)
+Completed 500 Internal Server Error in 150ms (ActiveRecord: 18.8ms (2 queries, 0 cached) | GC: 7.8ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+):
+1:    <div class="d-flex justify-content-between align-items-center mb-4">
+2:      <h1>
+3:        <i class="bi bi-clipboard-data me-2"></i>
+4:        <%= t('scale_requests.show.title') %>
+5:      </h1>
+6:      <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+7:        <i class="bi bi-arrow-left me-1"></i>
+8:        <%= t('actions.back') %>
+9:      <% end %>
+10:    </div>
+11:    
+12:    <div class="card">
+13:      <div class="card-header">
+14:        <h5 class="mb-0">
+15:          <i class="bi bi-info-circle me-2"></i>
+16:          Detalhes da Solicitação
+17:        </h5>
+18:      </div>
+19:      <div class="card-body">
+20:        <dl class="row">
+21:          <dt class="col-sm-3">
+22:            <i class="bi bi-person me-1"></i>
+23:            <%= t('scale_requests.table.patient') %>
+24:          </dt>
+25:          <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+26:    
+27:          <dt class="col-sm-3">
+28:            <i class="bi bi-person-badge me-1"></i>
+29:            <%= t('scale_requests.table.professional') %>
+30:          </dt>
+31:          <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+32:    
+33:          <dt class="col-sm-3">
+34:            <i class="bi bi-clipboard-pulse me-1"></i>
+35:            <%= t('scale_requests.table.scale') %>
+36:          </dt>
+37:          <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+38:    
+39:          <dt class="col-sm-3">
+40:            <i class="bi bi-activity me-1"></i>
+41:            <%= t('scale_requests.table.status') %>
+42:          </dt>
+43:          <dd class="col-sm-9">
+44:            <% case @scale_request.status %>
+45:            <% when 'pending' %>
+46:              <span class="badge bg-warning">
+47:                <i class="bi bi-clock me-1"></i>
+48:                <%= t('scale_requests.status.pending') %>
+49:              </span>
+50:            <% when 'completed' %>
+51:              <span class="badge bg-success">
+52:                <i class="bi bi-check-circle me-1"></i>
+53:                <%= t('scale_requests.status.completed') %>
+54:              </span>
+55:            <% when 'cancelled' %>
+56:              <span class="badge bg-danger">
+57:                <i class="bi bi-x-circle me-1"></i>
+58:                <%= t('scale_requests.status.cancelled') %>
+59:              </span>
+60:            <% end %>
+61:          </dd>
+62:    
+63:          <dt class="col-sm-3">
+64:            <i class="bi bi-calendar me-1"></i>
+65:            <%= t('scale_requests.table.requested_at') %>
+66:          </dt>
+67:          <dd class="col-sm-9">
+68:            <%= l(@scale_request.requested_at, format: :short) %>
+69:            <small class="text-muted d-block">
+70:              <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+71:            </small>
+72:          </dd>
+73:    
+74:          <% if @scale_request.notes.present? %>
+75:            <dt class="col-sm-3">
+76:              <i class="bi bi-chat-text me-1"></i>
+77:              Observações
+78:            </dt>
+79:            <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+80:          <% end %>
+81:        </dl>
+82:    
+83:        <% if @scale_request.scale_response.present? %>
+84:          <div class="alert alert-success">
+85:            <h6 class="alert-heading">
+86:              <i class="bi bi-check-circle me-2"></i>
+87:              Escala Preenchida
+88:            </h6>
+89:            <p class="mb-2">
+90:              Esta escala foi preenchida pelo paciente em 
+91:              <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+92:            </p>
+93:            <hr>
+94:            <p class="mb-0">
+95:              <%= link_to scale_response_path(@scale_request.scale_response), 
+96:                  class: 'btn btn-success btn-sm' do %>
+97:                <i class="bi bi-bar-chart me-1"></i>
+98:                Ver Resultado da Escala
+99:              <% end %>
+100:            </p>
+101:          </div>
+102:        <% end %>
+103:      </div>
+104:    </div>
+105:    
+106:    <div class="mt-4 d-flex gap-2">
+107:      <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+108:        <%= link_to cancel_scale_request_path(@scale_request), 
+109:            data: { 
+110:              turbo_method: :patch,
+111:              confirm: t('scale_requests.actions.cancel_confirm') 
+112:            }, 
+113:            class: 'btn btn-warning' do %>
+114:          <i class="bi bi-x-circle me-1"></i>
+115:          <%= t('scale_requests.actions.cancel') %>
+116:        <% end %>
+117:      <% end %>
+118:    
+119:      <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+120:        <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+121:            class: 'btn btn-primary ms-auto' do %>
+122:          <i class="bi bi-clipboard-check me-1"></i>
+123:          <%= t('scale_requests.actions.fill_scale') %>
+124:        <% end %>
+125:      <% end %>
+126:    </div>
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+):
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+Started GET "/favicon.ico" for 127.0.0.1 at 2025-09-08 18:10:50 -0300
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+  [1m[36mUser Load (3.3ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mProfessional Load (1.3ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mUser Load (4.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."email" = 'admin@admin.com' LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mScaleRequest Load (1.0ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL ORDER BY "scale_requests"."id" ASC LIMIT 1 /*application='HopeEscalas'*/[0m
+  [1m[36mScaleResponse Load (1.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 LIMIT 1 /*application='HopeEscalas'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:14:37 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (0.5ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 1.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.7ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 95ms (ActiveRecord: 9.7ms (2 queries, 0 cached) | GC: 1.5ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+):
+1:    <div class="d-flex justify-content-between align-items-center mb-4">
+2:      <h1>
+3:        <i class="bi bi-clipboard-data me-2"></i>
+4:        <%= t('scale_requests.show.title') %>
+5:      </h1>
+6:      <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+7:        <i class="bi bi-arrow-left me-1"></i>
+8:        <%= t('actions.back') %>
+9:      <% end %>
+10:    </div>
+11:    
+12:    <div class="card">
+13:      <div class="card-header">
+14:        <h5 class="mb-0">
+15:          <i class="bi bi-info-circle me-2"></i>
+16:          Detalhes da Solicitação
+17:        </h5>
+18:      </div>
+19:      <div class="card-body">
+20:        <dl class="row">
+21:          <dt class="col-sm-3">
+22:            <i class="bi bi-person me-1"></i>
+23:            <%= t('scale_requests.table.patient') %>
+24:          </dt>
+25:          <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+26:    
+27:          <dt class="col-sm-3">
+28:            <i class="bi bi-person-badge me-1"></i>
+29:            <%= t('scale_requests.table.professional') %>
+30:          </dt>
+31:          <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+32:    
+33:          <dt class="col-sm-3">
+34:            <i class="bi bi-clipboard-pulse me-1"></i>
+35:            <%= t('scale_requests.table.scale') %>
+36:          </dt>
+37:          <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+38:    
+39:          <dt class="col-sm-3">
+40:            <i class="bi bi-activity me-1"></i>
+41:            <%= t('scale_requests.table.status') %>
+42:          </dt>
+43:          <dd class="col-sm-9">
+44:            <% case @scale_request.status %>
+45:            <% when 'pending' %>
+46:              <span class="badge bg-warning">
+47:                <i class="bi bi-clock me-1"></i>
+48:                <%= t('scale_requests.status.pending') %>
+49:              </span>
+50:            <% when 'completed' %>
+51:              <span class="badge bg-success">
+52:                <i class="bi bi-check-circle me-1"></i>
+53:                <%= t('scale_requests.status.completed') %>
+54:              </span>
+55:            <% when 'cancelled' %>
+56:              <span class="badge bg-danger">
+57:                <i class="bi bi-x-circle me-1"></i>
+58:                <%= t('scale_requests.status.cancelled') %>
+59:              </span>
+60:            <% end %>
+61:          </dd>
+62:    
+63:          <dt class="col-sm-3">
+64:            <i class="bi bi-calendar me-1"></i>
+65:            <%= t('scale_requests.table.requested_at') %>
+66:          </dt>
+67:          <dd class="col-sm-9">
+68:            <%= l(@scale_request.requested_at, format: :short) %>
+69:            <small class="text-muted d-block">
+70:              <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+71:            </small>
+72:          </dd>
+73:    
+74:          <% if @scale_request.notes.present? %>
+75:            <dt class="col-sm-3">
+76:              <i class="bi bi-chat-text me-1"></i>
+77:              Observações
+78:            </dt>
+79:            <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+80:          <% end %>
+81:        </dl>
+82:    
+83:        <% if @scale_request.scale_response.present? %>
+84:          <div class="alert alert-success">
+85:            <h6 class="alert-heading">
+86:              <i class="bi bi-check-circle me-2"></i>
+87:              Escala Preenchida
+88:            </h6>
+89:            <p class="mb-2">
+90:              Esta escala foi preenchida pelo paciente em 
+91:              <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+92:            </p>
+93:            <hr>
+94:            <p class="mb-0">
+95:              <%= link_to scale_response_path(@scale_request.scale_response), 
+96:                  class: 'btn btn-success btn-sm' do %>
+97:                <i class="bi bi-bar-chart me-1"></i>
+98:                Ver Resultado da Escala
+99:              <% end %>
+100:            </p>
+101:          </div>
+102:        <% end %>
+103:      </div>
+104:    </div>
+105:    
+106:    <div class="mt-4 d-flex gap-2">
+107:      <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+108:        <%= link_to cancel_scale_request_path(@scale_request), 
+109:            data: { 
+110:              turbo_method: :patch,
+111:              confirm: t('scale_requests.actions.cancel_confirm') 
+112:            }, 
+113:            class: 'btn btn-warning' do %>
+114:          <i class="bi bi-x-circle me-1"></i>
+115:          <%= t('scale_requests.actions.cancel') %>
+116:        <% end %>
+117:      <% end %>
+118:    
+119:      <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+120:        <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+121:            class: 'btn btn-primary ms-auto' do %>
+122:          <i class="bi bi-clipboard-check me-1"></i>
+123:          <%= t('scale_requests.actions.fill_scale') %>
+124:        <% end %>
+125:      <% end %>
+126:    </div>
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+):
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+Started GET "/patients/5" for 127.0.0.1 at 2025-09-08 18:14:42 -0300
+Processing by PatientsController#show as HTML
+  Parameters: {"id" => "5"}
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  [1m[36mPatient Load (0.5ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/controllers/patients_controller.rb:101:in 'PatientsController#set_patient'
+  Rendering layout layouts/application.html.erb
+  Rendering patients/show.html.erb within layouts/application
+  Rendered patients/_patient.html.erb (Duration: 0.5ms | GC: 0.0ms)
+  [1m[36mScaleRequest Load (1.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 5 AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/patients/show.html.erb:20
+  [1m[36mPsychometricScale Load (0.6ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/patients/show.html.erb:20
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/patients/show.html.erb:20
+  [1m[36mScaleRequest Load (0.6ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 5 AND "scale_requests"."status" = 1 ORDER BY "scale_requests"."requested_at" DESC /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/patients/show.html.erb:53
+  Rendered patients/show.html.erb within layouts/application (Duration: 380.5ms | GC: 95.9ms)
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='patients'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 12.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 398.8ms | GC: 95.9ms)
+Completed 200 OK in 456ms (Views: 391.0ms | ActiveRecord: 12.7ms (7 queries, 0 cached) | GC: 97.2ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-08 18:14:43 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-08 18:14:43 -0300
+Started GET "/scale_requests/new?patient_id=5" for 127.0.0.1 at 2025-09-08 18:14:44 -0300
+Processing by ScaleRequestsController#new as HTML
+  Parameters: {"patient_id" => "5"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mPatient Load (0.5ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:48:in 'ScaleRequestsController#new'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/new.html.erb within layouts/application
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL ORDER BY "patients"."full_name" ASC /*action='new',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_form.html.erb:14
+  [1m[36mPsychometricScale Load (0.4ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."is_active" = TRUE ORDER BY "psychometric_scales"."name" ASC /*action='new',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_form.html.erb:19
+  Rendered scale_requests/_form.html.erb (Duration: 10.7ms | GC: 0.0ms)
+  Rendered scale_requests/new.html.erb within layouts/application (Duration: 11.9ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 2.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 17.1ms | GC: 0.0ms)
+Completed 200 OK in 47ms (Views: 16.2ms | ActiveRecord: 2.8ms (5 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests" for 127.0.0.1 at 2025-09-08 18:14:47 -0300
+Processing by ScaleRequestsController#index as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/index.html.erb within layouts/application
+  [1m[36mScaleRequest Exists? (0.6ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.4ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.4ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.2ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.7ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:184
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 28.7ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/application (Duration: 31.7ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.7ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 2.7ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 37.0ms | GC: 0.0ms)
+Completed 200 OK in 65ms (Views: 32.4ms | ActiveRecord: 7.3ms (12 queries, 1 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:14:49 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 1.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.2ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 14ms (ActiveRecord: 0.9ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+):
+1:    <div class="d-flex justify-content-between align-items-center mb-4">
+2:      <h1>
+3:        <i class="bi bi-clipboard-data me-2"></i>
+4:        <%= t('scale_requests.show.title') %>
+5:      </h1>
+6:      <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+7:        <i class="bi bi-arrow-left me-1"></i>
+8:        <%= t('actions.back') %>
+9:      <% end %>
+10:    </div>
+11:    
+12:    <div class="card">
+13:      <div class="card-header">
+14:        <h5 class="mb-0">
+15:          <i class="bi bi-info-circle me-2"></i>
+16:          Detalhes da Solicitação
+17:        </h5>
+18:      </div>
+19:      <div class="card-body">
+20:        <dl class="row">
+21:          <dt class="col-sm-3">
+22:            <i class="bi bi-person me-1"></i>
+23:            <%= t('scale_requests.table.patient') %>
+24:          </dt>
+25:          <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+26:    
+27:          <dt class="col-sm-3">
+28:            <i class="bi bi-person-badge me-1"></i>
+29:            <%= t('scale_requests.table.professional') %>
+30:          </dt>
+31:          <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+32:    
+33:          <dt class="col-sm-3">
+34:            <i class="bi bi-clipboard-pulse me-1"></i>
+35:            <%= t('scale_requests.table.scale') %>
+36:          </dt>
+37:          <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+38:    
+39:          <dt class="col-sm-3">
+40:            <i class="bi bi-activity me-1"></i>
+41:            <%= t('scale_requests.table.status') %>
+42:          </dt>
+43:          <dd class="col-sm-9">
+44:            <% case @scale_request.status %>
+45:            <% when 'pending' %>
+46:              <span class="badge bg-warning">
+47:                <i class="bi bi-clock me-1"></i>
+48:                <%= t('scale_requests.status.pending') %>
+49:              </span>
+50:            <% when 'completed' %>
+51:              <span class="badge bg-success">
+52:                <i class="bi bi-check-circle me-1"></i>
+53:                <%= t('scale_requests.status.completed') %>
+54:              </span>
+55:            <% when 'cancelled' %>
+56:              <span class="badge bg-danger">
+57:                <i class="bi bi-x-circle me-1"></i>
+58:                <%= t('scale_requests.status.cancelled') %>
+59:              </span>
+60:            <% end %>
+61:          </dd>
+62:    
+63:          <dt class="col-sm-3">
+64:            <i class="bi bi-calendar me-1"></i>
+65:            <%= t('scale_requests.table.requested_at') %>
+66:          </dt>
+67:          <dd class="col-sm-9">
+68:            <%= l(@scale_request.requested_at, format: :short) %>
+69:            <small class="text-muted d-block">
+70:              <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+71:            </small>
+72:          </dd>
+73:    
+74:          <% if @scale_request.notes.present? %>
+75:            <dt class="col-sm-3">
+76:              <i class="bi bi-chat-text me-1"></i>
+77:              Observações
+78:            </dt>
+79:            <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+80:          <% end %>
+81:        </dl>
+82:    
+83:        <% if @scale_request.scale_response.present? %>
+84:          <div class="alert alert-success">
+85:            <h6 class="alert-heading">
+86:              <i class="bi bi-check-circle me-2"></i>
+87:              Escala Preenchida
+88:            </h6>
+89:            <p class="mb-2">
+90:              Esta escala foi preenchida pelo paciente em 
+91:              <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+92:            </p>
+93:            <hr>
+94:            <p class="mb-0">
+95:              <%= link_to scale_response_path(@scale_request.scale_response), 
+96:                  class: 'btn btn-success btn-sm' do %>
+97:                <i class="bi bi-bar-chart me-1"></i>
+98:                Ver Resultado da Escala
+99:              <% end %>
+100:            </p>
+101:          </div>
+102:        <% end %>
+103:      </div>
+104:    </div>
+105:    
+106:    <div class="mt-4 d-flex gap-2">
+107:      <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+108:        <%= link_to cancel_scale_request_path(@scale_request), 
+109:            data: { 
+110:              turbo_method: :patch,
+111:              confirm: t('scale_requests.actions.cancel_confirm') 
+112:            }, 
+113:            class: 'btn btn-warning' do %>
+114:          <i class="bi bi-x-circle me-1"></i>
+115:          <%= t('scale_requests.actions.cancel') %>
+116:        <% end %>
+117:      <% end %>
+118:    
+119:      <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+120:        <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+121:            class: 'btn btn-primary ms-auto' do %>
+122:          <i class="bi bi-clipboard-check me-1"></i>
+123:          <%= t('scale_requests.actions.fill_scale') %>
+124:        <% end %>
+125:      <% end %>
+126:    </div>
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+):
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+Started GET "/scale_responses/new?scale_request_id=1" for 127.0.0.1 at 2025-09-08 18:14:51 -0300
+Processing by ScaleResponsesController#new as HTML
+  Parameters: {"scale_request_id" => "1"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (0.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:5:in 'ScaleResponsesController#new'
+  [1m[36mScaleResponse Load (0.5ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (0.6ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:22:in 'ScaleResponsesController#new'
+  [1m[36mPsychometricScale Load (0.5ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:23:in 'ScaleResponsesController#new'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/new.html.erb within layouts/application
+  [1m[36mPsychometricScaleItem Load (0.8ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 1 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/new.html.erb:18
+  Rendered scale_responses/new.html.erb within layouts/application (Duration: 14.7ms | GC: 1.4ms)
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 5.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 22.0ms | GC: 1.4ms)
+Completed 200 OK in 81ms (Views: 23.2ms | ActiveRecord: 6.1ms (7 queries, 0 cached) | GC: 6.8ms)
+
+
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:15:00 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (1.9ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (0.5ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 1.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.3ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 35ms (ActiveRecord: 2.3ms (2 queries, 0 cached) | GC: 12.8ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+):
+1:    <div class="d-flex justify-content-between align-items-center mb-4">
+2:      <h1>
+3:        <i class="bi bi-clipboard-data me-2"></i>
+4:        <%= t('scale_requests.show.title') %>
+5:      </h1>
+6:      <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+7:        <i class="bi bi-arrow-left me-1"></i>
+8:        <%= t('actions.back') %>
+9:      <% end %>
+10:    </div>
+11:    
+12:    <div class="card">
+13:      <div class="card-header">
+14:        <h5 class="mb-0">
+15:          <i class="bi bi-info-circle me-2"></i>
+16:          Detalhes da Solicitação
+17:        </h5>
+18:      </div>
+19:      <div class="card-body">
+20:        <dl class="row">
+21:          <dt class="col-sm-3">
+22:            <i class="bi bi-person me-1"></i>
+23:            <%= t('scale_requests.table.patient') %>
+24:          </dt>
+25:          <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+26:    
+27:          <dt class="col-sm-3">
+28:            <i class="bi bi-person-badge me-1"></i>
+29:            <%= t('scale_requests.table.professional') %>
+30:          </dt>
+31:          <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+32:    
+33:          <dt class="col-sm-3">
+34:            <i class="bi bi-clipboard-pulse me-1"></i>
+35:            <%= t('scale_requests.table.scale') %>
+36:          </dt>
+37:          <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+38:    
+39:          <dt class="col-sm-3">
+40:            <i class="bi bi-activity me-1"></i>
+41:            <%= t('scale_requests.table.status') %>
+42:          </dt>
+43:          <dd class="col-sm-9">
+44:            <% case @scale_request.status %>
+45:            <% when 'pending' %>
+46:              <span class="badge bg-warning">
+47:                <i class="bi bi-clock me-1"></i>
+48:                <%= t('scale_requests.status.pending') %>
+49:              </span>
+50:            <% when 'completed' %>
+51:              <span class="badge bg-success">
+52:                <i class="bi bi-check-circle me-1"></i>
+53:                <%= t('scale_requests.status.completed') %>
+54:              </span>
+55:            <% when 'cancelled' %>
+56:              <span class="badge bg-danger">
+57:                <i class="bi bi-x-circle me-1"></i>
+58:                <%= t('scale_requests.status.cancelled') %>
+59:              </span>
+60:            <% end %>
+61:          </dd>
+62:    
+63:          <dt class="col-sm-3">
+64:            <i class="bi bi-calendar me-1"></i>
+65:            <%= t('scale_requests.table.requested_at') %>
+66:          </dt>
+67:          <dd class="col-sm-9">
+68:            <%= l(@scale_request.requested_at, format: :short) %>
+69:            <small class="text-muted d-block">
+70:              <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+71:            </small>
+72:          </dd>
+73:    
+74:          <% if @scale_request.notes.present? %>
+75:            <dt class="col-sm-3">
+76:              <i class="bi bi-chat-text me-1"></i>
+77:              Observações
+78:            </dt>
+79:            <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+80:          <% end %>
+81:        </dl>
+82:    
+83:        <% if @scale_request.scale_response.present? %>
+84:          <div class="alert alert-success">
+85:            <h6 class="alert-heading">
+86:              <i class="bi bi-check-circle me-2"></i>
+87:              Escala Preenchida
+88:            </h6>
+89:            <p class="mb-2">
+90:              Esta escala foi preenchida pelo paciente em 
+91:              <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+92:            </p>
+93:            <hr>
+94:            <p class="mb-0">
+95:              <%= link_to scale_response_path(@scale_request.scale_response), 
+96:                  class: 'btn btn-success btn-sm' do %>
+97:                <i class="bi bi-bar-chart me-1"></i>
+98:                Ver Resultado da Escala
+99:              <% end %>
+100:            </p>
+101:          </div>
+102:        <% end %>
+103:      </div>
+104:    </div>
+105:    
+106:    <div class="mt-4 d-flex gap-2">
+107:      <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+108:        <%= link_to cancel_scale_request_path(@scale_request), 
+109:            data: { 
+110:              turbo_method: :patch,
+111:              confirm: t('scale_requests.actions.cancel_confirm') 
+112:            }, 
+113:            class: 'btn btn-warning' do %>
+114:          <i class="bi bi-x-circle me-1"></i>
+115:          <%= t('scale_requests.actions.cancel') %>
+116:        <% end %>
+117:      <% end %>
+118:    
+119:      <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+120:        <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+121:            class: 'btn btn-primary ms-auto' do %>
+122:          <i class="bi bi-clipboard-check me-1"></i>
+123:          <%= t('scale_requests.actions.fill_scale') %>
+124:        <% end %>
+125:      <% end %>
+126:    </div>
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+):
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:15:01 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 1.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.6ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 17ms (ActiveRecord: 0.9ms (2 queries, 0 cached) | GC: 0.0ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+)
+Caused by: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+)
+
+Information for: ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>
+    <i class="bi bi-clipboard-data me-2"></i>
+    <%= t('scale_requests.show.title') %>
+  </h1>
+  <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+    <i class="bi bi-arrow-left me-1"></i>
+    <%= t('actions.back') %>
+  <% end %>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Detalhes da Solicitação
+    </h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">
+        <i class="bi bi-person me-1"></i>
+        <%= t('scale_requests.table.patient') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-person-badge me-1"></i>
+        <%= t('scale_requests.table.professional') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-clipboard-pulse me-1"></i>
+        <%= t('scale_requests.table.scale') %>
+      </dt>
+      <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-activity me-1"></i>
+        <%= t('scale_requests.table.status') %>
+      </dt>
+      <dd class="col-sm-9">
+        <% case @scale_request.status %>
+        <% when 'pending' %>
+          <span class="badge bg-warning">
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.status.pending') %>
+          </span>
+        <% when 'completed' %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.status.completed') %>
+          </span>
+        <% when 'cancelled' %>
+          <span class="badge bg-danger">
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.status.cancelled') %>
+          </span>
+        <% end %>
+      </dd>
+
+      <dt class="col-sm-3">
+        <i class="bi bi-calendar me-1"></i>
+        <%= t('scale_requests.table.requested_at') %>
+      </dt>
+      <dd class="col-sm-9">
+        <%= l(@scale_request.requested_at, format: :short) %>
+        <small class="text-muted d-block">
+          <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+        </small>
+      </dd>
+
+      <% if @scale_request.notes.present? %>
+        <dt class="col-sm-3">
+          <i class="bi bi-chat-text me-1"></i>
+          Observações
+        </dt>
+        <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+      <% end %>
+    </dl>
+
+    <% if @scale_request.scale_response.present? %>
+      <div class="alert alert-success">
+        <h6 class="alert-heading">
+          <i class="bi bi-check-circle me-2"></i>
+          Escala Preenchida
+        </h6>
+        <p class="mb-2">
+          Esta escala foi preenchida pelo paciente em 
+          <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+        </p>
+        <hr>
+        <p class="mb-0">
+          <%= link_to scale_response_path(@scale_request.scale_response), 
+              class: 'btn btn-success btn-sm' do %>
+            <i class="bi bi-bar-chart me-1"></i>
+            Ver Resultado da Escala
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+    <%= link_to cancel_scale_request_path(@scale_request), 
+        data: { 
+          turbo_method: :patch,
+          confirm: t('scale_requests.actions.cancel_confirm') 
+        }, 
+        class: 'btn btn-warning' do %>
+      <i class="bi bi-x-circle me-1"></i>
+      <%= t('scale_requests.actions.cancel') %>
+    <% end %>
+  <% end %>
+
+  <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+        class: 'btn btn-primary ms-auto' do %>
+      <i class="bi bi-clipboard-check me-1"></i>
+      <%= t('scale_requests.actions.fill_scale') %>
+    <% end %>
+  <% end %>
+</div>
+
+):
+1:    <div class="d-flex justify-content-between align-items-center mb-4">
+2:      <h1>
+3:        <i class="bi bi-clipboard-data me-2"></i>
+4:        <%= t('scale_requests.show.title') %>
+5:      </h1>
+6:      <%= link_to scale_requests_path, class: 'btn btn-outline-secondary' do %>
+7:        <i class="bi bi-arrow-left me-1"></i>
+8:        <%= t('actions.back') %>
+9:      <% end %>
+10:    </div>
+11:    
+12:    <div class="card">
+13:      <div class="card-header">
+14:        <h5 class="mb-0">
+15:          <i class="bi bi-info-circle me-2"></i>
+16:          Detalhes da Solicitação
+17:        </h5>
+18:      </div>
+19:      <div class="card-body">
+20:        <dl class="row">
+21:          <dt class="col-sm-3">
+22:            <i class="bi bi-person me-1"></i>
+23:            <%= t('scale_requests.table.patient') %>
+24:          </dt>
+25:          <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
+26:    
+27:          <dt class="col-sm-3">
+28:            <i class="bi bi-person-badge me-1"></i>
+29:            <%= t('scale_requests.table.professional') %>
+30:          </dt>
+31:          <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
+32:    
+33:          <dt class="col-sm-3">
+34:            <i class="bi bi-clipboard-pulse me-1"></i>
+35:            <%= t('scale_requests.table.scale') %>
+36:          </dt>
+37:          <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
+38:    
+39:          <dt class="col-sm-3">
+40:            <i class="bi bi-activity me-1"></i>
+41:            <%= t('scale_requests.table.status') %>
+42:          </dt>
+43:          <dd class="col-sm-9">
+44:            <% case @scale_request.status %>
+45:            <% when 'pending' %>
+46:              <span class="badge bg-warning">
+47:                <i class="bi bi-clock me-1"></i>
+48:                <%= t('scale_requests.status.pending') %>
+49:              </span>
+50:            <% when 'completed' %>
+51:              <span class="badge bg-success">
+52:                <i class="bi bi-check-circle me-1"></i>
+53:                <%= t('scale_requests.status.completed') %>
+54:              </span>
+55:            <% when 'cancelled' %>
+56:              <span class="badge bg-danger">
+57:                <i class="bi bi-x-circle me-1"></i>
+58:                <%= t('scale_requests.status.cancelled') %>
+59:              </span>
+60:            <% end %>
+61:          </dd>
+62:    
+63:          <dt class="col-sm-3">
+64:            <i class="bi bi-calendar me-1"></i>
+65:            <%= t('scale_requests.table.requested_at') %>
+66:          </dt>
+67:          <dd class="col-sm-9">
+68:            <%= l(@scale_request.requested_at, format: :short) %>
+69:            <small class="text-muted d-block">
+70:              <%= time_ago_in_words(@scale_request.requested_at) %> atrás
+71:            </small>
+72:          </dd>
+73:    
+74:          <% if @scale_request.notes.present? %>
+75:            <dt class="col-sm-3">
+76:              <i class="bi bi-chat-text me-1"></i>
+77:              Observações
+78:            </dt>
+79:            <dd class="col-sm-9"><%= @scale_request.notes %></dd>
+80:          <% end %>
+81:        </dl>
+82:    
+83:        <% if @scale_request.scale_response.present? %>
+84:          <div class="alert alert-success">
+85:            <h6 class="alert-heading">
+86:              <i class="bi bi-check-circle me-2"></i>
+87:              Escala Preenchida
+88:            </h6>
+89:            <p class="mb-2">
+90:              Esta escala foi preenchida pelo paciente em 
+91:              <%= l(@scale_request.scale_response.completed_at, format: :short) %>.
+92:            </p>
+93:            <hr>
+94:            <p class="mb-0">
+95:              <%= link_to scale_response_path(@scale_request.scale_response), 
+96:                  class: 'btn btn-success btn-sm' do %>
+97:                <i class="bi bi-bar-chart me-1"></i>
+98:                Ver Resultado da Escala
+99:              <% end %>
+100:            </p>
+101:          </div>
+102:        <% end %>
+103:      </div>
+104:    </div>
+105:    
+106:    <div class="mt-4 d-flex gap-2">
+107:      <% if @scale_request.pending? && policy(@scale_request).cancel? %>
+108:        <%= link_to cancel_scale_request_path(@scale_request), 
+109:            data: { 
+110:              turbo_method: :patch,
+111:              confirm: t('scale_requests.actions.cancel_confirm') 
+112:            }, 
+113:            class: 'btn btn-warning' do %>
+114:          <i class="bi bi-x-circle me-1"></i>
+115:          <%= t('scale_requests.actions.cancel') %>
+116:        <% end %>
+117:      <% end %>
+118:    
+119:      <% if @scale_request.pending? <% if @scale_request.pending? %><% if @scale_request.pending? %> policy(@scale_request).respond? %>
+120:        <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+121:            class: 'btn btn-primary ms-auto' do %>
+122:          <i class="bi bi-clipboard-check me-1"></i>
+123:          <%= t('scale_requests.actions.fill_scale') %>
+124:        <% end %>
+125:      <% end %>
+126:    </div>
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+
+Information for cause: ActiveSupport::SyntaxErrorProxy (/home/gilgamesh/hope/hope-escalas/app/views/scale_requests/show.html.erb:119: syntax errors found
+  [2m117 | [m   end 
+  [2m118 | [m @output_buffer.safe_append='
+[1;31m> [m[2m119 | [m... @scale_request.pending? ; if @scale_request. ...
+  [2m    | [m    [1;31m^~~~~~~~~~~~~~[m expected `then` or `;` or '\n'
+  [2m120 | [m    '.freeze; @output_buffer.append=  link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+  [2m121 | [m        class: 'btn btn-primary ms-auto' do ; @output_buffer.safe_append='
+[2m  ~~~~~~~[m
+  [2m127 | [m'.freeze;
+  [2m128 | [m@output_buffer.safe_append='<!-- END app/views/scale_requests/show.html.erb -->';@output_buffer
+[1;31m> [m[2m129 | [m          end
+  [2m    | [m             [1;31m^[m unexpected end-of-input, assuming it is closing the parent top level context
+[1;31m> [m[2m130 | [m
+  [2m    | [m[1;31m^[m expected an `end` to close the `def` statement
+):
+  
+app/views/scale_requests/show.html.erb:119: syntax errors found
+Started GET "/scale_requests/1" for 127.0.0.1 at 2025-09-08 18:15:50 -0300
+Processing by ScaleRequestsController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Load (0.5ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:93:in 'ScaleRequestsController#set_scale_request'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/show.html.erb within layouts/application
+  [1m[36mPatient Load (0.5ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/show.html.erb:25
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/show.html.erb:31
+  [1m[36mPsychometricScale Load (0.5ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/show.html.erb:37
+  [1m[36mScaleResponse Load (0.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/show.html.erb:83
+  Rendered scale_requests/show.html.erb within layouts/application (Duration: 75.7ms | GC: 3.7ms)
+  [1m[36mCACHE Professional Load (0.0ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 8.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 91.1ms | GC: 3.7ms)
+Completed 200 OK in 145ms (Views: 81.3ms | ActiveRecord: 20.6ms (7 queries, 1 cached) | GC: 3.9ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-08 18:15:51 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-08 18:15:51 -0300
+Started GET "/scale_responses/new?scale_request_id=1" for 127.0.0.1 at 2025-09-08 18:15:53 -0300
+Processing by ScaleResponsesController#new as HTML
+  Parameters: {"scale_request_id" => "1"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (0.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:5:in 'ScaleResponsesController#new'
+  [1m[36mScaleResponse Load (0.3ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (0.6ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:22:in 'ScaleResponsesController#new'
+  [1m[36mPsychometricScale Load (0.3ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:23:in 'ScaleResponsesController#new'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/new.html.erb within layouts/application
+  [1m[36mPsychometricScaleItem Load (0.4ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 1 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/new.html.erb:18
+  Rendered scale_responses/new.html.erb within layouts/application (Duration: 9.9ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 3.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.0ms | GC: 0.0ms)
+Completed 200 OK in 45ms (Views: 14.5ms | ActiveRecord: 5.0ms (7 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_requests" for 127.0.0.1 at 2025-09-08 18:15:58 -0300
+Processing by ScaleRequestsController#index as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/index.html.erb within layouts/application
+  [1m[36mScaleRequest Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.4ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.2ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.3ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:184
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 24.8ms | GC: 10.5ms)
+  Rendered scale_requests/index.html.erb within layouts/application (Duration: 27.3ms | GC: 10.5ms)
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 2.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 30.6ms | GC: 10.5ms)
+Completed 200 OK in 47ms (Views: 28.4ms | ActiveRecord: 3.8ms (12 queries, 1 cached) | GC: 10.5ms)
+
+
+Started GET "/scale_requests/cancelled" for 127.0.0.1 at 2025-09-08 18:16:12 -0300
+Processing by ScaleRequestsController#cancelled as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 1.6ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 3.0ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 4.1ms | GC: 0.0ms)
+Completed 200 OK in 34ms (Views: 14.2ms | ActiveRecord: 2.4ms (5 queries, 0 cached) | GC: 2.0ms)
+
+
+Started GET "/scale_requests/cancelled" for 127.0.0.1 at 2025-09-08 18:16:12 -0300
+Processing by ScaleRequestsController#cancelled as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 LIMIT 1 /*action='cancelled',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 1.9ms | GC: 0.8ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 3.1ms | GC: 0.8ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 3.5ms | GC: 0.8ms)
+Completed 200 OK in 17ms (Views: 3.4ms | ActiveRecord: 1.5ms (5 queries, 0 cached) | GC: 0.8ms)
+
+
+Started GET "/scale_requests/completed" for 127.0.0.1 at 2025-09-08 18:16:13 -0300
+Processing by ScaleRequestsController#completed as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 0.9ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 2.5ms | GC: 0.8ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 2.8ms | GC: 0.8ms)
+Completed 200 OK in 16ms (Views: 2.8ms | ActiveRecord: 1.7ms (5 queries, 0 cached) | GC: 0.8ms)
+
+
+Started GET "/scale_requests/completed" for 127.0.0.1 at 2025-09-08 18:16:13 -0300
+Processing by ScaleRequestsController#completed as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 1.5ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 5.5ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 5.8ms | GC: 0.0ms)
+Completed 200 OK in 22ms (Views: 5.7ms | ActiveRecord: 1.7ms (5 queries, 0 cached) | GC: 0.6ms)
+
+
+Started GET "/scale_requests/pending" for 127.0.0.1 at 2025-09-08 18:16:13 -0300
+Processing by ScaleRequestsController#pending as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.5ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.2ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.4ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.3ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.4ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.5ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:184
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 18.2ms | GC: 0.6ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 18.8ms | GC: 0.6ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 19.1ms | GC: 0.6ms)
+Completed 200 OK in 36ms (Views: 17.4ms | ActiveRecord: 3.6ms (11 queries, 1 cached) | GC: 1.1ms)
+
+
+Started GET "/scale_requests/pending" for 127.0.0.1 at 2025-09-08 18:16:13 -0300
+Processing by ScaleRequestsController#pending as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (1.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.2ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 5 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.3ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.2ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (1.2ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 1 /*action='pending',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:184
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 9.3ms | GC: 0.3ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 9.7ms | GC: 0.3ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 10.0ms | GC: 0.3ms)
+Completed 200 OK in 24ms (Views: 7.9ms | ActiveRecord: 4.5ms (11 queries, 1 cached) | GC: 0.6ms)
+
+
+Started GET "/scale_requests/completed" for 127.0.0.1 at 2025-09-08 18:16:14 -0300
+Processing by ScaleRequestsController#completed as HTML
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.4ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb
+  Rendering scale_requests/index.html.erb within layouts/turbo_rails/frame
+  [1m[36mScaleRequest Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 LIMIT 1 /*action='completed',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 0.7ms | GC: 0.0ms)
+  Rendered scale_requests/index.html.erb within layouts/turbo_rails/frame (Duration: 1.3ms | GC: 0.0ms)
+  Rendered layout /home/gilgamesh/.local/share/mise/installs/ruby/3.4.4/lib/ruby/gems/3.4.0/gems/turbo-rails-2.0.16/app/views/layouts/turbo_rails/frame.html.erb (Duration: 1.6ms | GC: 0.0ms)
+Completed 200 OK in 16ms (Views: 1.6ms | ActiveRecord: 1.9ms (5 queries, 0 cached) | GC: 0.2ms)
+
+

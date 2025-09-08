@@ -341,6 +341,7 @@ pt-BR:
       confirm_cancel: "Tem certeza que deseja cancelar esta solicitação?"
       view_response: "Ver resultado"
       cancel_confirm: "Tem certeza que deseja cancelar esta solicitação?"
+      fill_scale: "Preencher Escala"
     create:
       success: "Solicitação criada com sucesso."
     destroy:
