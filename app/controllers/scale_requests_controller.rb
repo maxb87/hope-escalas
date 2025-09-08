@@ -3,6 +3,7 @@ class ScaleRequestsController < ApplicationController
 
   def index
     @scale_requests = policy_scope(ScaleRequest)
+                        .pending
                         .includes(:patient, :professional, :psychometric_scale, :scale_response)
                         .recent
     load_counters
@@ -54,6 +55,7 @@ class ScaleRequestsController < ApplicationController
 
   def create
     @scale_request = ScaleRequest.new(scale_request_params)
+    
     @scale_request.professional = current_user.account
     # status default já é :pending pelo enum; linha abaixo é redundante, mas inofensiva
     @scale_request.status ||= :pending
@@ -72,7 +74,7 @@ class ScaleRequestsController < ApplicationController
   def destroy
     authorize @scale_request
     @scale_request.destroy
-    redirect_to scale_requests_path, notice: I18n.t("scale_requests.destroy.success")
+    redirect_to pending_scale_requests_path, notice: I18n.t("scale_requests.destroy.success")
   end
 
   def cancel
@@ -97,7 +99,6 @@ class ScaleRequestsController < ApplicationController
 
   def load_counters
     base_scope = policy_scope(ScaleRequest)
-    @all_count = base_scope.count
     @pending_count = base_scope.pending.count
     @completed_count = base_scope.completed.count
     @cancelled_count = base_scope.cancelled.count
