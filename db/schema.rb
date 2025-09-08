@@ -133,17 +133,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.datetime "deleted_at"
-    t.boolean "force_password_reset", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "account_type"
     t.bigint "account_id"
+    t.boolean "force_password_reset", default: true, null: false
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
     t.index ["account_type", "account_id"], name: "index_users_on_account"
-    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
