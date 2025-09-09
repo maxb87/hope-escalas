@@ -1,6 +1,6 @@
 <h2><%= @scale_response.psychometric_scale.name %></h2>
 
-<p>Responda a todos os itens abaixo. Selecione uma opção de 0 a 3 para cada pergunta.</p>
+<p>Responda a todos os itens abaixo. Selecione uma opção de 1 a 4 para cada pergunta.</p>
 
 <%= form_with model: @scale_response, url: scale_responses_path, method: :post, data: { turbo: false } do |f| %>
   <% if @scale_response.errors.any? %>
@@ -14,6 +14,32 @@
     </div>
   <% end %>
   <%= hidden_field_tag :scale_request_id, @scale_request.id %>
+  
+  <!-- Campos específicos para heterorrelato -->
+  <% if @scale_response.hetero_report? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Informações do Relator</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= f.label :relator_name, "Nome do Relator", class: "form-label" %>
+              <%= f.text_field :relator_name, class: "form-control", placeholder: "Digite o nome completo do relator" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <%= f.label :relator_relationship, "Relação com o Paciente", class: "form-label" %>
+              <%= f.text_field :relator_relationship, class: "form-control", placeholder: "Ex: Pai, Mãe, Cônjuge, Amigo, etc." %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="list-group">
     <% @scale_items.each do |item| %>
       <div class="list-group-item mb-3">

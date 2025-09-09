@@ -231,7 +231,7 @@ end
   - `Professional` (profissionais médicos): acessam autenticados, gerenciam pacientes e solicitam preenchimento de escalas psicométricas.
   - `Patient` (pacientes): acessam via login direto e veem apenas as escalas solicitadas por um médico.
   - `User` (Devise): conta autenticável associada a um `Professional` ou `Patient`. Conta provisionada por administrador.
-  - `PsychometricScale` (escalas): catálogo de escalas disponíveis (ex: BDI - Inventário de Depressão de Beck).
+  - `PsychometricScale` (escalas): catálogo de escalas disponíveis (ex: SRS-2 - Social Responsiveness Scale).
   - `ScaleRequest` (solicitações): pedidos de preenchimento de escalas por profissionais para pacientes.
   - `ScaleResponse` (respostas): preenchimentos das escalas pelos pacientes com cálculo automático de pontuação.
 
@@ -245,7 +245,7 @@ end
   1. Login → Dashboard com lista de pacientes
   2. Seleciona paciente → Perfil do paciente
   3. Clica "Solicitar preenchimento" → Lista de escalas disponíveis
-  4. Seleciona escala (ex: BDI) → Cria solicitação
+  4. Seleciona escala (ex: SRS-2) → Cria solicitação
   5. Visualiza solicitações pendentes/completadas do paciente
 
 - Fluxo do paciente:
@@ -256,9 +256,9 @@ end
   4. Preenche todos os itens → Sistema calcula pontuação automaticamente
   5. Volta ao perfil → Tabela com escalas preenchidas (nome + data conclusão)
 
-- Primeira escala implementada: **BDI (Inventário de Depressão de Beck)**
-  - 21 itens com 4 opções cada (0-3 pontos)
-  - Cálculo automático: 0-11 (Mínima), 12-19 (Leve), 20-27 (Moderada), 28-63 (Grave)
+- Primeira escala implementada: **SRS-2 (Social Responsiveness Scale)**
+  - Escala de avaliação para transtornos do espectro autista
+  - Cálculo automático de pontuações e interpretação dos resultados
 
 ## Testes e qualidade
 
@@ -340,7 +340,7 @@ Subdomínio de escalas psicométricas (alto nível):
 ## Roadmap
 
 - MVP com cadastro de pacientes, solicitação de escalas psicométricas e preenchimento
-- Implementação do BDI (Inventário de Depressão de Beck) como primeira escala
+- Implementação do SRS-2 (Social Responsiveness Scale) como primeira escala
 - Painel do profissional: solicitações, status e visualização de resultados
 - Painel do paciente: solicitações pendentes e histórico de escalas preenchidas
 - Sistema de notificações para alertas e lembretes

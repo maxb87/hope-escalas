@@ -6,7 +6,7 @@
 
   - Migrações com `deleted_at` + índices (`users`, `patients`, `professionals`)
   - Models com `acts_as_paranoid`, endpoints de restore e specs
-  - (UX opcional do botão “Restaurar” ainda pendente)
+  - (UX opcional do botão "Restaurar" ainda pendente)
 
 - Autorização (Pundit)
 
@@ -21,13 +21,13 @@
   - `:lockable` habilitado (3 tentativas, 5min) e UX de mensagens (I18n pt‑BR, incl. `registrations.updated`)
   - Redirecionamento pós‑login por perfil (admin/profissional → lista de pacientes; paciente → próprio perfil)
 
-- Escalas (BDI – MVP)
+- Escalas (SRS-2 – MVP)
 
   - Modelos: `PsychometricScale`, `PsychometricScaleItem`, `ScaleRequest`, `ScaleResponse`
-  - Seeds: BDI com 21 itens (0–3)
+  - Seeds: SRS-2 com itens específicos da escala
   - Formulário `ScaleResponses#new` com exibição de erros (422)
   - `results:jsonb` em `ScaleResponse` (+ `results_schema_version`, `computed_at`, índices GIN)
-  - Serviço `Scoring::BDI` e integração no model (preenche `results` e campos legados)
+  - Serviço `Scoring::SRS2` e integração no model (preenche `results` e campos legados)
   - `show` exibe métricas/subescalas para profissional/admin; paciente não vê resultados
 
 - Solicitações de escalas
@@ -126,7 +126,7 @@
     - [ ] Auditar `strong_params` em todos os controllers.
   - [ ] **Models**: Centralizar regras de negócio.
     - [ ] Criar scopes (`.pending`, `.completed`) para consultas comuns.
-    - [ ] Garantir que `Scoring::BDI` seja idempotente e totalmente testado.
+    - [ ] Garantir que `Scoring::SRS2` seja idempotente e totalmente testado.
     - [ ] Cálculo de `results` e `computed_at` deve ser atômico no `ScaleResponse`.
   - [ ] **Segurança**:
     - [ ] Auditar `before_action :authenticate_user!`, `policy_scope` e `authorize` em todos os controllers.
@@ -165,7 +165,7 @@
 ### ✅ Core Funcional (100% Completo)
 
 - **Domínio**: Modelos, migrações, associações e soft delete
-- **BDI**: 21 itens, cálculo automático, interpretação visual
+- **SRS-2**: Implementação completa, cálculo automático, interpretação visual
 - **Autenticação**: Devise com lockable e primeiro login
 - **Autorização**: Pundit com policies robustas
 - **Solicitações**: CRUD completo com filtros e cancelamento
@@ -189,4 +189,4 @@
 1. **Testes**: Cobertura completa das funcionalidades
 2. **Fluxo Refazer**: Cancelar anterior + nova solicitação
 3. **Notificações**: Sistema para profissionais
-4. **Segunda Escala**: BAI (Ansiedade)
+4. **Escalas Adicionais**: Expansão do catálogo de escalas psicométricas

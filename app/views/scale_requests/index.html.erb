@@ -13,7 +13,7 @@
   <%= link_to new_scale_request_path, 
       class: 'btn btn-warning d-flex align-items-center gap-2',
       data: { turbo_frame: "_top" } do %>
-    <i class="bi bi-plus-circle"></i>
+    <i></i>
     <span><%= t('scale_requests.new.button') %></span>
   <% end %>
 </div>
@@ -29,7 +29,7 @@
               turbo_method: :get,
               turbo_frame: 'scale_requests_content' 
             } do %>
-          <i class="bi bi-clock me-1"></i>
+          <span>🟡</span>
           <%= t('scale_requests.filters.pending') %>
           <span class="badge bg-warning ms-1"><%= @pending_count %></span>
         <% end %>
@@ -41,7 +41,7 @@
               turbo_method: :get,
               turbo_frame: 'scale_requests_content' 
             } do %>
-          <i class="bi bi-check-circle me-1"></i>
+          <span>✅</span>
           <%= t('scale_requests.filters.completed') %>
           <span class="badge bg-success ms-1"><%= @completed_count %></span>
         <% end %>
@@ -53,7 +53,7 @@
               turbo_method: :get,
               turbo_frame: 'scale_requests_content' 
             } do %>
-          <i class="bi bi-x-circle me-1"></i>
+          <span>❌</span>
           <%= t('scale_requests.filters.cancelled') %>
           <span class="badge bg-danger ms-1"><%= @cancelled_count %></span>
         <% end %>

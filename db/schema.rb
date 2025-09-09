@@ -117,6 +117,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
     t.jsonb "results", default: {}, null: false
     t.integer "results_schema_version", default: 1, null: false
     t.datetime "computed_at"
+    t.string "relator_name"
+    t.string "relator_relationship"
     t.index ["answers"], name: "index_scale_responses_on_answers", using: :gin
     t.index ["completed_at"], name: "index_scale_responses_on_completed_at"
     t.index ["deleted_at"], name: "index_scale_responses_on_deleted_at"

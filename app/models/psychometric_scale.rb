@@ -6,7 +6,7 @@ class PsychometricScale < ApplicationRecord
   has_many :scale_responses, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
-  validates :code, presence: true, uniqueness: true, format: { with: /\A[A-Z]+\z/, message: "deve conter apenas letras maiúsculas" }
+  validates :code, presence: true, uniqueness: true
   validates :is_active, inclusion: { in: [ true, false ] }
 
   scope :active, -> { where(is_active: true) }

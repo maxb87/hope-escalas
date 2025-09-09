@@ -1,6 +1,11 @@
 class ScaleResponsesController < ApplicationController
   before_action :set_scale_response, only: [ :show ]
+  def index
+    @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
+    authorize @scale_responses
 
+
+  end
   def new
     @scale_request = ScaleRequest.find(params[:scale_request_id])
     authorize @scale_request, :respond?
@@ -70,10 +75,14 @@ class ScaleResponsesController < ApplicationController
   end
 
   def scale_response_params
-    # Permitir respostas para todos os itens (item_1, item_2, etc.)
+    # Permitir respostas para todos os itens (item_1, item_2, etc.) e campos do heterorrelato
     # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
     if params[:scale_response].present?
-      permitted_params = params.require(:scale_response).permit(answers: {})
+      permitted_params = params.require(:scale_response).permit(
+        answers: {},
+        relator_name,
+        relator_relationship
+      )
 
       # Converter answers para o formato esperado se necessário
       if permitted_params[:answers].present?
@@ -111,3 +120,8 @@ class ScaleResponsesController < ApplicationController
     end
   end
 end
+
+  def index
+    @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
+    authorize @scale_responses
+  end

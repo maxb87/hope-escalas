@@ -1,0 +1,36 @@
+<h2>Respostas de Escalas</h2>
+
+<% if @scale_responses.any? %>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Escala</th>
+          <th>Data de Conclusão</th>
+          <th>Pontuação Total</th>
+          <th>Interpretação</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @scale_responses.each do |response| %>
+          <tr>
+            <td><%= response.patient.full_name %></td>
+            <td><%= response.psychometric_scale.name %></td>
+            <td><%= response.completed_at.strftime("%d/%m/%Y %H:%M") %></td>
+            <td><%= response.total_score %></td>
+            <td><%= response.interpretation %></td>
+            <td>
+              <%= link_to "Ver", response, class: "btn btn-sm btn-outline-primary" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <p>Nenhuma resposta de escala encontrada.</p>
+  </div>
+<% end %>

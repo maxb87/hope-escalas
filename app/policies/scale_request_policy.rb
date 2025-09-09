@@ -62,9 +62,9 @@ class ScaleRequestPolicy < ApplicationPolicy
     # 3. A solicitação está pendente (não foi completada, cancelada ou expirada)
     # 4. Ainda não existe uma resposta para esta solicitação
     return false unless record.pending? && record.scale_response.nil?
-    
+
     return true if user.email == "admin@admin.com"
-    
+
     if user.account_type == "Patient"
       record.patient == user.account
     elsif user.account_type == "Professional"

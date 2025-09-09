@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ScaleRequest, type: :model do
   let(:patient) { FactoryBot.create(:patient) }
   let(:professional) { FactoryBot.create(:professional) }
-  let(:bdi_scale) { FactoryBot.create(:psychometric_scale, name: "Inventário de Depressão de Beck", code: "BDI") }
+  let(:srs2_scale) { FactoryBot.create(:psychometric_scale, name: "Escala de Responsividade Social - Segunda Edição", code: "SRS-2") }
 
   describe 'validations' do
     context 'unique active request per patient and scale' do
@@ -11,7 +11,7 @@ RSpec.describe ScaleRequest, type: :model do
         scale_request = FactoryBot.build(:scale_request,
                              patient: patient,
                              professional: professional,
-                             psychometric_scale: bdi_scale)
+                             psychometric_scale: srs2_scale)
 
         expect(scale_request).to be_valid
       end
@@ -21,19 +21,19 @@ RSpec.describe ScaleRequest, type: :model do
         FactoryBot.create(:scale_request,
                patient: patient,
                professional: professional,
-               psychometric_scale: bdi_scale,
+               psychometric_scale: srs2_scale,
                status: :pending)
 
         # Tentar criar segunda solicitação pendente para mesma escala e paciente
         duplicate_request = FactoryBot.build(:scale_request,
                                  patient: patient,
                                  professional: professional,
-                                 psychometric_scale: bdi_scale,
+                                 psychometric_scale: srs2_scale,
                                  status: :pending)
 
         expect(duplicate_request).not_to be_valid
         expect(duplicate_request.errors[:base]).to include(
-          "Já existe uma solicitação pendente da escala 'Inventário de Depressão de Beck' para #{patient.full_name}. Cancele a solicitação anterior ou aguarde sua conclusão antes de criar uma nova."
+          "Já existe uma solicitação pendente da escala 'Escala de Responsividade Social - Segunda Edição' para #{patient.full_name}. Cancele a solicitação anterior ou aguarde sua conclusão antes de criar uma nova."
         )
       end
 
@@ -42,14 +42,14 @@ RSpec.describe ScaleRequest, type: :model do
         FactoryBot.create(:scale_request,
                patient: patient,
                professional: professional,
-               psychometric_scale: bdi_scale,
+               psychometric_scale: srs2_scale,
                status: :completed)
 
         # Criar segunda solicitação deve ser permitido
         new_request = FactoryBot.build(:scale_request,
                            patient: patient,
                            professional: professional,
-                           psychometric_scale: bdi_scale,
+                           psychometric_scale: srs2_scale,
                            status: :pending)
 
         expect(new_request).to be_valid
@@ -60,37 +60,37 @@ RSpec.describe ScaleRequest, type: :model do
         FactoryBot.create(:scale_request,
                patient: patient,
                professional: professional,
-               psychometric_scale: bdi_scale,
+               psychometric_scale: srs2_scale,
                status: :cancelled)
 
         # Criar segunda solicitação deve ser permitido
         new_request = FactoryBot.build(:scale_request,
                            patient: patient,
                            professional: professional,
-                           psychometric_scale: bdi_scale,
+                           psychometric_scale: srs2_scale,
                            status: :pending)
 
         expect(new_request).to be_valid
       end
 
       it 'allows creating request for different scale for same patient' do
-        bai_scale = FactoryBot.create(:psychometric_scale, name: "Inventário de Ansiedade de Beck", code: "BAI")
+        srs2_hr_scale = FactoryBot.create(:psychometric_scale, name: "SRS-2 - Formulário de Heterorrelato", code: "SRS-2-HR")
 
-        # Criar solicitação para BDI
+        # Criar solicitação para SRS-2
         FactoryBot.create(:scale_request,
                patient: patient,
                professional: professional,
-               psychometric_scale: bdi_scale,
+               psychometric_scale: srs2_scale,
                status: :pending)
 
-        # Criar solicitação para BAI deve ser permitido
-        bai_request = FactoryBot.build(:scale_request,
+        # Criar solicitação para SRS-2-HR deve ser permitido
+        srs2_hr_request = FactoryBot.build(:scale_request,
                            patient: patient,
                            professional: professional,
-                           psychometric_scale: bai_scale,
+                           psychometric_scale: srs2_hr_scale,
                            status: :pending)
 
-        expect(bai_request).to be_valid
+        expect(srs2_hr_request).to be_valid
       end
 
       it 'allows creating request for same scale for different patient' do
@@ -100,14 +100,14 @@ RSpec.describe ScaleRequest, type: :model do
         FactoryBot.create(:scale_request,
                patient: patient,
                professional: professional,
-               psychometric_scale: bdi_scale,
+               psychometric_scale: srs2_scale,
                status: :pending)
 
         # Criar solicitação para segundo paciente deve ser permitido
         other_request = FactoryBot.build(:scale_request,
                              patient: other_patient,
                              professional: professional,
-                             psychometric_scale: bdi_scale,
+                             psychometric_scale: srs2_scale,
                              status: :pending)
 
         expect(other_request).to be_valid

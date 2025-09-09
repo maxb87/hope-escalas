@@ -10,6 +10,7 @@ class ScaleResponse < ApplicationRecord
   validates :interpretation, presence: true, if: -> { answers.present? }
   validates :completed_at, presence: true, if: -> { answers.present? }
   validate :validate_answers
+  validate :validate_hetero_report_fields
 
   before_validation :calculate_score, if: :answers_changed?
   before_validation :set_completed_at, if: -> { answers.present? && !completed_at? }
@@ -17,13 +18,13 @@ class ScaleResponse < ApplicationRecord
   scope :recent, -> { order(completed_at: :desc) }
   scope :by_scale, ->(scale) { where(psychometric_scale: scale) }
 
-  def bdi_score
-    return nil unless psychometric_scale.code == "BDI"
+  def srs2_score
+    return nil unless srs2_scale?
     total_score
   end
 
-  def bdi_interpretation
-    return nil unless psychometric_scale.code == "BDI"
+  def srs2_interpretation
+    return nil unless srs2_scale?
     interpretation
   end
 
@@ -49,28 +50,33 @@ class ScaleResponse < ApplicationRecord
     results.dig("interpretation", "level") || "Não disponível"
   end
 
+  # Check if this is a hetero-report scale
+  def hetero_report?
+    psychometric_scale.code == "SRS2HR"
+  end
+
+  # Check if this is any SRS-2 scale
+  def srs2_scale?
+    ["SRS2SR", "SRS2HR"].include?(psychometric_scale.code)
+  end
+
   private
 
   def calculate_score
     return unless answers.present? && psychometric_scale.present?
 
     case psychometric_scale.code
-    when "BDI"
-      results_hash = Scoring::BDI.calculate(answers, scale_version: psychometric_scale.version)
+    when "SRS2SR", "SRS2HR"
+      results_hash = Scoring::Srs2.calculate(answers, scale_version: psychometric_scale.version)
       apply_results!(results_hash)
     else
       calculate_generic_score
     end
   end
 
-  def calculate_bdi_score
+  def calculate_srs2_score
     self.total_score = answers.values.sum(&:to_i)
-    self.interpretation = interpret_bdi_score(total_score)
-  end
-
-  def calculate_bai_score
-    self.total_score = answers.values.sum(&:to_i)
-    self.interpretation = interpret_bai_score(total_score)
+    self.interpretation = interpret_srs2_score(total_score)
   end
 
   def calculate_generic_score
@@ -90,22 +96,12 @@ class ScaleResponse < ApplicationRecord
     self.computed_at = Time.current
   end
 
-  def interpret_bdi_score(score)
+  def interpret_srs2_score(score)
     case score
-    when 0..11 then "Mínima"
-    when 12..19 then "Leve"
-    when 20..27 then "Moderada"
-    when 28..63 then "Grave"
-    else "Pontuação inválida"
-    end
-  end
-
-  def interpret_bai_score(score)
-    case score
-    when 0..7 then "Mínima"
-    when 8..15 then "Leve"
-    when 16..25 then "Moderada"
-    when 26..63 then "Grave"
+    when 65..90 then "Normal"
+    when 91..120 then "Leve"
+    when 121..150 then "Moderado"
+    when 151..260 then "Severo"
     else "Pontuação inválida"
     end
   end
@@ -150,10 +146,18 @@ class ScaleResponse < ApplicationRecord
         errors.add(:answers, I18n.t("scale_responses.errors.invalid_key", key: item_key))
         break
       end
-      unless value.to_s.match?(/\A[0-3]\z/)
+      # SRS-2 uses 1-4 scale instead of 0-3
+      unless value.to_s.match?(/\A[1-4]\z/)
         errors.add(:answers, I18n.t("scale_responses.errors.invalid_value", key: item_key, value: value))
         break
       end
+    end
+  end
+
+  def validate_hetero_report_fields
+    if hetero_report?
+      errors.add(:relator_name, "é obrigatório para formulários de heterorrelato") if relator_name.blank?
+      errors.add(:relator_relationship, "é obrigatório para formulários de heterorrelato") if relator_relationship.blank?
     end
   end
 end
