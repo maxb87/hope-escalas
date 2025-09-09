@@ -29365,3 +29365,4 @@ Processing by ScaleRequestsController#completed as HTML
 Completed 200 OK in 16ms (Views: 1.6ms | ActiveRecord: 1.9ms (5 queries, 0 cached) | GC: 0.2ms)
 
 
+  [1m[36mActiveRecord::SchemaMigration Load (1.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='HopeEscalas'*/[0m
