@@ -79,9 +79,9 @@ class ScaleResponsesController < ApplicationController
     # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
     if params[:scale_response].present?
       permitted_params = params.require(:scale_response).permit(
-        answers: {},
-        relator_name,
-        relator_relationship
+        :relator_name,
+        :relator_relationship,
+        answers: {}
       )
 
       # Converter answers para o formato esperado se necessário

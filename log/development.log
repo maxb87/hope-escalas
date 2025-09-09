@@ -33499,3 +33499,239 @@ SyntaxError (/home/gilgamesh/hope/hope-escalas/app/controllers/scale_responses_c
 ):
   
 app/controllers/scale_responses_controller.rb:83: syntax errors found
+Started GET "/scale_responses" for 127.0.0.1 at 2025-09-09 13:24:52 -0300
+Processing by ScaleResponsesController#index as */*
+Completed 401 Unauthorized in 12ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_responses/new?scale_request_id=4" for 127.0.0.1 at 2025-09-09 13:25:00 -0300
+Processing by ScaleResponsesController#new as */*
+  Parameters: {"scale_request_id" => "4"}
+Completed 401 Unauthorized in 9ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/scale_responses/new?scale_request_id=4" for 127.0.0.1 at 2025-09-09 13:25:35 -0300
+Processing by ScaleResponsesController#new as HTML
+  Parameters: {"scale_request_id" => "4"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 4 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:10:in 'ScaleResponsesController#new'
+  [1m[36mScaleResponse Load (0.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 4 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (1.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:27:in 'ScaleResponsesController#new'
+  [1m[36mPsychometricScale Load (0.3ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 4 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:28:in 'ScaleResponsesController#new'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/new.html.erb within layouts/application
+  [1m[36mPsychometricScaleItem Load (1.1ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 4 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/new.html.erb:44
+  Rendered scale_responses/new.html.erb within layouts/application (Duration: 63.2ms | GC: 24.7ms)
+  [1m[36mProfessional Load (3.0ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 47.7ms | GC: 1.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 114.2ms | GC: 25.7ms)
+Completed 200 OK in 303ms (Views: 112.9ms | ActiveRecord: 25.5ms (7 queries, 0 cached) | GC: 70.8ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-09 13:25:35 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-09 13:25:35 -0300
+Started POST "/scale_responses" for 127.0.0.1 at 2025-09-09 13:26:32 -0300
+Processing by ScaleResponsesController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "scale_request_id" => "4", "scale_response" => {"relator_name" => "Parente Pai", "relator_relationship" => "Pai", "answers" => {"item_1" => "1", "item_2" => "2", "item_3" => "1", "item_4" => "2", "item_5" => "1", "item_6" => "2", "item_7" => "1", "item_8" => "2", "item_9" => "1", "item_10" => "2", "item_11" => "1", "item_12" => "2", "item_13" => "1", "item_14" => "2", "item_15" => "1", "item_16" => "2", "item_17" => "1", "item_18" => "2", "item_19" => "1", "item_20" => "2", "item_21" => "1", "item_22" => "2", "item_23" => "1", "item_24" => "2", "item_25" => "1", "item_26" => "2", "item_27" => "1", "item_28" => "2", "item_29" => "1", "item_30" => "2", "item_31" => "1", "item_32" => "2", "item_33" => "1", "item_34" => "2", "item_35" => "1", "item_36" => "2", "item_37" => "1", "item_38" => "2", "item_39" => "1", "item_40" => "2", "item_41" => "1", "item_42" => "2", "item_43" => "1", "item_44" => "2", "item_45" => "1", "item_46" => "2", "item_47" => "1", "item_48" => "2", "item_49" => "1", "item_50" => "2", "item_51" => "1", "item_52" => "2", "item_53" => "1", "item_54" => "2", "item_55" => "1", "item_56" => "2", "item_57" => "1", "item_58" => "2", "item_59" => "1", "item_60" => "2", "item_61" => "1", "item_62" => "2", "item_63" => "1", "item_64" => "2", "item_65" => "1"}}, "commit" => "Enviar respostas"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (1.1ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 4 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:35:in 'ScaleResponsesController#create'
+  [1m[36mScaleResponse Load (0.7ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 4 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (0.7ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:52:in 'ScaleResponsesController#create'
+  [1m[36mPsychometricScale Load (0.7ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 4 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:53:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_response.rb:135:in 'ScaleResponse#validate_answers'
+  [1m[36mPsychometricScaleItem Pluck (3.0ms)[0m  [1m[34mSELECT "psychometric_scale_items"."item_number" FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 4 AND "psychometric_scale_items"."is_required" = TRUE /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_response.rb:135:in 'ScaleResponse#validate_answers'
+  [1m[36mScaleResponse Create (5.3ms)[0m  [1m[32mINSERT INTO "scale_responses" ("scale_request_id", "patient_id", "psychometric_scale_id", "answers", "total_score", "interpretation", "completed_at", "deleted_at", "created_at", "updated_at", "results", "results_schema_version", "computed_at", "relator_name", "relator_relationship") VALUES (4, 8, 4, '{"item_1":"1","item_2":"2","item_3":"1","item_4":"2","item_5":"1","item_6":"2","item_7":"1","item_8":"2","item_9":"1","item_10":"2","item_11":"1","item_12":"2","item_13":"1","item_14":"2","item_15":"1","item_16":"2","item_17":"1","item_18":"2","item_19":"1","item_20":"2","item_21":"1","item_22":"2","item_23":"1","item_24":"2","item_25":"1","item_26":"2","item_27":"1","item_28":"2","item_29":"1","item_30":"2","item_31":"1","item_32":"2","item_33":"1","item_34":"2","item_35":"1","item_36":"2","item_37":"1","item_38":"2","item_39":"1","item_40":"2","item_41":"1","item_42":"2","item_43":"1","item_44":"2","item_45":"1","item_46":"2","item_47":"1","item_48":"2","item_49":"1","item_50":"2","item_51":"1","item_52":"2","item_53":"1","item_54":"2","item_55":"1","item_56":"2","item_57":"1","item_58":"2","item_59":"1","item_60":"2","item_61":"1","item_62":"2","item_63":"1","item_64":"2","item_65":"1"}', 97, 'Leve', '2025-09-09 16:26:32.954681', NULL, '2025-09-09 16:26:32.977087', '2025-09-09 16:26:32.977087', '{"schema_version":1,"scale_code":"SRS-2","scale_version":"2.0","computed_at":"2025-09-09T13:26:32-03:00","metrics":{"total":97,"social_awareness":19,"social_cognition":20,"social_communication":19,"social_motivation":20,"restricted_interests":19},"subscales":{"social_awareness":{"score":19,"description":"Consciência Social","items":"1-13"},"social_cognition":{"score":20,"description":"Cognição Social","items":"14-26"},"social_communication":{"score":19,"description":"Comunicação Social","items":"27-39"},"social_motivation":{"score":20,"description":"Motivação Social","items":"40-52"},"restricted_interests":{"score":19,"description":"Interesses Restritos e Comportamentos Repetitivos","items":"53-65"}},"interpretation":{"level":"Leve","rules":"SRS-2 v2.0 cutoffs (65 itens, escala 1-4)","description":"Dificuldades leves em habilidades sociais. Pode apresentar algumas limitações sociais sutis.","total_range":"65-260","items_count":65}}', 1, '2025-09-09 16:26:32', 'Parente Pai', 'Pai') RETURNING "id" /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:57:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (1.3ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:57:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:88:in 'ScaleRequest#unique_active_request_per_patient_and_scale'
+  [1m[36mScaleRequest Exists? (1.8ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 8 AND "scale_requests"."psychometric_scale_id" = 4 AND "scale_requests"."status" = 0 AND "scale_requests"."id" != 4 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:88:in 'ScaleRequest#unique_active_request_per_patient_and_scale'
+  [1m[36mScaleRequest Update (1.6ms)[0m  [1m[33mUPDATE "scale_requests" SET "status" = 1, "updated_at" = '2025-09-09 16:26:33.039089' WHERE "scale_requests"."id" = 4 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:45:in 'ScaleRequest#complete!'
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:45:in 'ScaleRequest#complete!'
+Redirected to http://127.0.0.1:3000/scale_responses/1
+Completed 302 Found in 198ms (ActiveRecord: 18.7ms (9 queries, 0 cached) | GC: 9.6ms)
+
+
+Started GET "/scale_responses/1" for 127.0.0.1 at 2025-09-09 13:26:33 -0300
+Processing by ScaleResponsesController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleResponse Load (0.5ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:74:in 'ScaleResponsesController#set_scale_response'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/show.html.erb within layouts/application
+  [1m[36mPsychometricScale Load (0.6ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 4 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:7
+  [1m[36mPatient Load (0.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:11
+  [1m[36mPsychometricScaleItem Load (0.7ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 4 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:63
+  Rendered scale_responses/show.html.erb within layouts/application (Duration: 25.4ms | GC: 0.0ms)
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 5.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 32.1ms | GC: 0.0ms)
+Completed 200 OK in 49ms (Views: 29.9ms | ActiveRecord: 3.6ms (6 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-09 13:26:33 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-09 13:26:33 -0300
+Started GET "/dashboard/patients" for 127.0.0.1 at 2025-09-09 13:27:16 -0300
+Processing by DashboardsController#patients as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='patients',application='HopeEscalas',controller='dashboards'*/[0m
+Redirected to http://127.0.0.1:3000/scale_responses/1
+Completed 302 Found in 26ms (ActiveRecord: 0.5ms (1 query, 0 cached) | GC: 9.8ms)
+
+
+Started GET "/scale_responses/1" for 127.0.0.1 at 2025-09-09 13:27:16 -0300
+Processing by ScaleResponsesController#show as HTML
+  Parameters: {"id" => "1"}
+  [1m[36mUser Load (0.6ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleResponse Load (0.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."id" = 1 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:74:in 'ScaleResponsesController#set_scale_response'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/show.html.erb within layouts/application
+  [1m[36mPsychometricScale Load (0.5ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 4 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:7
+  [1m[36mPatient Load (0.6ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:11
+  [1m[36mPsychometricScaleItem Load (1.0ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 4 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:63
+  Rendered scale_responses/show.html.erb within layouts/application (Duration: 18.2ms | GC: 0.6ms)
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 2.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 22.0ms | GC: 0.6ms)
+Completed 200 OK in 37ms (Views: 20.1ms | ActiveRecord: 3.5ms (6 queries, 0 cached) | GC: 1.4ms)
+
+
+Started GET "/scale_requests" for 127.0.0.1 at 2025-09-09 13:27:21 -0300
+Processing by ScaleRequestsController#index as HTML
+  [1m[36mUser Load (0.7ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  [1m[36mScaleRequest Count (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:102:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:103:in 'ScaleRequestsController#load_counters'
+  [1m[36mScaleRequest Count (0.3ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/controllers/scale_requests_controller.rb:104:in 'ScaleRequestsController#load_counters'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_requests/index.html.erb within layouts/application
+  [1m[36mScaleRequest Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:1
+  [1m[36mScaleRequest Load (0.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0 ORDER BY "scale_requests"."requested_at" DESC /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPatient Load (0.5ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mProfessional Load (0.5ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mPsychometricScale Load (0.6ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mScaleResponse Load (0.5ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 3 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:37
+  [1m[36mCACHE ScaleRequest Count (0.0ms)[0m  [1m[34mSELECT COUNT(*) FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."status" = 0[0m
+  ↳ app/views/scale_requests/_scale_requests_table.html.erb:184
+  Rendered scale_requests/_scale_requests_table.html.erb (Duration: 22.7ms | GC: 0.4ms)
+  Rendered scale_requests/index.html.erb within layouts/application (Duration: 28.3ms | GC: 0.8ms)
+  [1m[36mProfessional Load (0.6ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='index',application='HopeEscalas',controller='scale_requests'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 3.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 32.9ms | GC: 0.8ms)
+Completed 200 OK in 57ms (Views: 30.1ms | ActiveRecord: 5.5ms (12 queries, 1 cached) | GC: 0.8ms)
+
+
+Started GET "/scale_responses/new?scale_request_id=3" for 127.0.0.1 at 2025-09-09 13:27:24 -0300
+Processing by ScaleResponsesController#new as HTML
+  Parameters: {"scale_request_id" => "3"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (0.3ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 3 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:10:in 'ScaleResponsesController#new'
+  [1m[36mScaleResponse Load (0.2ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 3 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (0.4ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:27:in 'ScaleResponsesController#new'
+  [1m[36mPsychometricScale Load (0.3ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 3 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:28:in 'ScaleResponsesController#new'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/new.html.erb within layouts/application
+  [1m[36mPsychometricScaleItem Load (2.6ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 3 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/new.html.erb:44
+  Rendered scale_responses/new.html.erb within layouts/application (Duration: 10.9ms | GC: 1.8ms)
+  [1m[36mProfessional Load (0.7ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='new',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 3.5ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.4ms | GC: 1.8ms)
+Completed 200 OK in 42ms (Views: 12.4ms | ActiveRecord: 5.0ms (7 queries, 0 cached) | GC: 1.8ms)
+
+
+Started POST "/scale_responses" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
+Processing by ScaleResponsesController#create as HTML
+  Parameters: {"authenticity_token" => "[FILTERED]", "scale_request_id" => "3", "scale_response" => {"answers" => {"item_1" => "4", "item_2" => "4", "item_3" => "4", "item_4" => "4", "item_5" => "4", "item_6" => "4", "item_7" => "4", "item_8" => "4", "item_9" => "4", "item_10" => "4", "item_11" => "4", "item_12" => "4", "item_13" => "4", "item_14" => "4", "item_15" => "4", "item_16" => "4", "item_17" => "4", "item_18" => "4", "item_19" => "4", "item_20" => "4", "item_21" => "4", "item_22" => "4", "item_23" => "4", "item_24" => "4", "item_25" => "4", "item_26" => "4", "item_27" => "3", "item_28" => "4", "item_29" => "4", "item_30" => "4", "item_31" => "4", "item_32" => "4", "item_33" => "4", "item_34" => "4", "item_35" => "4", "item_36" => "4", "item_37" => "4", "item_38" => "4", "item_39" => "4", "item_40" => "4", "item_41" => "4", "item_42" => "4", "item_43" => "4", "item_44" => "4", "item_45" => "4", "item_46" => "4", "item_47" => "4", "item_48" => "4", "item_49" => "4", "item_50" => "4", "item_51" => "4", "item_52" => "4", "item_53" => "4", "item_54" => "4", "item_55" => "4", "item_56" => "4", "item_57" => "4", "item_58" => "4", "item_59" => "4", "item_60" => "4", "item_61" => "4", "item_62" => "4", "item_63" => "4", "item_64" => "4", "item_65" => "4"}}, "commit" => "Enviar respostas"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleRequest Load (0.4ms)[0m  [1m[34mSELECT "scale_requests".* FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."id" = 3 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:35:in 'ScaleResponsesController#create'
+  [1m[36mScaleResponse Load (0.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."scale_request_id" = 3 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/policies/scale_request_policy.rb:64:in 'ScaleRequestPolicy#respond?'
+  [1m[36mPatient Load (0.8ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:52:in 'ScaleResponsesController#create'
+  [1m[36mPsychometricScale Load (0.3ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 3 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:53:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_response.rb:135:in 'ScaleResponse#validate_answers'
+  [1m[36mPsychometricScaleItem Pluck (1.0ms)[0m  [1m[34mSELECT "psychometric_scale_items"."item_number" FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 3 AND "psychometric_scale_items"."is_required" = TRUE /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_response.rb:135:in 'ScaleResponse#validate_answers'
+  [1m[36mScaleResponse Create (1.2ms)[0m  [1m[32mINSERT INTO "scale_responses" ("scale_request_id", "patient_id", "psychometric_scale_id", "answers", "total_score", "interpretation", "completed_at", "deleted_at", "created_at", "updated_at", "results", "results_schema_version", "computed_at", "relator_name", "relator_relationship") VALUES (3, 8, 3, '{"item_1":"4","item_2":"4","item_3":"4","item_4":"4","item_5":"4","item_6":"4","item_7":"4","item_8":"4","item_9":"4","item_10":"4","item_11":"4","item_12":"4","item_13":"4","item_14":"4","item_15":"4","item_16":"4","item_17":"4","item_18":"4","item_19":"4","item_20":"4","item_21":"4","item_22":"4","item_23":"4","item_24":"4","item_25":"4","item_26":"4","item_27":"3","item_28":"4","item_29":"4","item_30":"4","item_31":"4","item_32":"4","item_33":"4","item_34":"4","item_35":"4","item_36":"4","item_37":"4","item_38":"4","item_39":"4","item_40":"4","item_41":"4","item_42":"4","item_43":"4","item_44":"4","item_45":"4","item_46":"4","item_47":"4","item_48":"4","item_49":"4","item_50":"4","item_51":"4","item_52":"4","item_53":"4","item_54":"4","item_55":"4","item_56":"4","item_57":"4","item_58":"4","item_59":"4","item_60":"4","item_61":"4","item_62":"4","item_63":"4","item_64":"4","item_65":"4"}', 259, 'Severo', '2025-09-09 16:27:44.768322', NULL, '2025-09-09 16:27:44.773060', '2025-09-09 16:27:44.773060', '{"schema_version":1,"scale_code":"SRS-2","scale_version":"2.0","computed_at":"2025-09-09T13:27:44-03:00","metrics":{"total":259,"social_awareness":52,"social_cognition":52,"social_communication":51,"social_motivation":52,"restricted_interests":52},"subscales":{"social_awareness":{"score":52,"description":"Consciência Social","items":"1-13"},"social_cognition":{"score":52,"description":"Cognição Social","items":"14-26"},"social_communication":{"score":51,"description":"Comunicação Social","items":"27-39"},"social_motivation":{"score":52,"description":"Motivação Social","items":"40-52"},"restricted_interests":{"score":52,"description":"Interesses Restritos e Comportamentos Repetitivos","items":"53-65"}},"interpretation":{"level":"Severo","rules":"SRS-2 v2.0 cutoffs (65 itens, escala 1-4)","description":"Dificuldades severas em habilidades sociais. Limitações significativas que impactam substancialmente o funcionamento social.","total_range":"65-260","items_count":65}}', 1, '2025-09-09 16:27:44', NULL, NULL) RETURNING "id" /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:57:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (9.5ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:57:in 'ScaleResponsesController#create'
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:88:in 'ScaleRequest#unique_active_request_per_patient_and_scale'
+  [1m[36mScaleRequest Exists? (14.1ms)[0m  [1m[34mSELECT 1 AS one FROM "scale_requests" WHERE "scale_requests"."deleted_at" IS NULL AND "scale_requests"."patient_id" = 8 AND "scale_requests"."psychometric_scale_id" = 3 AND "scale_requests"."status" = 0 AND "scale_requests"."id" != 3 LIMIT 1 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:88:in 'ScaleRequest#unique_active_request_per_patient_and_scale'
+  [1m[36mScaleRequest Update (0.5ms)[0m  [1m[33mUPDATE "scale_requests" SET "status" = 1, "updated_at" = '2025-09-09 16:27:44.804902' WHERE "scale_requests"."id" = 3 /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:45:in 'ScaleRequest#complete!'
+  [1m[36mTRANSACTION (2.4ms)[0m  [1m[35mCOMMIT /*action='create',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/models/scale_request.rb:45:in 'ScaleRequest#complete!'
+Redirected to http://127.0.0.1:3000/scale_responses/2
+Completed 302 Found in 81ms (ActiveRecord: 31.6ms (9 queries, 0 cached) | GC: 10.8ms)
+
+
+Started GET "/scale_responses/2" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
+Processing by ScaleResponsesController#show as HTML
+  Parameters: {"id" => "2"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  [1m[36mScaleResponse Load (0.4ms)[0m  [1m[34mSELECT "scale_responses".* FROM "scale_responses" WHERE "scale_responses"."deleted_at" IS NULL AND "scale_responses"."id" = 2 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/controllers/scale_responses_controller.rb:74:in 'ScaleResponsesController#set_scale_response'
+  Rendering layout layouts/application.html.erb
+  Rendering scale_responses/show.html.erb within layouts/application
+  [1m[36mPsychometricScale Load (0.2ms)[0m  [1m[34mSELECT "psychometric_scales".* FROM "psychometric_scales" WHERE "psychometric_scales"."deleted_at" IS NULL AND "psychometric_scales"."id" = 3 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:7
+  [1m[36mPatient Load (0.3ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."deleted_at" IS NULL AND "patients"."id" = 8 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:11
+  [1m[36mPsychometricScaleItem Load (0.6ms)[0m  [1m[34mSELECT "psychometric_scale_items".* FROM "psychometric_scale_items" WHERE "psychometric_scale_items"."psychometric_scale_id" = 3 ORDER BY "psychometric_scale_items"."item_number" ASC /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/scale_responses/show.html.erb:63
+  Rendered scale_responses/show.html.erb within layouts/application (Duration: 6.7ms | GC: 0.6ms)
+  [1m[36mProfessional Load (0.3ms)[0m  [1m[34mSELECT "professionals".* FROM "professionals" WHERE "professionals"."deleted_at" IS NULL AND "professionals"."id" = 6 LIMIT 1 /*action='show',application='HopeEscalas',controller='scale_responses'*/[0m
+  ↳ app/views/shared/_sidebar.html.erb:2
+  Rendered shared/_sidebar.html.erb (Duration: 2.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.5ms | GC: 0.6ms)
+Completed 200 OK in 26ms (Views: 8.5ms | ActiveRecord: 2.3ms (6 queries, 0 cached) | GC: 1.4ms)
+
+
+Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
+Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
