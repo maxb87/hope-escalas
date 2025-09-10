@@ -8,7 +8,7 @@ module Scoring
       # Questões que devem ter valores invertidos (1->4, 2->3, 3->2, 4->1)
       inverted_items = [ 3, 7, 11, 12, 15, 17, 21, 22, 26, 32, 38, 40, 43, 45, 48, 52, 55 ]
 
-      total = answers.map do |key, value|
+      raw_score = answers.map do |key, value|
         item_num = key.match(/item_(\d+)/)[1].to_i
         raw_value = value.to_i
 
@@ -24,7 +24,7 @@ module Scoring
       # SRS-2 scoring ranges para 65 itens (escala 0-3 após conversão)
       # Pontuação máxima: 65 * 3 = 195
       # Pontuação mínima: 65 * 0 = 0
-      level = case total
+      level = case raw_score
       when 0..25 then "Normal"
       when 26..55 then "Leve"
       when 56..85 then "Moderado"
@@ -33,11 +33,12 @@ module Scoring
       end
 
       # Calcular subescalas SRS-2 (baseado na estrutura real da escala)
-      social_awareness = calculate_subscale(answers, (1..13).to_a)
-      social_cognition = calculate_subscale(answers, (14..26).to_a)
-      social_communication = calculate_subscale(answers, (27..39).to_a)
-      social_motivation = calculate_subscale(answers, (40..52).to_a)
-      restricted_interests = calculate_subscale(answers, (53..65).to_a)
+      social_awareness = calculate_subscale_raw(answers, (1..13).to_a)
+      social_cognition = calculate_subscale_raw(answers, (14..26).to_a)
+      social_communication = calculate_subscale_raw(answers, (27..39).to_a)
+      social_motivation = calculate_subscale_raw(answers, (40..52).to_a)
+      repetitive_patterns = calculate_subscale_raw(answers, (53..65).to_a)
+      social_interaction = calculate_subscale_raw(answers, (1..65).to_a)
 
       {
         "schema_version" => 1,
@@ -45,7 +46,7 @@ module Scoring
         "scale_version" => scale_version,
         "computed_at" => Time.current.iso8601,
         "metrics" => {
-          "total" => total,
+          "raw_score" => raw_score,
           "social_awareness" => social_awareness,
           "social_cognition" => social_cognition,
           "social_communication" => social_communication,
@@ -91,7 +92,7 @@ module Scoring
 
     private
 
-    def self.calculate_subscale(answers, item_numbers)
+    def self.calculate_subscale_raw(answers, item_numbers)
       # Questões que devem ter valores invertidos
       inverted_items = [ 3, 7, 11, 12, 15, 17, 21, 22, 26, 32, 38, 40, 43, 45, 48, 52, 55 ]
 

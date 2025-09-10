@@ -3,8 +3,6 @@ class ScaleResponsesController < ApplicationController
   def index
     @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
     authorize @scale_responses
-
-
   end
   def new
     @scale_request = ScaleRequest.find(params[:scale_request_id])
