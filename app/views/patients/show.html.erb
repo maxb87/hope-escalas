@@ -4,14 +4,16 @@
 
 <div>
   
-  <div class="d-flex justify-content-around gap-2 col-md-3">
-    <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient), class: 'btn btn-primary' %>
-    <%= link_to t('patients.show.back_link'), patients_path, class: 'btn btn-primary', data: { turbo_method: :get } %>
     
     <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
-      <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy') }, class: 'btn btn-primary' %>
+      <div class="d-flex justify-content-around gap-2 col-md-3">
+
+        <%= link_to t('patients.show.back_link'), patients_path, class: 'btn btn-primary', data: { turbo_method: :get } %>
+        <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient), class: 'btn btn-primary' %>
+   
+        <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy'), turbo_confirm: t('patients.show.confirm_destroy') }, class: 'btn btn-primary' %>
+      </div>
     <% end %>
-  </div>
 
   
 

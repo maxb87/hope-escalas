@@ -12,12 +12,17 @@
   <strong>Idade:</strong> <%= @scale_response.patient.age %> anos<br/>
   <strong>Solicitado em:</strong> <%= l(@scale_response.scale_request.requested_at, format: :short) %><br/>
   <strong>Preenchido em:</strong> <%= l(@scale_response.completed_at, format: :short) %><br/>
-  <% if @scale_response.hetero_report? && @scale_response.relator_name.present? %>
-    <strong>Relator:</strong> <%= @scale_response.relator_name %> (<%= @scale_response.relator_relationship %>)
-  <% else %>
+  <% if @scale_response.hetero_report? %>
     <strong>Relator:</strong> <%= @scale_response.relator_name %> (<%= @scale_response.relator_relationship %>)
   <% end %>
 </div>
+
+<% unless is_professional_or_admin %>
+  <div class="mb-3">
+    <h3>Aguardando análise profissional.</h3>
+    <p>Mais informações sobre resultados, laudos e andamento de sua avaliação podem ser verificados em sua próxima consulta.</p>
+  </div>
+<% end %>
 
 <% unless is_patient %>
 
@@ -112,5 +117,5 @@
 <% end %>
 
 <div class="mt-3">
-  <%= link_to "Voltar ao Perfil", patients_dashboard_path, class: "btn btn-secondary" %>
+  <%= link_to "Voltar ao Perfil", patient_path(@scale_response.patient), class: "btn btn-secondary" %>
 </div>

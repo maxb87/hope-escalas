@@ -54,33 +54,6 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <%= form.label :rg, "RG", class: 'form-label' %>
-    <%= form.text_field :rg, class: 'form-control' %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :current_address, "Endereço Atual", class: 'form-label' %>
-    <%= form.text_area :current_address, class: 'form-control', rows: 2 %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :current_phone, "Telefone Atual", class: 'form-label' %>
-    <%= form.text_field :current_phone, class: 'form-control' %>
-    <div class="form-text">
-      <i class="bi bi-telephone me-1"></i>
-      Formato: (11) 99999-9999
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :started_at, "Data de Início do Atendimento", class: 'form-label' %>
-    <%= form.date_field :started_at, class: 'form-control' %>
-    <div class="form-text">
-      <i class="bi bi-calendar-check me-1"></i>
-      Data em que o paciente iniciou o tratamento
-    </div>
-  </div>
 
   <div class="mt-3">
     <%= form.submit "Salvar Paciente", class: 'btn btn-primary' %>

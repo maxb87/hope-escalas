@@ -1,185 +1,190 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, t('patients.index.title') %>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>
-    <i class="bi bi-people me-2"></i>
-    <%= t('patients.index.title') %>
-  </h1>
-  <%= link_to new_patient_path, class: 'btn btn-primary' do %>
-    <i class="bi bi-plus-circle me-1"></i>
-    <%= t('patients.index.new_link') %>
-  <% end %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h1 class="card-title mb-0">
+            <i class="bi bi-people me-2"></i>
+            Pacientes
+          </h1>
+          <%= link_to new_patient_path, class: 'btn btn-primary' do %>
+            <i class="bi bi-plus me-1"></i>
+            Novo paciente
+          <% end %>
+        </div>
+        
+        <% if @patients.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="py-3">
+                    <i class="bi bi-person me-1"></i>
+                    Paciente
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-calendar-event me-1"></i>
+                    Idade
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-gender-ambiguous me-1"></i>
+                    Gênero
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-envelope me-1"></i>
+                    Email
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-file-text me-1"></i>
+                    Solicitações
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Respostas
+                  </th>
+                  <th class="py-3 text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @patients.each do |patient| %>
+                  <tr>
+                    <td class="py-3">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <%= patient.full_name.first.upcase %>
+                        </div>
+                        <div>
+                          <div class="fw-medium"><%= patient.full_name %></div>
+                          <small class="text-muted">ID: <%= patient.id %></small>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3">
+                      <div>
+                        <div class="fw-medium"><%= patient.age %> anos</div>
+                        <small class="text-muted">
+                          <i class="bi bi-calendar-event me-1"></i>
+                          <%= patient.birthday.strftime("%d/%m/%Y") %>
+                        </small>
+                      </div>
+                    </td>
+                    <td class="py-3">
+                      <% case patient.gender %>
+                      <% when 'male' %>
+                        <span class="badge bg-primary">
+                          <i class="bi bi-gender-male me-1"></i>
+                          Masculino
+                        </span>
+                      <% when 'female' %>
+                        <span class="badge bg-pink">
+                          <i class="bi bi-gender-female me-1"></i>
+                          Feminino
+                        </span>
+                      <% end %>
+                    </td>
+                    <td class="py-3">
+                      <div>
+                        <div><%= patient.email %></div>
+                        <small class="text-success">
+                          <i class="bi bi-check-circle me-1"></i>
+                          Ativo
+                        </small>
+                      </div>
+                    </td>
+                    <td class="py-3">
+                      <div>
+                        <div class="fw-medium">
+                          <%= patient.scale_requests.count %> total
+                        </div>
+                        <% if patient.pending_scale_requests_count > 0 %>
+                          <span class="badge bg-warning text-dark">
+                            <i class="bi bi-clock me-1"></i>
+                            <%= patient.pending_scale_requests_count %> pendentes
+                          </span>
+                        <% else %>
+                          <span class="badge bg-secondary">
+                            <i class="bi bi-check me-1"></i>
+                            0 pendentes
+                          </span>
+                        <% end %>
+                      </div>
+                    </td>
+                    <td class="py-3">
+                      <div>
+                        <div class="fw-medium">
+                          <%= patient.completed_scale_responses_count %> completas
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <small class="text-muted me-2">
+                            <i class="bi bi-percent me-1"></i>
+                            <%= completion_rate = patient.scale_requests.count > 0 ? (patient.completed_scale_responses_count.to_f / patient.scale_requests.count * 100).round(1) : 0 %>%
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="py-3 text-center">
+                      <div class="btn-group" role="group">
+                        <%= link_to patient_path(patient), 
+                            class: 'btn btn-sm btn-outline-primary',
+                            title: 'Visualizar',
+                            data: { turbo_frame: "_top" } do %>
+                          <i class="bi bi-eye"></i>
+                        <% end %>
+                        
+                        <%= link_to edit_patient_path(patient), 
+                            class: 'btn btn-sm btn-outline-warning',
+                            title: 'Editar',
+                            data: { turbo_frame: "_top" } do %>
+                          <i class="bi bi-pencil"></i>
+                        <% end %>
+                        
+                        <% if policy(patient).destroy? %>
+                          <%= button_to patient_path(patient), 
+                              method: :delete,
+                              data: { 
+                                confirm: "Tem certeza que deseja excluir o paciente #{patient.full_name}?",
+                                turbo_confirm: "Tem certeza que deseja excluir o paciente #{patient.full_name}?"
+                              },
+                              class: "btn btn-sm btn-outline-danger",
+                              title: "Excluir" do %>
+                            <i class="bi bi-trash"></i>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              Mostrando <%= @patients.count %> paciente(s)
+            </small>
+          </div>
+        <% else %>
+          <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+            <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+            <h3 class="text-muted mt-3">Nenhum paciente encontrado</h3>
+            <p class="text-muted">Comece adicionando seu primeiro paciente.</p>
+            <%= link_to new_patient_path, class: 'btn btn-primary' do %>
+              <i class="bi bi-plus me-1"></i>
+              Novo paciente
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<% if @patients.any? %>
-  <div class="table-responsive">
-    <table class="table table-hover mb-0">
-      <thead class="table-light">
-        <tr>
-          <th class="py-3">
-            <i class="bi bi-person me-1"></i>
-            Paciente
-          </th>
-          <th class="py-3">
-            <i class="bi bi-calendar me-1"></i>
-            Idade
-          </th>
-          <th class="py-3">
-            <i class="bi bi-gender-ambiguous me-1"></i>
-            Gênero
-          </th>
-          <th class="py-3">
-            <i class="bi bi-envelope me-1"></i>
-            Email
-          </th>
-          <th class="py-3">
-            <i class="bi bi-clipboard-pulse me-1"></i>
-            Solicitações
-          </th>
-          <th class="py-3">
-            <i class="bi bi-check-circle me-1"></i>
-            Respostas
-          </th>
-          <th class="py-3 text-center">
-            <i class="bi bi-gear me-1"></i>
-            Ações
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @patients.each do |patient| %>
-          <tr>
-            <td class="py-3">
-              <div class="d-flex align-items-center">
-                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
-                  <%= patient.full_name.first.upcase %>
-                </div>
-                <div>
-                  <div class="fw-semibold"><%= patient.full_name %></div>
-                  <small class="text-muted">ID: <%= patient.id %></small>
-                </div>
-              </div>
-            </td>
-            <td class="py-3">
-              <div>
-                <div class="fw-medium"><%= patient.age %> anos</div>
-                <small class="text-muted">
-                  <i class="bi bi-calendar-event me-1"></i>
-                  <%= patient.birthday.strftime("%d/%m/%Y") %>
-                </small>
-              </div>
-            </td>
-            <td class="py-3">
-              <% case patient.gender %>
-              <% when 'male' %>
-                <span class="badge bg-info">
-                  <i class="bi bi-gender-male me-1"></i>
-                  Masculino
-                </span>
-              <% when 'female' %>
-                <span class="badge bg-pink">
-                  <i class="bi bi-gender-female me-1"></i>
-                  Feminino
-                </span>
-              <% end %>
-            </td>
-            <td class="py-3">
-              <div>
-                <div class="fw-medium"><%= patient.email %></div>
-                <small class="text-muted">
-                  <i class="bi bi-person-check me-1"></i>
-                  Ativo
-                </small>
-              </div>
-            </td>
-            <td class="py-3">
-              <div>
-                <span class="badge bg-light text-dark">
-                  <i class="bi bi-clipboard me-1"></i>
-                  <%= patient.scale_requests.count %> total
-                </span>
-                <div class="mt-1">
-                  <span class="badge bg-warning">
-                    <i class="bi bi-clock me-1"></i>
-                    <%= patient.pending_scale_requests_count %> pendentes
-                  </span>
-                </div>
-              </div>
-            </td>
-            <td class="py-3">
-              <div>
-                <span class="badge bg-success">
-                  <i class="bi bi-check-circle me-1"></i>
-                  <%= patient.completed_scale_responses_count %> completas
-                </span>
-                <div class="mt-1">
-                  <% completion_rate = patient.scale_requests.count > 0 ? (patient.completed_scale_responses_count.to_f / patient.scale_requests.count * 100).round(1) : 0 %>
-                  <small class="text-muted">
-                    <i class="bi bi-percent me-1"></i>
-                    <%= completion_rate %>%
-                  </small>
-                </div>
-              </div>
-            </td>
-            <td class="py-3 text-center">
-              <div class="btn-group" role="group">
-                <%= link_to patient_path(patient), 
-                    class: 'btn btn-sm btn-outline-primary',
-                    title: 'Visualizar',
-                    data: { turbo_frame: "_top" } do %>
-                  <i class="bi bi-eye"></i>
-                <% end %>
-                
-                <%= link_to edit_patient_path(patient), 
-                    class: 'btn btn-sm btn-outline-warning',
-                    title: 'Editar',
-                    data: { turbo_frame: "_top" } do %>
-                  <i class="bi bi-pencil"></i>
-                <% end %>
-                
-                
-              </div>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <!-- Rodapé da tabela -->
-  <div class="card-footer d-flex justify-content-between align-items-center">
-    <small class="text-muted">
-      Mostrando <%= @patients.count %> paciente(s)
-    </small>
-    <!-- Aqui pode adicionar paginação futuramente -->
-  </div>
-<% else %>
-  <!-- Estado vazio -->
-  <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
-    <div class="mb-3">
-      <i class="bi bi-person-x text-muted" style="font-size: 3rem;"></i>
-    </div>
-    <h5 class="text-muted mb-2">Nenhum paciente encontrado</h5>
-    <p class="text-muted mb-4">Comece adicionando um novo paciente ao sistema.</p>
-    
-    <%= link_to new_patient_path, 
-        class: 'btn btn-primary',
-        data: { turbo_frame: "_top" } do %>
-      <i class="bi bi-plus-circle me-2"></i>
-      <%= t('patients.index.new_link') %>
-    <% end %>
-  </div>
-<% end %>
-
 <style>
-.avatar-sm {
-  width: 32px;
-  height: 32px;
-  font-size: 0.875rem;
-}
-
 .bg-pink {
   background-color: #e91e63 !important;
 }
