@@ -15,4 +15,13 @@ class Patient < ApplicationRecord
   def completed_scale_responses_count
     scale_responses.count
   end
+
+  def age
+    return nil if birthday.nil?
+    
+    today = Date.current
+    age = today.year - birthday.year
+    age -= 1 if today < birthday + age.years
+    age
+  end
 end

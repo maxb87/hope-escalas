@@ -1,7 +1,6 @@
 <div id="<%= dom_id patient %>">
   <p>
-    <strong>Full name:</strong>
-    <%= patient.full_name %>
+    <h2><%= patient.full_name %></h2>
   </p>
 
   <p>
@@ -10,15 +9,9 @@
   </p>
 
   <p>
-    <strong>Birthday:</strong>
-    <%= patient.birthday %>
+    <strong>Data de Nascimento:</strong>
+    <%= patient.birthday %> (<%= patient.age %> anos)
   </p>
-
-  <p>
-    <strong>Started at:</strong>
-    <%= patient.started_at %>
-  </p>
-
 
   <p>
     <strong>Email:</strong>
@@ -28,21 +21,6 @@
   <p>
     <strong>Cpf:</strong>
     <%= patient.cpf %>
-  </p>
-
-  <p>
-    <strong>Rg:</strong>
-    <%= patient.rg %>
-  </p>
-
-  <p>
-    <strong>Current address:</strong>
-    <%= patient.current_address %>
-  </p>
-
-  <p>
-    <strong>Current phone:</strong>
-    <%= patient.current_phone %>
   </p>
 
 

@@ -3,16 +3,18 @@
 <%= render @patient %>
 
 <div>
-  <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient) %> |
-  <%= link_to t('patients.show.back_link'), patients_path %>
+  
+  <div class="d-flex justify-content-around gap-2 col-md-3">
+    <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient), class: 'btn btn-primary' %>
+    <%= link_to t('patients.show.back_link'), patients_path, class: 'btn btn-primary', data: { turbo_method: :get } %>
+    
+    <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
+      <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy') }, class: 'btn btn-primary' %>
+    <% end %>
+  </div>
 
-  <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy') } %>
-  <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
-    <div class="mt-3">
-      <%= link_to t('patients.show.request_scale'), new_scale_request_path(patient_id: @patient.id), class: 'btn btn-primary' %>
-    </div>
-  <% end %>
-</div>
+  
+
 
 <hr/>
 

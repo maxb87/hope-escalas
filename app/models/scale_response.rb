@@ -57,7 +57,7 @@ class ScaleResponse < ApplicationRecord
 
   # Check if this is any SRS-2 scale
   def srs2_scale?
-    ["SRS2SR", "SRS2HR"].include?(psychometric_scale.code)
+    [ "SRS2SR", "SRS2HR" ].include?(psychometric_scale.code)
   end
 
   private
@@ -67,7 +67,18 @@ class ScaleResponse < ApplicationRecord
 
     case psychometric_scale.code
     when "SRS2SR", "SRS2HR"
-      results_hash = Scoring::Srs2.calculate(answers, scale_version: psychometric_scale.version)
+      # Calcular idade do paciente
+      patient_age = calculate_patient_age
+      # Determinar tipo de escala baseado no código
+      scale_type = psychometric_scale.code == "SRS2SR" ? "self_report" : "parent_report"
+
+      results_hash = Scoring::Srs2.calculate(
+        answers,
+        scale_version: psychometric_scale.version,
+        patient_gender: patient.gender,
+        patient_age: patient_age,
+        scale_type: scale_type
+      )
       apply_results!(results_hash)
     else
       calculate_generic_score
@@ -159,5 +170,16 @@ class ScaleResponse < ApplicationRecord
       errors.add(:relator_name, "é obrigatório para formulários de heterorrelato") if relator_name.blank?
       errors.add(:relator_relationship, "é obrigatório para formulários de heterorrelato") if relator_relationship.blank?
     end
+  end
+
+  def calculate_patient_age
+    return nil unless patient&.birthday
+
+    today = Date.current
+    birthday = patient.birthday
+
+    age = today.year - birthday.year
+    age -= 1 if today < birthday + age.years
+    age
   end
 end

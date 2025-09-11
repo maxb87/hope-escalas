@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_11_184422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "patients", force: :cascade do |t|
     t.string "full_name", null: false
-    t.integer "sex"
+    t.string "gender", null: false
     t.date "birthday", null: false
     t.date "started_at"
     t.string "email", null: false
@@ -32,11 +32,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
     t.check_constraint "char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text", name: "patients_cpf_format"
     t.check_constraint "char_length(full_name::text) >= 5", name: "patients_full_name_minlen"
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "patients_email_format"
+    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying, 'female'::character varying]::text[])", name: "patients_gender_values"
   end
 
   create_table "professionals", force: :cascade do |t|
     t.string "full_name", null: false
-    t.integer "sex"
+    t.string "gender", null: false
     t.date "birthday", null: false
     t.date "started_at"
     t.string "email", null: false
@@ -54,6 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
     t.check_constraint "char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text", name: "professionals_cpf_format"
     t.check_constraint "char_length(full_name::text) >= 5", name: "professionals_full_name_minlen"
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "professionals_email_format"
+    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying, 'female'::character varying]::text[])", name: "professionals_gender_values"
   end
 
   create_table "psychometric_scale_items", force: :cascade do |t|
@@ -135,15 +137,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_190010) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at"
+    t.datetime "deleted_at"
+    t.boolean "force_password_reset", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "account_type"
     t.bigint "account_id"
-    t.boolean "force_password_reset", default: true, null: false
-    t.integer "failed_attempts", default: 0, null: false
-    t.string "unlock_token"
-    t.datetime "locked_at"
     t.index ["account_type", "account_id"], name: "index_users_on_account"
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true

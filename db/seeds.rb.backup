@@ -1,0 +1,188 @@
+# frozen_string_literal: true
+
+# Seeds para ambiente de desenvolvimento
+# - Admin (sem associação) com email admin@admin.com
+# - 5 Professionals (técnicos de tênis) com Users associados
+# - 5 Patients (tenistas famosos, incluindo Rafael Nadal) com Users associados
+# Todos com senha 123456 e sem necessidade de reset de senha no primeiro login
+
+require "active_record"
+require "date"
+
+SEED_PASSWORD = "123456"
+
+def set_password_and_flags!(user, password)
+  user.password = password
+  user.password_confirmation = password
+  if user.respond_to?(:force_password_reset)
+    user.force_password_reset = false
+  end
+  user.save!
+end
+
+ActiveRecord::Base.transaction do
+  puts "Seeding: Admin user"
+  admin_email = "admin@admin.com"
+  admin = User.find_or_initialize_by(email: admin_email)
+  admin.account = nil
+  set_password_and_flags!(admin, SEED_PASSWORD)
+  puts "  ✓ Admin user ensured: #{admin.email}"
+
+  puts "Seeding: Professionals (coaches)"
+  coaches = [
+    { full_name: "Nick Bollettieri", email: "nick.bollettieri@hope.local", cpf: "10000000001", birthday: Date.new(1941, 7, 31) },
+    { full_name: "Toni Nadal",        email: "toni.nadal@hope.local",        cpf: "10000000002", birthday: Date.new(1961, 2, 20) },
+    { full_name: "Ivan Lendl",        email: "ivan.lendl@hope.local",        cpf: "10000000003", birthday: Date.new(1960, 3, 7) },
+    { full_name: "Patrick Mouratoglou", email: "patrick.mouratoglou@hope.local", cpf: "10000000004", birthday: Date.new(1970, 6, 8) },
+    { full_name: "Darren Cahill",     email: "darren.cahill@hope.local",     cpf: "10000000005", birthday: Date.new(1965, 10, 2) }
+  ]
+
+  coaches.each do |attrs|
+    prof = Professional.find_or_initialize_by(cpf: attrs[:cpf])
+    prof.full_name = attrs[:full_name]
+    prof.email     = attrs[:email]
+    prof.birthday  = attrs[:birthday]
+    prof.save!
+
+    if prof.user
+      prof.user.email = attrs[:email]
+      set_password_and_flags!(prof.user, SEED_PASSWORD)
+    else
+      prof.create_user!(email: attrs[:email], password: SEED_PASSWORD, password_confirmation: SEED_PASSWORD, force_password_reset: false)
+    end
+
+    puts "  ✓ Professional ensured: #{prof.full_name} (#{prof.email})"
+  end
+
+  puts "Seeding: Patients (players)"
+  players = [
+    { full_name: "Rafael Nadal",     email: "rafael.nadal@hope.local",     cpf: "20000000001", birthday: Date.new(1986, 6, 3) },
+    { full_name: "Roger Federer",    email: "roger.federer@hope.local",    cpf: "20000000002", birthday: Date.new(1981, 8, 8) },
+    { full_name: "Novak Djokovic",   email: "novak.djokovic@hope.local",   cpf: "20000000003", birthday: Date.new(1987, 5, 22) },
+    { full_name: "Serena Williams",  email: "serena.williams@hope.local",  cpf: "20000000004", birthday: Date.new(1981, 9, 26) },
+    { full_name: "Andy Murray",      email: "andy.murray@hope.local",      cpf: "20000000005", birthday: Date.new(1987, 5, 15) }
+  ]
+
+  players.each do |attrs|
+    pat = Patient.find_or_initialize_by(cpf: attrs[:cpf])
+    pat.full_name = attrs[:full_name]
+    pat.email     = attrs[:email]
+    pat.birthday  = attrs[:birthday]
+    pat.save!
+
+    if pat.user
+      pat.user.email = attrs[:email]
+      set_password_and_flags!(pat.user, SEED_PASSWORD)
+    else
+      pat.create_user!(email: attrs[:email], password: SEED_PASSWORD, password_confirmation: SEED_PASSWORD, force_password_reset: false)
+    end
+
+    puts "  ✓ Patient ensured: #{pat.full_name} (#{pat.email})"
+  end
+end
+
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+#
+# Example:
+#
+#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
+#     MovieGenre.find_or_create_by!(name: genre_name)
+#   end
+
+
+# Create admin professional
+admin_professional = Professional.find_or_create_by!(email: "admin@admin.com") do |professional|
+  professional.full_name = "Administrador"
+  professional.cpf = "00000000000"
+  professional.birthday = Date.new(1990, 1, 1)
+  professional.gender = "male"
+end
+
+# Associate admin user with admin professional
+admin_user.update!(account: admin_professional) unless admin_user.account.present?
+
+# Create sample professionals
+sample_professionals = [
+  {
+    full_name: "Dr. João Silva",
+    email: "joao.silva@hope.local",
+    cpf: "11111111111",
+    birthday: Date.new(1985, 5, 15),
+    gender: "male"
+  },
+  {
+    full_name: "Dra. Maria Santos",
+    email: "maria.santos@hope.local",
+    cpf: "22222222222",
+    birthday: Date.new(1988, 8, 22),
+    gender: "female"
+  }
+]
+
+sample_professionals.each do |professional_data|
+  professional = Professional.find_or_create_by!(email: professional_data[:email]) do |p|
+    p.full_name = professional_data[:full_name]
+    p.cpf = professional_data[:cpf]
+    p.birthday = professional_data[:birthday]
+    p.gender = professional_data[:gender]
+  end
+
+  # Create user for professional
+  user = User.find_or_create_by!(email: professional_data[:email]) do |u|
+    u.password = "123456"
+    u.password_confirmation = "123456"
+    u.force_password_reset = true
+  end
+
+  user.update!(account: professional) unless user.account.present?
+end
+
+# Create sample patients
+sample_patients = [
+  {
+    full_name: "Ana Oliveira",
+    email: "ana.oliveira@hope.local",
+    cpf: "33333333333",
+    birthday: Date.new(1992, 3, 10),
+    gender: "female"
+  },
+  {
+    full_name: "Carlos Ferreira",
+    email: "carlos.ferreira@hope.local",
+    cpf: "44444444444",
+    birthday: Date.new(1987, 12, 5),
+    gender: "male"
+  },
+  {
+    full_name: "Lucia Costa",
+    email: "lucia.costa@hope.local",
+    cpf: "55555555555",
+    birthday: Date.new(1995, 7, 18),
+    gender: "female"
+  }
+]
+
+sample_patients.each do |patient_data|
+  patient = Patient.find_or_create_by!(email: patient_data[:email]) do |p|
+    p.full_name = patient_data[:full_name]
+    p.cpf = patient_data[:cpf]
+    p.birthday = patient_data[:birthday]
+    p.gender = patient_data[:gender]
+  end
+
+  # Create user for patient
+  user = User.find_or_create_by!(email: patient_data[:email]) do |u|
+    u.password = "123456"
+    u.password_confirmation = "123456"
+    u.force_password_reset = true
+  end
+
+  user.update!(account: patient) unless user.account.present?
+end
+
+
+puts "👥 Usuários criados:"
+puts "   - Admin: admin@admin.com (senha: admin123)"
+puts "   - Profissionais: joao.silva@hope.local, maria.santos@hope.local (senha: 123456)"
+puts "   - Pacientes: ana.oliveira@hope.local, carlos.ferreira@hope.local, lucia.costa@hope.local (senha: 123456)"
