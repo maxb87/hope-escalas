@@ -2,6 +2,7 @@ class ScaleRequestsController < ApplicationController
   before_action :set_scale_request, only: [ :show, :destroy, :cancel ]
 
   def index
+    @active_tab = :pending
     @scale_requests = policy_scope(ScaleRequest)
                         .pending
                         .includes(:patient, :professional, :psychometric_scale, :scale_response)
@@ -11,6 +12,7 @@ class ScaleRequestsController < ApplicationController
   end
 
   def pending
+    @active_tab = :pending
     @scale_requests = policy_scope(ScaleRequest)
                         .pending
                         .includes(:patient, :professional, :psychometric_scale, :scale_response)
@@ -21,6 +23,7 @@ class ScaleRequestsController < ApplicationController
   end
 
   def completed
+    @active_tab = :completed
     @scale_requests = policy_scope(ScaleRequest)
                         .completed
                         .includes(:patient, :professional, :psychometric_scale, :scale_response)
@@ -31,6 +34,7 @@ class ScaleRequestsController < ApplicationController
   end
 
   def cancelled
+    @active_tab = :cancelled
     @scale_requests = policy_scope(ScaleRequest)
                         .cancelled
                         .includes(:patient, :professional, :psychometric_scale, :scale_response)

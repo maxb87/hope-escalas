@@ -102,7 +102,7 @@
                       class: 'btn btn-sm btn-outline-warning',
                       title: t('scale_requests.actions.fill_scale'),
                       data: { turbo_frame: "_top" } do %>
-                    <span>✏️</span>
+                    <i class="bi bi-pencil"></i>
                   <% end %>
                 <% end %>
               <% if req.scale_response.present? %>
@@ -138,7 +138,7 @@
                     class: 'btn btn-sm btn-outline-primary',
                     title: t('actions.show'),
                     data: { turbo_frame: "_top" } do %>
-                  <span>🔍</span>
+                  <i class="bi bi-eye"></i>
                 <% end %>
                 
                 <% if req.pending? && policy(req).respond? %>
@@ -146,7 +146,7 @@
                       class: 'btn btn-sm btn-outline-warning',
                       title: t('scale_requests.actions.fill_scale'),
                       data: { turbo_frame: "_top" } do %>
-                    <span>✏️</span>
+                    <i class="bi bi-pencil"></i>
                   <% end %>
                 <% end %>
                 <% if req.scale_response.present? %>
@@ -154,7 +154,7 @@
                       class: 'btn btn-sm btn-outline-success',
                       title: t('scale_requests.actions.view_response'),
                       data: { turbo_frame: "_top" } do %>
-                    <span>📊</span>
+                    <i class="bi bi-bar-chart"></i>
                   <% end %>
                 <% end %>
                 
@@ -167,7 +167,7 @@
                         confirm: t('scale_requests.actions.cancel_confirm'),
                         turbo_frame: "_top"
                       } do %>
-                    <span>❌</span>
+                    <i class="bi bi-x"></i>
                   <% end %>
                 <% end %>
               </div>

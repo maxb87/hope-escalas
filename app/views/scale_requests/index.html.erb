@@ -13,57 +13,57 @@
   <%= link_to new_scale_request_path, 
       class: 'btn btn-warning d-flex align-items-center gap-2',
       data: { turbo_frame: "_top" } do %>
-    <i></i>
+    <i class="bi bi-plus-circle"></i>
     <span><%= t('scale_requests.new.button') %></span>
   <% end %>
 </div>
 
 <!-- Navegação por Abas -->
 <div class="card">
-  <div class="card-header p-0">
-    <ul class="nav nav-tabs card-header-tabs" id="scale-requests-tabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <%= link_to pending_scale_requests_path, 
-            class: "nav-link #{'active' if current_page?(pending_scale_requests_path) || current_page?(scale_requests_path)}", 
-            data: { 
-              turbo_method: :get,
-              turbo_frame: 'scale_requests_content' 
-            } do %>
-          <span>🟡</span>
-          <%= t('scale_requests.filters.pending') %>
-          <span class="badge bg-warning ms-1"><%= @pending_count %></span>
-        <% end %>
-      </li>
-      <li class="nav-item" role="presentation">
-        <%= link_to completed_scale_requests_path, 
-            class: "nav-link #{'active' if current_page?(completed_scale_requests_path)}", 
-            data: { 
-              turbo_method: :get,
-              turbo_frame: 'scale_requests_content' 
-            } do %>
-          <span>✅</span>
-          <%= t('scale_requests.filters.completed') %>
-          <span class="badge bg-success ms-1"><%= @completed_count %></span>
-        <% end %>
-      </li>
-      <li class="nav-item" role="presentation">
-        <%= link_to cancelled_scale_requests_path, 
-            class: "nav-link #{'active' if current_page?(cancelled_scale_requests_path)}", 
-            data: { 
-              turbo_method: :get,
-              turbo_frame: 'scale_requests_content' 
-            } do %>
-          <span>❌</span>
-          <%= t('scale_requests.filters.cancelled') %>
-          <span class="badge bg-danger ms-1"><%= @cancelled_count %></span>
-        <% end %>
-      </li>
-    </ul>
-  </div>
-  
-  <div class="card-body p-0">
-    <%= turbo_frame_tag 'scale_requests_content' do %>
+  <%= turbo_frame_tag 'scale_requests_content' do %>
+    <div class="card-header p-0">
+      <ul class="nav nav-tabs card-header-tabs" id="scale-requests-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <%= link_to pending_scale_requests_path, 
+              class: "nav-link #{'active' if @active_tab == :pending}", 
+              data: { 
+                turbo_method: :get,
+                turbo_frame: 'scale_requests_content' 
+              } do %>
+            <i class="bi bi-clock me-1"></i>
+            <%= t('scale_requests.filters.pending') %>
+            <span class="badge bg-warning ms-1"><%= @pending_count %></span>
+          <% end %>
+        </li>
+        <li class="nav-item" role="presentation">
+          <%= link_to completed_scale_requests_path, 
+              class: "nav-link #{'active' if @active_tab == :completed}", 
+              data: { 
+                turbo_method: :get,
+                turbo_frame: 'scale_requests_content' 
+              } do %>
+            <i class="bi bi-check-circle me-1"></i>
+            <%= t('scale_requests.filters.completed') %>
+            <span class="badge bg-success ms-1"><%= @completed_count %></span>
+          <% end %>
+        </li>
+        <li class="nav-item" role="presentation">
+          <%= link_to cancelled_scale_requests_path, 
+              class: "nav-link #{'active' if @active_tab == :cancelled}", 
+              data: { 
+                turbo_method: :get,
+                turbo_frame: 'scale_requests_content' 
+              } do %>
+            <i class="bi bi-x-circle me-1"></i>
+            <%= t('scale_requests.filters.cancelled') %>
+            <span class="badge bg-danger ms-1"><%= @cancelled_count %></span>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="card-body p-0">
       <%= render 'scale_requests_table', scale_requests: @scale_requests %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
