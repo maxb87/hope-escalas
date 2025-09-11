@@ -25,7 +25,7 @@
           </th>
           <th class="py-3">
             <i class="bi bi-bar-chart me-1"></i>
-            <%= t('scale_requests.table.result') %>
+            Resultados
           </th>
           <th class="py-3 text-center">
             <i class="bi bi-gear me-1"></i>
@@ -107,23 +107,24 @@
                 <% end %>
               <% if req.scale_response.present? %>
                 <div>
+
+                  <div class="mt-1">
+                    <% interpretation = req.scale_response.interpretation_level %>
+                    <% case interpretation %>
+                    <% when "Normal" %>
+                      <span class="badge bg-success"><%= interpretation %></span>
+                    <% when "Leve" %>
+                      <span class="badge bg-warning"><%= interpretation %></span>
+                    <% when "Moderado" %>
+                      <span class="badge bg-orange"><%= interpretation %></span>
+                    <% when "Severo" %>
+                      <span class="badge bg-danger"><%= interpretation %></span>
+                    <% end %>
+                  </div>
                   <span class="badge bg-light text-dark">
                     <i class="bi bi-calculator me-1"></i>
                     <%= req.scale_response.total_score %> pts
                   </span>
-                  <div class="mt-1">
-                    <% interpretation = req.scale_response.interpretation_level %>
-                    <% case interpretation %>
-                    <% when "Mínima" %>
-                      <span class="badge bg-success"><%= interpretation %></span>
-                    <% when "Leve" %>
-                      <span class="badge bg-warning"><%= interpretation %></span>
-                    <% when "Moderada" %>
-                      <span class="badge bg-orange"><%= interpretation %></span>
-                    <% when "Grave" %>
-                      <span class="badge bg-danger"><%= interpretation %></span>
-                    <% end %>
-                  </div>
                 </div>
               <% else %>
                 <span class="text-muted">

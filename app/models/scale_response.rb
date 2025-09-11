@@ -50,6 +50,10 @@ class ScaleResponse < ApplicationRecord
     results.dig("interpretation", "level") || "Não disponível"
   end
 
+  def total_score
+    results.dig("metrics", "raw_score") || 0
+  end
+
   # Check if this is a hetero-report scale
   def hetero_report?
     psychometric_scale.code == "SRS2HR"
