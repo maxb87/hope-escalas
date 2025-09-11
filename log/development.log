@@ -33735,3 +33735,5 @@ Completed 200 OK in 26ms (Views: 8.5ms | ActiveRecord: 2.3ms (6 queries, 0 cache
 
 Started GET "/assets/fonts/bootstrap-icons.woff2" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
 Started GET "/assets/fonts/bootstrap-icons.woff" for 127.0.0.1 at 2025-09-09 13:27:44 -0300
+Error loading SRS-2 lookup table srs2_lookup_adult_t_percentile_auto.csv: undefined method 'to_sym' for nil
+Error loading SRS-2 lookup table srs2_lookup_adult_t_percentile_hetero.csv: undefined method 'to_sym' for nil

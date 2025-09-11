@@ -5,7 +5,7 @@ RSpec.describe "professionals/index", type: :view do
     assign(:professionals, [
       Professional.create!(
         full_name: "Full Name",
-        sex: 2,
+        gender: "male",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",
@@ -15,7 +15,7 @@ RSpec.describe "professionals/index", type: :view do
       ),
       Professional.create!(
         full_name: "Full Name",
-        sex: 2,
+        gender: "male",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",

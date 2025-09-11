@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :patient do
     sequence(:full_name) { |n| "Paciente #{n}" }
-    sex { 1 }
+    gender { "female" }
     birthday { Date.new(1990, 1, 1) }
     started_at { Date.current }
     sequence(:email) { |n| "paciente#{n}@test.com" }

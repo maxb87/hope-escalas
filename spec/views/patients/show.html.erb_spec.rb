@@ -4,7 +4,7 @@ RSpec.describe "patients/show", type: :view do
   before(:each) do
     assign(:patient, Patient.create!(
       full_name: "Full Name",
-             sex: 2,
+             gender: "male",
        email: "Email",
       cpf: "Cpf",
       rg: "Rg",
@@ -16,7 +16,7 @@ RSpec.describe "patients/show", type: :view do
   it "renders attributes in <p>" do
     render
     expect(rendered).to match(/Full Name/)
-    expect(rendered).to match(/2/)
+    expect(rendered).to match(/Masculino/)
     expect(rendered).to match(/Email/)
     expect(rendered).to match(/Cpf/)
     expect(rendered).to match(/Rg/)

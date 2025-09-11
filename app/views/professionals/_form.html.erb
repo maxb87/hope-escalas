@@ -17,8 +17,8 @@
   </div>
 
   <div>
-    <%= form.label :sex, style: "display: block" %>
-    <%= form.number_field :sex %>
+    <%= form.label :gender, "Gênero", style: "display: block" %>
+    <%= form.select :gender, [["Masculino", "male"], ["Feminino", "female"]], { prompt: "Selecione..." } %>
   </div>
 
   <div>

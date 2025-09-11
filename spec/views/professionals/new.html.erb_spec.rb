@@ -4,7 +4,7 @@ RSpec.describe "professionals/new", type: :view do
   before(:each) do
     assign(:professional, Professional.new(
       full_name: "MyString",
-             sex: 1,
+             gender: "male",
        email: "MyString",
       cpf: "MyString",
       rg: "MyString",
@@ -20,7 +20,7 @@ RSpec.describe "professionals/new", type: :view do
     assert_select "form[action=?][method=?]", professionals_path, "post" do
       assert_select "input[name=?]", "professional[full_name]"
 
-      assert_select "input[name=?]", "professional[sex]"
+      assert_select "select[name=?]", "professional[gender]"
 
 
       assert_select "input[name=?]", "professional[email]"

@@ -2,7 +2,7 @@ class CreateProfessionals < ActiveRecord::Migration[8.0]
   def change
     create_table :professionals do |t|
       t.string :full_name, null: false
-      t.integer :sex
+      t.string :gender, null: false
       t.date :birthday, null: false
       t.date :started_at
       t.string :email, null: false
@@ -26,5 +26,7 @@ class CreateProfessionals < ActiveRecord::Migration[8.0]
     add_check_constraint :professionals, "email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'", name: "professionals_email_format"
     # full_name: minimum length 5 (validations complement at model level if needed)
     add_check_constraint :professionals, "char_length(full_name) >= 5", name: "professionals_full_name_minlen"
+    # gender: must be male or female
+    add_check_constraint :professionals, "gender IN ('male', 'female')", name: "professionals_gender_values"
   end
 end

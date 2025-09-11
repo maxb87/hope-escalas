@@ -93,3 +93,4 @@ group :test do
   # Code coverage
   gem "simplecov", require: false
 end
+gem "csv"

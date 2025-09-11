@@ -5,7 +5,7 @@ RSpec.describe "patients/index", type: :view do
     assign(:patients, [
       Patient.create!(
         full_name: "Full Name",
-        sex: 2,
+        gender: "female",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",
@@ -14,7 +14,7 @@ RSpec.describe "patients/index", type: :view do
       ),
       Patient.create!(
         full_name: "Full Name",
-        sex: 2,
+        gender: "female",
         email: "Email",
         cpf: "Cpf",
         rg: "Rg",

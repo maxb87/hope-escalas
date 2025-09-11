@@ -2,7 +2,7 @@ class CreatePatients < ActiveRecord::Migration[8.0]
   def change
     create_table :patients do |t|
       t.string :full_name, null: false
-      t.integer :sex
+      t.string :gender, null: false
       t.date :birthday, null: false
       t.date :started_at
       t.string :email, null: false
@@ -24,5 +24,7 @@ class CreatePatients < ActiveRecord::Migration[8.0]
     add_check_constraint :patients, "email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'", name: "patients_email_format"
     # full_name: minimum length 5
     add_check_constraint :patients, "char_length(full_name) >= 5", name: "patients_full_name_minlen"
+    # gender: must be male or female
+    add_check_constraint :patients, "gender IN ('male', 'female')", name: "patients_gender_values"
   end
 end

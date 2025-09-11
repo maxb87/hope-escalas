@@ -4,7 +4,7 @@ RSpec.describe "professionals/show", type: :view do
   before(:each) do
     assign(:professional, Professional.create!(
       full_name: "Full Name",
-             sex: 2,
+             gender: "male",
        email: "Email",
       cpf: "Cpf",
       rg: "Rg",

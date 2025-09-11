@@ -6,6 +6,7 @@ class Patient < ApplicationRecord
 
   validates :full_name, presence: true
   validates :email, presence: true
+  validates :gender, presence: true, inclusion: { in: %w[male female] }
 
   def pending_scale_requests_count
     scale_requests.pending.count

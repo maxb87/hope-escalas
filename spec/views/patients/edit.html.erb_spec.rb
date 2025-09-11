@@ -4,7 +4,7 @@ RSpec.describe "patients/edit", type: :view do
   let(:patient) {
     Patient.create!(
       full_name: "MyString",
-             sex: 1,
+             gender: "female",
        email: "MyString",
       cpf: "MyString",
       rg: "MyString",
@@ -23,7 +23,7 @@ RSpec.describe "patients/edit", type: :view do
     assert_select "form[action=?][method=?]", patient_path(patient), "post" do
       assert_select "input[name=?]", "patient[full_name]"
 
-      assert_select "input[name=?]", "patient[sex]"
+      assert_select "select[name=?]", "patient[gender]"
 
 
       assert_select "input[name=?]", "patient[email]"

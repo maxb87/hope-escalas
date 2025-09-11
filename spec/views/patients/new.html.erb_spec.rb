@@ -4,7 +4,7 @@ RSpec.describe "patients/new", type: :view do
   before(:each) do
     assign(:patient, Patient.new(
       full_name: "MyString",
-             sex: 1,
+             gender: "female",
        email: "MyString",
       cpf: "MyString",
       rg: "MyString",
@@ -19,7 +19,7 @@ RSpec.describe "patients/new", type: :view do
     assert_select "form[action=?][method=?]", patients_path, "post" do
       assert_select "input[name=?]", "patient[full_name]"
 
-      assert_select "input[name=?]", "patient[sex]"
+      assert_select "select[name=?]", "patient[gender]"
 
 
       assert_select "input[name=?]", "patient[email]"

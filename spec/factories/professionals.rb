@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :professional do
     sequence(:full_name) { |n| "Dr. Profissional #{n}" }
-    sex { 0 }
+    gender { "male" }
     birthday { Date.new(1980, 1, 1) }
     started_at { Date.current }
     sequence(:email) { |n| "profissional#{n}@test.com" }
