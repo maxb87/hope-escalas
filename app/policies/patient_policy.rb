@@ -39,4 +39,9 @@ class PatientPolicy < ApplicationPolicy
   def destroy?
     user.email == "admin@admin.com" || (user.account_type == "Professional" && user.account_id.present?)
   end
+
+  def search?
+    # Busca de pacientes apenas para admin/profissional
+    user.email == "admin@admin.com" || (user.account_type == "Professional" && user.account_id.present?)
+  end
 end

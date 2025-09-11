@@ -1,8 +1,7 @@
-<%= form_with(model: patient) do |form| %>
+<%= form_with(model: patient, local: true, class: 'needs-validation', novalidate: true) do |form| %>
   <% if patient.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(patient.errors.count, "erro") %> impediram o salvamento deste paciente:</h2>
-
+    <div class="alert alert-danger">
+      <h4><%= pluralize(patient.errors.count, "erro") %> impediram o salvamento deste paciente:</h4>
       <ul>
         <% patient.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,33 +10,80 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :full_name, style: "display: block" %>
-    <%= form.text_field :full_name %>
+  <div class="mb-3">
+    <%= form.label :full_name, "Nome Completo", class: 'form-label' %>
+    <%= form.text_field :full_name, class: 'form-control', required: true %>
+    <div class="form-text">
+      <i class="bi bi-person me-1"></i>
+      Nome completo do paciente
+    </div>
   </div>
 
-  <div>
-    <%= form.label :gender, "Gênero", style: "display: block" %>
-    <%= form.select :gender, [["Masculino", "male"], ["Feminino", "female"]], { prompt: "Selecione..." } %>
+  <div class="mb-3">
+    <%= form.label :gender, "Gênero", class: 'form-label' %>
+    <%= form.select :gender, 
+        [["Masculino", "male"], ["Feminino", "female"]], 
+        { prompt: "Selecione o gênero..." }, 
+        { class: 'form-select', required: true } %>
   </div>
 
-  <div>
-    <%= form.label :birthday, style: "display: block" %>
-    <%= form.date_field :birthday %>
+  <div class="mb-3">
+    <%= form.label :birthday, "Data de Nascimento", class: 'form-label' %>
+    <%= form.date_field :birthday, class: 'form-control', required: true %>
+    <div class="form-text">
+      <i class="bi bi-calendar-event me-1"></i>
+      Formato: DD/MM/AAAA
+    </div>
   </div>
 
-  <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.text_field :email %>
+  <div class="mb-3">
+    <%= form.label :email, "Email", class: 'form-label' %>
+    <%= form.email_field :email, class: 'form-control', required: true %>
+    <div class="form-text">
+      <i class="bi bi-envelope me-1"></i>
+      Email será usado para login do paciente
+    </div>
   </div>
 
-  <div>
-    <%= form.label :cpf, style: "display: block" %>
-    <%= form.text_field :cpf %>
+  <div class="mb-3">
+    <%= form.label :cpf, "CPF", class: 'form-label' %>
+    <%= form.text_field :cpf, class: 'form-control', required: true %>
+    <div class="form-text">
+      <i class="bi bi-person-badge me-1"></i>
+      Apenas números, sem pontos ou hífens
+    </div>
   </div>
 
+  <div class="mb-3">
+    <%= form.label :rg, "RG", class: 'form-label' %>
+    <%= form.text_field :rg, class: 'form-control' %>
+  </div>
 
-  <div>
-    <%= form.submit "Salvar" %>
+  <div class="mb-3">
+    <%= form.label :current_address, "Endereço Atual", class: 'form-label' %>
+    <%= form.text_area :current_address, class: 'form-control', rows: 2 %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :current_phone, "Telefone Atual", class: 'form-label' %>
+    <%= form.text_field :current_phone, class: 'form-control' %>
+    <div class="form-text">
+      <i class="bi bi-telephone me-1"></i>
+      Formato: (11) 99999-9999
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :started_at, "Data de Início do Atendimento", class: 'form-label' %>
+    <%= form.date_field :started_at, class: 'form-control' %>
+    <div class="form-text">
+      <i class="bi bi-calendar-check me-1"></i>
+      Data em que o paciente iniciou o tratamento
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= form.submit "Salvar Paciente", class: 'btn btn-primary' %>
+    <%= link_to "Cancelar", patients_path, class: 'btn btn-secondary' %>
   </div>
 <% end %>

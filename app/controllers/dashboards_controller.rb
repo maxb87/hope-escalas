@@ -13,44 +13,18 @@ class DashboardsController < ApplicationController
 
   def professionals
     authorize :dashboards, :professionals?
-    @patients = policy_scope(Patient).order(:full_name)
-
-    # Otimizar queries para evitar N+1
-    # Buscar todas as contagens em queries únicas
-    patient_ids = @patients.pluck(:id)
-
-    completed_counts = ScaleResponse.where(patient_id: patient_ids)
-                                   .group(:patient_id)
-                                   .count
-
-    pending_counts = ScaleRequest.where(patient_id: patient_ids, status: "pending")
-                                 .group(:patient_id)
-                                 .count
-
-    # Combinar dados de forma eficiente
-    @patients_with_counts = @patients.map do |patient|
-      {
-        patient: patient,
-        completed_count: completed_counts[patient.id] || 0,
-        pending_count: pending_counts[patient.id] || 0
-      }
-    end
+    # Redirecionar diretamente para a lista de pacientes
+    redirect_to patients_path
   end
 
   def patients
     authorize :dashboards, :patients?
     @patient = current_user.account if current_user.account.is_a?(Patient)
     if @patient
-      @pending_requests = ScaleRequest.where(patient: @patient, status: "pending")
-                                      .includes(:psychometric_scale, :professional)
-                                      .order(requested_at: :desc)
-      @completed_responses = ScaleResponse.where(patient: @patient)
-                                          .includes(:psychometric_scale)
-                                          .order(completed_at: :desc)
-
-      # Contadores para notificações
-      @pending_count = @pending_requests.count
-      @completed_count = @completed_responses.count
+      # Redirecionar diretamente para o perfil do próprio paciente
+      redirect_to patient_path(@patient)
+    else
+      redirect_to root_path, alert: "Paciente não encontrado." and return
     end
   end
 end

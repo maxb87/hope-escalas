@@ -67,7 +67,7 @@
                 <div class="fw-medium"><%= patient.age %> anos</div>
                 <small class="text-muted">
                   <i class="bi bi-calendar-event me-1"></i>
-                  <%= l(patient.birthday, format: :short) %>
+                  <%= patient.birthday.strftime("%d/%m/%Y") %>
                 </small>
               </div>
             </td>

@@ -4,7 +4,37 @@ class PatientsController < ApplicationController
 
   # GET /patients or /patients.json
   def index
+    # Buscar todos os pacientes com suas solicitações pendentes mais recentes
     @patients = policy_scope(Patient)
+      .left_joins(scale_requests: [])
+      .where(scale_requests: { status: 'pending' })
+      .group('patients.id')
+      .order('MAX(scale_requests.requested_at) DESC NULLS LAST, patients.full_name ASC')
+    
+    # Incluir pacientes sem solicitações pendentes no final
+    patients_without_pending = policy_scope(Patient)
+      .where.not(id: @patients.pluck(:id))
+      .order(:full_name)
+    
+    @patients = @patients + patients_without_pending
+  end
+
+  # GET /patients/search.json
+  def search
+    authorize Patient, :search?
+    query = params[:q]
+    if query.present?
+      @patients = policy_scope(Patient)
+        .where("full_name ILIKE ?", "%#{query}%")
+        .limit(10)
+        .order(:full_name)
+    else
+      @patients = policy_scope(Patient).limit(10).order(:full_name)
+    end
+
+    respond_to do |format|
+      format.json { render json: @patients.map { |p| { id: p.id, text: p.full_name, email: p.email } } }
+    end
   end
 
   # GET /patients/1 or /patients/1.json
@@ -20,7 +50,7 @@ class PatientsController < ApplicationController
     authorize @patient
   end
 
-  # GET /patients/1/edit
+  # GET /patients/1 or /patients/1.json
   def edit
     authorize @patient
   end

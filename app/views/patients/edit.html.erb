@@ -1,12 +1,19 @@
 <% content_for :title, t('patients.edit.title') %>
 
-<h1><%= t('patients.edit.title') %></h1>
-
-<%= render "form", patient: @patient %>
-
-<br>
-
-<div>
-  <%= link_to t('patients.edit.show_link'), @patient %> |
-  <%= link_to t('patients.edit.back_link'), patients_path %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title mb-0">
+            <i class="bi bi-person-gear me-2"></i>
+            <%= t('patients.edit.title') %>
+          </h1>
+        </div>
+        <div class="card-body">
+          <%= render "form", patient: @patient %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
