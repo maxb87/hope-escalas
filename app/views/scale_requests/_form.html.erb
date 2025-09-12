@@ -1,7 +1,7 @@
 <%= form_with(model: [@scale_request], local: true, class: 'needs-validation', novalidate: true) do |f| %>
   <% if @scale_request.errors.any? %>
     <div class="alert alert-danger">
-      <h4><%= pluralize(@scale_request.errors.count, "error") %> prohibited this scale_request from being saved:</h4>
+      <h4><%= I18n.t("errors.messages.not_saved", count: @scale_request.errors.count, resource: @scale_request.class.model_name.human.downcase) %></h4>
       <ul>
         <% @scale_request.errors.full_messages.each do |message| %>
           <li><%= message %></li>

@@ -38,18 +38,18 @@
           </li>
         <% elsif is_professional || is_admin %>
           <li class="nav-item mb-2">
-            <%= link_to professionals_dashboard_path,
-                class: "nav-link d-flex align-items-center #{'active' if current_page?(professionals_dashboard_path)}" do %>
-              <i class="bi bi-people me-3 fs-5"></i>
-              <span>Pacientes</span>
+            <%= link_to scale_requests_path,
+                class: "nav-link d-flex align-items-center #{'active' if current_page?(scale_requests_path)}" do %>
+              <i class="bi bi-clipboard-data me-3 fs-5"></i>
+              <span>Solicitações</span>
             <% end %>
           </li>
 
           <li class="nav-item mb-2">
-            <%= link_to scale_requests_path,
-                class: "nav-link d-flex align-items-center #{'active' if current_page?(scale_requests_path)}" do %>
+            <%= link_to patients_path,
+                class: "nav-link d-flex align-items-center #{'active' if current_page?(patients_path)}" do %>
               <i class="bi bi-list-check me-3 fs-5"></i>
-              <span>Solicitações</span>
+              <span>Lista de Pacientes</span>
             <% end %>
           </li>
 

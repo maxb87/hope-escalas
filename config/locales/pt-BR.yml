@@ -48,16 +48,8 @@ pt-BR:
       - Quinta-feira
       - Sexta-feira
       - Sábado
-    abbr_day_names:
-      - Dom
-      - Seg
-      - Ter
-      - Qua
-      - Qui
-      - Sex
-      - Sáb
     month_names:
-      - ~
+      - null
       - Janeiro
       - Fevereiro
       - Março
@@ -70,8 +62,16 @@ pt-BR:
       - Outubro
       - Novembro
       - Dezembro
+    abbr_day_names:
+      - Dom
+      - Seg
+      - Ter
+      - Qua
+      - Qui
+      - Sex
+      - Sáb
     abbr_month_names:
-      - ~
+      - null
       - Jan
       - Fev
       - Mar
@@ -84,66 +84,80 @@ pt-BR:
       - Out
       - Nov
       - Dez
-    order:
-      - :day
-      - :month
-      - :year
 
   time:
     formats:
       default: "%d/%m/%Y %H:%M"
       short: "%d/%m %H:%M"
-      long: "%d de %B de %Y, %H:%M"
+      long: "%d de %B de %Y às %H:%M"
+    am: "AM"
+    pm: "PM"
 
   datetime:
     distance_in_words:
-      about_x_hours:
-        one: "cerca de 1 hora"
-        other: "cerca de %{count} horas"
-      about_x_months:
-        one: "cerca de 1 mês"
-        other: "cerca de %{count} meses"
-      about_x_years:
-        one: "cerca de 1 ano"
-        other: "cerca de %{count} anos"
-      almost_x_years:
-        one: "quase 1 ano"
-        other: "quase %{count} anos"
       half_a_minute: "meio minuto"
       less_than_x_minutes:
-        one: "menos de 1 minuto"
+        one: "menos de um minuto"
         other: "menos de %{count} minutos"
-      less_than_x_seconds:
-        one: "menos de 1 segundo"
-        other: "menos de %{count} segundos"
-      over_x_years:
-        one: "mais de 1 ano"
-        other: "mais de %{count} anos"
-      x_days:
-        one: "1 dia"
-        other: "%{count} dias"
       x_minutes:
         one: "1 minuto"
         other: "%{count} minutos"
+      about_x_hours:
+        one: "cerca de 1 hora"
+        other: "cerca de %{count} horas"
+      x_days:
+        one: "1 dia"
+        other: "%{count} dias"
+      about_x_months:
+        one: "cerca de 1 mês"
+        other: "cerca de %{count} meses"
       x_months:
         one: "1 mês"
         other: "%{count} meses"
-      x_seconds:
-        one: "1 segundo"
-        other: "%{count} segundos"
+      about_x_years:
+        one: "cerca de 1 ano"
+        other: "cerca de %{count} anos"
+      over_x_years:
+        one: "mais de 1 ano"
+        other: "mais de %{count} anos"
+      almost_x_years:
+        one: "quase 1 ano"
+        other: "quase %{count} anos"
 
   number:
-    format:
-      separator: ","
-      delimiter: "."
-      precision: 2
     currency:
       format:
         unit: "R$"
-        format: "%u %n"
+        precision: 2
         separator: ","
         delimiter: "."
-        precision: 2
+        format: "%u %n"
+    percentage:
+      format:
+        precision: 0
+    precision:
+      format:
+        delimiter: "."
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          unit: ""
+          thousand: "mil"
+          million: "milhão"
+          billion: "bilhão"
+          trillion: "trilhão"
+          quadrillion: "quatrilhão"
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
 
   activerecord:
     models:
@@ -204,6 +218,7 @@ pt-BR:
           attributes:
             base:
               duplicate_active_request: "Já existe uma solicitação pendente da escala '%{scale}' para %{patient}. Cancele a solicitação anterior ou aguarde sua conclusão antes de criar uma nova."
+              duplicate_srs2_self_report: "O paciente %{patient} já possui uma solicitação de autorelato SRS-2 (pendente ou concluída). Não é possível criar uma nova solicitação de autorelato."
 
   patients:
     index:
@@ -257,95 +272,108 @@ pt-BR:
       destroyed: "Profissional excluído com sucesso."
       dev_password: "(senha temporária: %{password})"
 
-  dashboards:
-    professionals:
-      title: "Pacientes"
-      new_patient: "Cadastrar paciente"
-      age_col: "Idade (nascimento)"
-      manage_scales: "Gerenciar Escalas"
-      scales_completed_col: "Escalas preenchidas"
-    patients:
-      title: "Meu perfil"
-      not_found: "Perfil não encontrado."
-      pending_requests_title: "Escalas pendentes para preenchimento"
-      completed_responses_title: "Escalas preenchidas"
-      scale_col: "Escala"
-      requested_at_col: "Solicitada em"
-      completed_at_col: "Concluída em"
-      fill_scale: "Preencher"
-      no_pending: "Você não tem escalas pendentes."
-      no_completed: "Você ainda não preencheu escalas."
-      alert_title: "Atenção!"
-      pending_alert:
-        one: "Você tem 1 escala psicométrica pendente para preenchimento."
-        other: "Você tem %{count} escalas psicométricas pendentes para preenchimento."
-      welcome_message: "Bem-vindo ao seu painel de escalas psicométricas!"
-      professional_col: "Solicitado por"
-
-  scale_responses:
-    create:
-      success: "Escala preenchida com sucesso."
-    new:
-      submit: "Enviar respostas"
-    errors:
-      answers_blank: "Respostas não podem ficar em branco. Selecione uma opção para cada item."
-      missing_required_items: "Itens obrigatórios não respondidos: %{items}"
-      invalid_key: "Estrutura inválida nas respostas: %{key}"
-      invalid_value: "Valor inválido em %{key}: %{value} (permitidos: 0, 1, 2, 3)"
-      already_completed: "Esta escala já foi preenchida. Você não pode preenchê-la novamente."
-      not_pending: "Esta solicitação não está mais disponível para preenchimento. Ela pode ter sido cancelada ou já foi completada."
-  psychometric_scales:
-    index:
-      notice: "Selecione uma escala para solicitar."
   scale_requests:
+    actions:
+      fill_scale: "Preencher escala"
+    index:
+      title: "Solicitações de Escalas"
+      pending_tab: "Pendentes"
+      completed_tab: "Concluídas"
+      cancelled_tab: "Canceladas"
+      new_link: "Nova solicitação"
+      show_link: "Ver solicitação"
+      cancel_link: "Cancelar"
+      patient_col: "Paciente"
+      scale_col: "Escala"
+      professional_col: "Profissional"
+      requested_at_col: "Solicitada em"
+      status_col: "Status"
+      actions_col: "Ações"
+    show:
+      title: "Solicitação de Escala"
+      back_link: "Voltar para solicitações"
+      patient_info: "Informações do Paciente"
+      scale_info: "Informações da Escala"
+      professional_info: "Profissional Responsável"
+      notes: "Observações"
+      status: "Status"
+      requested_at: "Solicitada em"
+      response_link: "Responder Escala"
+      cancel_link: "Cancelar Solicitação"
     new:
-      title: "Nova solicitação de escala"
-      link: "Nova solicitação"
+      title: "Nova Solicitação de Escala"
+      back_link: "Voltar para solicitações"
+      patient_label: "Paciente"
+      scale_label: "Escala"
+      notes_label: "Observações (opcional)"
+      submit: "Criar Solicitação"
       button: "Solicitar Preenchimento"
     form:
       patient: "Paciente"
       scale: "Escala"
       notes: "Observações"
-      submit: "Criar solicitação"
-    index:
-      title: "Escalas Psicométricas"
-      subtitle: "Gerencie solicitações de preenchimento de escalas"
-    filters:
-      all: "Todas"
-      pending: "Pendentes"
-      completed: "Concluídas"
-      cancelled: "Canceladas"
-    status:
-      pending: "Pendente"
-      completed: "Concluída"
-      cancelled: "Cancelada"
-      expired: "Expirada"
-    table:
-      patient: "Paciente"
-      scale: "Escala"
-      professional: "Profissional"
-      status: "Status"
-      requested_at: "Solicitada em"
-      result: "Resultado"
-      actions: "Ações"
-      no_result: "Sem resultado"
-      showing_count:
-        one: "Mostrando 1 solicitação"
-        other: "Mostrando %{count} solicitações"
-      empty_title: "Nenhuma solicitação encontrada"
-      empty_description: "Não há solicitações de escala neste filtro. Que tal criar uma nova?"
-    show:
-      title: "Detalhes da Solicitação"
-    actions:
-      cancel: "Cancelar solicitação"
-      confirm_cancel: "Tem certeza que deseja cancelar esta solicitação?"
-      view_response: "Ver resultado"
-      cancel_confirm: "Tem certeza que deseja cancelar esta solicitação?"
-      fill_scale: "Preencher Escala"
+      submit: "Criar Solicitação"
     create:
       success: "Solicitação criada com sucesso."
-    destroy:
-      success: "Solicitação cancelada com sucesso."
     cancel:
       success: "Solicitação cancelada com sucesso."
       failure: "Não foi possível cancelar a solicitação."
+
+  scale_responses:
+    index:
+      title: "Respostas de Escalas"
+      show_link: "Ver resposta"
+      patient_col: "Paciente"
+      scale_col: "Escala"
+      completed_at_col: "Concluída em"
+      score_col: "Pontuação"
+      interpretation_col: "Interpretação"
+      actions_col: "Ações"
+    show:
+      title: "Resposta de Escala"
+      back_link: "Voltar para respostas"
+      patient_info: "Informações do Paciente"
+      scale_info: "Informações da Escala"
+      professional_info: "Profissional Responsável"
+      answers: "Respostas"
+      results: "Resultados"
+      score: "Pontuação Total"
+      interpretation: "Interpretação"
+      completed_at: "Concluída em"
+      hetero_report_info: "Informações do Relator"
+      relator_name: "Nome do Relator"
+      relator_relationship: "Parentesco/Relação"
+    new:
+      title: "Responder Escala"
+      back_link: "Voltar"
+      submit: "Enviar Resposta"
+      required_items_note: "Itens obrigatórios estão marcados com *"
+    create:
+      success: "Resposta enviada com sucesso."
+    errors:
+      already_completed: "Esta solicitação já foi respondida."
+      not_pending: "Esta solicitação não está pendente."
+      answers_blank: "É necessário responder pelo menos um item da escala."
+      missing_required_items: "Itens obrigatórios não respondidos: %{items}"
+      invalid_key: "Chave de item inválida: %{key}"
+      invalid_value: "Valor inválido para o item %{key}: %{value}"
+
+  dashboards:
+    admin:
+      title: "Painel Administrativo"
+      patients_count: "Total de Pacientes"
+      professionals_count: "Total de Profissionais"
+      pending_requests_count: "Solicitações Pendentes"
+      completed_responses_count: "Respostas Concluídas"
+    professional:
+      title: "Painel do Profissional"
+      my_patients_count: "Meus Pacientes"
+      pending_requests_count: "Solicitações Pendentes"
+      completed_responses_count: "Respostas Concluídas"
+    patient:
+      title: "Meu Perfil"
+      pending_requests_count: "Solicitações Pendentes"
+      completed_responses_count: "Respostas Concluídas"
+      no_pending: "Não há solicitações pendentes."
+      no_completed: "Não há respostas enviadas."
+      completion_percentage: "Porcentagem de respostas completas"

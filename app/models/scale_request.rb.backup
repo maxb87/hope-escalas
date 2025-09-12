@@ -20,9 +20,9 @@ class ScaleRequest < ApplicationRecord
   # validate :expires_at_after_requested_at, if: :expires_at?
 
   # Validação para impedir múltiplas solicitações ativas da mesma escala por paciente
-  validate :unique_active_request_per_patient_and_scale, unless: :cancelled?
+  validate :unique_active_request_per_patient_and_scale
   # Validação para impedir múltiplas solicitações de autorelato SRS-2
-  validate :unique_srs2_self_report_request, if: :srs2_self_report?, unless: :cancelled?
+  validate :unique_srs2_self_report_request, if: :srs2_self_report?
 
   scope :recent, -> { order(requested_at: :desc) }
   scope :active, -> { pending }

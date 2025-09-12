@@ -19,8 +19,21 @@
 
 
 <hr/>
+<div class="d-flex gap-2">
+  <div class="col-md-3">
+    <h2>Escalas Solicitadas</h2>
+  </div>
+  <div class="col-md-3">
+     <%= link_to new_scale_request_path, 
+        class: 'btn btn-warning',
+        data: { turbo_frame: "_top" } do %>
+      <i class="bi bi-plus-circle me-2"></i>
+      <%= t('scale_requests.new.button') %>
+    <% end %>
+  </div>
 
-<h2>Escalas Solicitadas</h2>
+</div>
+
 <% if @pending_requests.present? %>
   <table class="table table-striped">
     <thead>
@@ -50,7 +63,7 @@
     </tbody>
   </table>
 <% else %>
-  <p><%= t('dashboards.patients.no_pending') %></p>
+  <p><%= t("Sem solicitações pendentes.") %></p>
 <% end %>
 
 <h2 class="mt-4">Escalas Respondidas</h2>
@@ -83,5 +96,5 @@
     </tbody>
   </table>
 <% else %>
-  <p><%= t('dashboards.patients.no_completed') %></p>
+  <p><%= t("Sem solicitações pendentes.") %></p>
 <% end %>

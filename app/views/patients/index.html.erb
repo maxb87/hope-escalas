@@ -99,7 +99,7 @@
                     <td class="py-3">
                       <div>
                         <div class="fw-medium">
-                          <%= patient.scale_requests.count %> total
+                          <%= patient.pending_scale_requests_count %> pendentes
                         </div>
                         <% if patient.pending_scale_requests_count > 0 %>
                           <span class="badge bg-warning text-dark">
@@ -122,7 +122,7 @@
                         <div class="d-flex align-items-center">
                           <small class="text-muted me-2">
                             <i class="bi bi-percent me-1"></i>
-                            <%= completion_rate = patient.scale_requests.count > 0 ? (patient.completed_scale_responses_count.to_f / patient.scale_requests.count * 100).round(1) : 0 %>%
+                            <%= patient.completion_percentage %>%
                           </small>
                         </div>
                       </div>

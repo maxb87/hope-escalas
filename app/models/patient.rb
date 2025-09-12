@@ -16,9 +16,20 @@ class Patient < ApplicationRecord
     scale_responses.count
   end
 
+  # Método para contar solicitações em aberto (pendentes + respondidas)
+  def open_scale_requests_count
+    scale_requests.where(status: [ :pending, :completed ]).count
+  end
+
+  # Método para calcular porcentagem de respostas completas
+  def completion_percentage
+    return 0 if open_scale_requests_count.zero?
+    (completed_scale_responses_count.to_f / open_scale_requests_count * 100).round(1)
+  end
+
   def age
     return nil if birthday.nil?
-    
+
     today = Date.current
     age = today.year - birthday.year
     age -= 1 if today < birthday + age.years

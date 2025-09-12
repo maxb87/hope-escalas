@@ -66,7 +66,7 @@ class ScaleRequestsController < ApplicationController
     authorize @scale_request
 
     if @scale_request.save
-      redirect_to @scale_request.patient, notice: I18n.t("scale_requests.create.success")
+      redirect_to pending_scale_requests_path, notice: I18n.t("scale_requests.create.success")
     else
       @psychometric_scales = PsychometricScale.active.ordered
       @patients = policy_scope(Patient).order(:full_name)

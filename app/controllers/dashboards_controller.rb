@@ -13,8 +13,8 @@ class DashboardsController < ApplicationController
 
   def professionals
     authorize :dashboards, :professionals?
-    # Redirecionar diretamente para a lista de pacientes
-    redirect_to patients_path
+    # Redirecionar diretamente para o index de solicitações
+    redirect_to scale_requests_path
   end
 
   def patients
