@@ -1,16 +1,143 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, t('professionals.index.title') %>
 
-<h1><%= t('professionals.index.title') %></h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h1 class="card-title mb-0">
+            <i class="bi bi-people me-2"></i>
+            Profissionais
+          </h1>
+          <%= link_to new_professional_path, class: 'btn btn-primary' do %>
+            <i class="bi bi-plus me-1"></i>
+            Novo profissional
+          <% end %>
+        </div>
+        
+        <% if @professionals.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="py-3">
+                    <i class="bi bi-person me-1"></i>
+                    Profissional
+                  </th>
 
-<div id="professionals">
-  <% @professionals.each do |professional| %>
-    <%= render professional %>
-    <p>
-      <%= link_to t('professionals.index.show_link'), professional %>
-    </p>
-  <% end %>
+                  <th class="py-3">
+                    <i class="bi bi-envelope me-1"></i>
+                    Email
+                  </th>
+                  <th class="py-3">
+                    <i class="bi bi-award me-1"></i>
+                    ID Profissional
+                  </th>
+
+                  <th class="py-3 text-center">
+                    <i class="bi bi-gear me-1"></i>
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @professionals.each do |professional| %>
+                  <tr>
+                    <td class="py-3">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <%= professional.full_name.first.upcase %>
+                        </div>
+                        <div>
+                          <div class="fw-medium"><%= professional.full_name %></div>
+                          <small class="text-muted">ID: <%= professional.id %></small>
+                        </div>
+                      </div>
+                    </td>
+                  
+
+                    <td class="py-3">
+                      <div>
+                        <div><%= professional.email %></div>
+                        <small class="text-success">
+                          <i class="bi bi-check-circle me-1"></i>
+                          Ativo
+                        </small>
+                      </div>
+                    </td>
+                    <td class="py-3">
+                      <div>
+                        <div class="fw-medium"><%= professional.professional_id %></div>
+                        <small class="text-muted">
+                          <i class="bi bi-award me-1"></i>
+                          Credencial
+                        </small>
+                      </div>
+                    </td>
+                    
+                    <td class="py-3 text-center">
+                      <div class="btn-group" role="group">
+                        <%= link_to professional_path(professional), 
+                            class: 'btn btn-sm btn-outline-primary',
+                            title: 'Visualizar',
+                            data: { turbo_frame: "_top" } do %>
+                          <i class="bi bi-eye"></i>
+                        <% end %>
+                        
+                        <%= link_to edit_professional_path(professional), 
+                            class: 'btn btn-sm btn-outline-warning',
+                            title: 'Editar',
+                            data: { turbo_frame: "_top" } do %>
+                          <i class="bi bi-pencil"></i>
+                        <% end %>
+                        
+                        <% if policy(professional).destroy? %>
+                          <%= button_to professional_path(professional), 
+                              method: :delete,
+                              data: { 
+                                confirm: "Tem certeza que deseja excluir o profissional #{professional.full_name}?",
+                                turbo_confirm: "Tem certeza que deseja excluir o profissional #{professional.full_name}?"
+                              },
+                              class: "btn btn-sm btn-outline-danger",
+                              title: "Excluir" do %>
+                            <i class="bi bi-trash"></i>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              Mostrando <%= @professionals.count %> profissional(is)
+            </small>
+          </div>
+        <% else %>
+          <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+            <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+            <h3 class="text-muted mt-3">Nenhum profissional encontrado</h3>
+            <p class="text-muted">Comece adicionando seu primeiro profissional.</p>
+            <%= link_to new_professional_path, class: 'btn btn-primary' do %>
+              <i class="bi bi-plus me-1"></i>
+              Novo profissional
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<%= link_to t('professionals.index.new_link'), new_professional_path %>
+<style>
+.bg-pink {
+  background-color: #e91e63 !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+</style>

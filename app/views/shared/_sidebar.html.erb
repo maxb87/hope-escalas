@@ -60,6 +60,22 @@
               <span>Cadastrar Paciente</span>
             <% end %>
           </li>
+
+          <li class="nav-item mb-2">
+            <%= link_to professionals_path,
+                class: "nav-link d-flex align-items-center #{'active' if current_page?(professionals_path)}" do %>
+              <i class="bi bi-people me-3 fs-5"></i>
+              <span>Lista de Profissionais</span>
+            <% end %>
+          </li>
+
+          <li class="nav-item mb-2">
+            <%= link_to new_professional_path,
+                class: "nav-link d-flex align-items-center #{'active' if current_page?(new_professional_path)}" do %>
+              <i class="bi bi-person-badge me-3 fs-5"></i>
+              <span>Cadastrar Profissional</span>
+            <% end %>
+          </li>
         <% end %>
       </ul>
 
@@ -119,6 +135,24 @@
                   onclick: "document.getElementById('sidebarOffcanvas').classList.remove('show'); document.querySelector('.offcanvas-backdrop').remove();" do %>
                 <i class="bi bi-person-plus me-3 fs-5"></i>
                 <span>Novo Paciente</span>
+              <% end %>
+            </li>
+
+            <li class="nav-item mb-2">
+              <%= link_to professionals_path,
+                  class: "nav-link d-flex align-items-center #{'active' if current_page?(professionals_path)}",
+                  onclick: "document.getElementById('sidebarOffcanvas').classList.remove('show'); document.querySelector('.offcanvas-backdrop').remove();" do %>
+                <i class="bi bi-people me-3 fs-5"></i>
+                <span>Lista de Profissionais</span>
+              <% end %>
+            </li>
+
+            <li class="nav-item mb-2">
+              <%= link_to new_professional_path,
+                  class: "nav-link d-flex align-items-center #{'active' if current_page?(new_professional_path)}",
+                  onclick: "document.getElementById('sidebarOffcanvas').classList.remove('show'); document.querySelector('.offcanvas-backdrop').remove();" do %>
+                <i class="bi bi-person-badge me-3 fs-5"></i>
+                <span>Cadastrar Profissional</span>
               <% end %>
             </li>
           <% end %>

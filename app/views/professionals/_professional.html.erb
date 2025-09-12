@@ -1,7 +1,6 @@
 <div id="<%= dom_id professional %>">
   <p>
-    <strong>Full name:</strong>
-    <%= professional.full_name %>
+    <h2><%= professional.full_name %></h2>
   </p>
 
   <p>
@@ -10,15 +9,14 @@
   </p>
 
   <p>
-    <strong>Birthday:</strong>
-    <%= professional.birthday %>
+    <strong>Data de Nascimento:</strong>
+    <%= professional.birthday %> (<%= professional.age %> anos)
   </p>
 
   <p>
-    <strong>Started at:</strong>
+    <strong>Data de Início:</strong>
     <%= professional.started_at %>
   </p>
-
 
   <p>
     <strong>Email:</strong>
@@ -26,29 +24,27 @@
   </p>
 
   <p>
-    <strong>Cpf:</strong>
+    <strong>CPF:</strong>
     <%= professional.cpf %>
   </p>
 
   <p>
-    <strong>Rg:</strong>
+    <strong>RG:</strong>
     <%= professional.rg %>
   </p>
 
   <p>
-    <strong>Current address:</strong>
+    <strong>Endereço:</strong>
     <%= professional.current_address %>
   </p>
 
   <p>
-    <strong>Current phone:</strong>
+    <strong>Telefone:</strong>
     <%= professional.current_phone %>
   </p>
 
   <p>
-    <strong>Professional:</strong>
+    <strong>ID Profissional:</strong>
     <%= professional.professional_id %>
   </p>
-
-
 </div>
