@@ -450,7 +450,8 @@ module Charts
       {
         patient_name: patient.full_name,
         requested_at: request.requested_at,
-        completed_at: request.scale_response.completed_at
+        completed_at: request.scale_response.completed_at,
+        scale_response: request.scale_response
       }
     end
 
@@ -466,7 +467,8 @@ module Charts
       {
         relator_name: hetero_report_respondent_name,
         requested_at: request.requested_at,
-        completed_at: request.scale_response.completed_at
+        completed_at: request.scale_response.completed_at,
+        scale_response: request.scale_response
       }
     end
 

@@ -28,56 +28,18 @@
       </div>
 
       <!-- Gráfico -->
-      <div class="card">
+      <div class="card my-4">
         <div class="card-body">
           <%= srs2_comparison_chart(@chart_data, height: "500px") %>
         </div>
       </div>
 
-      <!-- Legenda das Zonas de Prejuízo -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h6 class="card-title mb-0">
-                <i class="bi bi-info-circle me-1"></i>
-                Interpretação dos T-Scores
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-3">
-                  <div class="d-flex align-items-center mb-2">
-                    <div class="me-2" style="width: 20px; height: 20px; background-color: rgba(40, 167, 69, 0.3); border: 1px solid #28a745;"></div>
-                    <span><strong>50-59:</strong> Sem prejuízo</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="d-flex align-items-center mb-2">
-                    <div class="me-2" style="width: 20px; height: 20px; background-color: rgba(255, 193, 7, 0.3); border: 1px solid #ffc107;"></div>
-                    <span><strong>60-64:</strong> Prejuízo leve</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="d-flex align-items-center mb-2">
-                    <div class="me-2" style="width: 20px; height: 20px; background-color: rgba(253, 126, 20, 0.3); border: 1px solid #fd7e14;"></div>
-                    <span><strong>65-74:</strong> Prejuízo moderado</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="d-flex align-items-center mb-2">
-                    <div class="me-2" style="width: 20px; height: 20px; background-color: rgba(220, 53, 69, 0.3); border: 1px solid #dc3545;"></div>
-                    <span><strong>75+:</strong> Prejuízo grave</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Interpretação dos Resultados -->
+      <div class="card my-4">
+        <div class="card-body">
+          <p>Interpretação dos Resultados</p>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
 <script>
 <%= @chart_service.chart_js_function.html_safe %>

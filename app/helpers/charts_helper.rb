@@ -38,6 +38,17 @@ module ChartsHelper
     end
   end
 
+  # Gera link para ver resultados de uma escala
+  def scale_results_link(scale_response, text = "Ver Resultados", options = {})
+    return unless scale_response.present?
+
+    link_to scale_response_path(scale_response),
+            class: "btn btn-outline-secondary btn-sm #{options[:class]}",
+            title: "Ver resultados detalhados desta escala" do
+      content_tag(:i, "", class: "bi bi-eye me-1") + text
+    end
+  end
+
   private
 
   def self_report_info_section(self_report_info)
@@ -64,12 +75,15 @@ module ChartsHelper
                 content_tag(:span, l(self_report_info[:requested_at], format: :short), class: "fw-medium")
               end
             end,
-            content_tag(:div, class: "mt-auto") do
+            content_tag(:div, class: "mb-3") do
               content_tag(:div, class: "d-flex align-items-center") do
                 content_tag(:i, "", class: "bi bi-check-circle me-2 text-success") +
                 content_tag(:span, "Concluído em: ", class: "text-muted") +
                 content_tag(:span, l(self_report_info[:completed_at], format: :short), class: "fw-medium text-success")
               end
+            end,
+            content_tag(:div, class: "mt-auto") do
+              scale_results_link(self_report_info[:scale_response], "Ver Resultados", class: "w-100")
             end
           ].join.html_safe
         end
@@ -101,12 +115,15 @@ module ChartsHelper
                 content_tag(:span, l(hetero_report_info[:requested_at], format: :short), class: "fw-medium")
               end
             end,
-            content_tag(:div, class: "mt-auto") do
+            content_tag(:div, class: "mb-3") do
               content_tag(:div, class: "d-flex align-items-center") do
                 content_tag(:i, "", class: "bi bi-check-circle me-2 text-success") +
                 content_tag(:span, "Concluído em: ", class: "text-muted") +
                 content_tag(:span, l(hetero_report_info[:completed_at], format: :short), class: "fw-medium text-success")
               end
+            end,
+            content_tag(:div, class: "mt-auto") do
+              scale_results_link(hetero_report_info[:scale_response], "Ver Resultados", class: "w-100")
             end
           ].join.html_safe
         end
