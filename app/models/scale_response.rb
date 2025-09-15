@@ -64,6 +64,44 @@ class ScaleResponse < ApplicationRecord
     [ "SRS2SR", "SRS2HR" ].include?(psychometric_scale.code)
   end
 
+
+  # Métodos para obter respostas formatadas para exibição
+  def formatted_answers
+    return [] unless answers.present? && psychometric_scale.present?
+
+    psychometric_scale.scale_items.ordered.map do |item|
+      answer_key = "item_#{item.item_number}"
+      answer_value = answers[answer_key]
+      
+      if answer_value.present?
+        {
+          item_number: item.item_number,
+          question_text: item.question_text,
+          answer_value: answer_value,
+          answer_text: item.options[answer_value.to_s] || "Resposta inválida",
+          item: item
+        }
+      else
+        {
+          item_number: item.item_number,
+          question_text: item.question_text,
+          answer_value: nil,
+          answer_text: "Não respondido",
+          item: item
+        }
+      end
+    end
+  end
+
+  # Obtém apenas as respostas que foram preenchidas
+  def answered_items
+    formatted_answers.select { |item| item[:answer_value].present? }
+  end
+
+  # Obtém respostas não preenchidas
+  def unanswered_items
+    formatted_answers.select { |item| item[:answer_value].blank? }
+  end
   private
 
   def calculate_score

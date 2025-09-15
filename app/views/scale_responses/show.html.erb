@@ -113,6 +113,34 @@
     <% if interp.present? && interp["rules"].present? %>
       <p class="text-muted">Regra: <%= interp["rules"] %></p>
     <% end %>
+
+  <!-- Seção de Respostas do Paciente -->
+  <div class="mt-4">
+    <h3>Respostas do Paciente</h3>
+    <div class="card">
+      <div class="card-body">
+        <% if @scale_response.answers.present? %>
+          <div class="row">
+            <% @scale_response.answered_items.each do |item| %>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-3 bg-light">
+                  <h6 class="text-primary mb-2">Pergunta <%= item[:item_number] %></h6>
+                  <p class="mb-2"><strong><%= item[:question_text] %></strong></p>
+                  <div class="alert alert-success mb-0">
+                    <strong>Resposta:</strong> <%= item[:answer_value] %> — <%= item[:answer_text] %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="alert alert-warning">
+            <strong>Nenhuma resposta encontrada</strong> para esta escala.
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
   <% end %>
 <% end %>
 
