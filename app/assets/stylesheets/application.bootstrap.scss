@@ -1,1 +1,37 @@
 @import 'bootstrap/scss/bootstrap';
+
+// Chart styles
+.chart-container {
+  position: relative;
+  width: 100%;
+  
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+}
+
+.chart-report-info {
+  .card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    
+    .card-header {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+      font-weight: 600;
+    }
+  }
+}
+
+// Responsive adjustments for charts
+@media (max-width: 768px) {
+  .chart-container {
+    height: 300px !important;
+  }
+  
+  .chart-report-info {
+    .col-md-6 {
+      margin-bottom: 1rem;
+    }
+  }
+}
