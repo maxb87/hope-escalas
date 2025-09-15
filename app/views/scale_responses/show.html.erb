@@ -124,10 +124,9 @@
             <% @scale_response.answered_items.each do |item| %>
               <div class="col-12 mb-3">
                 <div class="border rounded p-3 bg-light">
-                  <h6 class="text-primary mb-2">Pergunta <%= item[:item_number] %></h6>
-                  <p class="mb-2"><strong><%= item[:question_text] %></strong></p>
+                  <p class="mb-2"><strong><%= item[:item_number] %>. <%= item[:question_text] %></strong></p>
                   <div class="alert alert-success mb-0">
-                    <strong>Resposta:</strong> <%= item[:answer_value] %> — <%= item[:answer_text] %>
+                    <strong> Resposta:</strong> <%= item[:answer_value] %> — <%= item[:answer_text] %>
                   </div>
                 </div>
               </div>

@@ -23,6 +23,8 @@ class ScaleRequest < ApplicationRecord
   validate :unique_active_request_per_patient_and_scale, unless: :cancelled?
   # Validação para impedir múltiplas solicitações de autorelato SRS-2
   validate :unique_srs2_self_report_request, if: :srs2_self_report?, unless: :cancelled?
+  # Validação para impedir múltiplas solicitações de heterorelato SRS-2
+  validate :unique_srs2_hetero_report_request, if: :srs2_hetero_report?, unless: :cancelled?
 
   scope :recent, -> { order(requested_at: :desc) }
   scope :active, -> { pending }
@@ -58,6 +60,11 @@ class ScaleRequest < ApplicationRecord
   # Verificar se é uma escala de autorelato SRS-2
   def srs2_self_report?
     psychometric_scale&.code == "SRS2SR"
+  end
+
+  # Verificar se é uma escala de heterorelato SRS-2
+  def srs2_hetero_report?
+    psychometric_scale&.code == "SRS2HR"
   end
 
   private
@@ -122,6 +129,30 @@ class ScaleRequest < ApplicationRecord
 
       errors.add(:base, I18n.t("activerecord.errors.models.scale_request.attributes.base.duplicate_srs2_self_report",
                                scale: scale_name, patient: patient_name))
+    end
+  end
+
+  # Validação para impedir múltiplas solicitações de heterorelato SRS-2
+  def unique_srs2_hetero_report_request
+    return unless patient_id.present?
+
+    # Buscar qualquer solicitação de heterorelato SRS-2 (pendente ou concluída) para o mesmo paciente
+    existing_requests = ScaleRequest.joins(:psychometric_scale)
+      .where(
+        patient_id: patient_id,
+        psychometric_scales: { code: "SRS2HR" }
+      )
+      .where(status: [ :pending, :completed ])
+
+    # Excluir o próprio registro se estiver sendo atualizado
+    existing_requests = existing_requests.where.not(id: id) if persisted?
+
+    if existing_requests.exists?
+      patient_name = patient&.full_name || "paciente selecionado"
+      scale_name = psychometric_scale&.name || "SRS-2 Heterorrelato"
+
+      errors.add(:base, I18n.t("activerecord.errors.models.scale_request.attributes.base.duplicate_srs2_hetero_report",
+                             scale: scale_name, patient: patient_name))
     end
   end
 end

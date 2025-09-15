@@ -219,6 +219,7 @@ pt-BR:
             base:
               duplicate_active_request: "Já existe uma solicitação pendente da escala '%{scale}' para %{patient}. Cancele a solicitação anterior ou aguarde sua conclusão antes de criar uma nova."
               duplicate_srs2_self_report: "O paciente %{patient} já possui uma solicitação de autorelato SRS-2 (pendente ou concluída). Não é possível criar uma nova solicitação de autorelato."
+              duplicate_srs2_hetero_report: "O paciente %{patient} já possui uma solicitação de heterorelato SRS-2 (pendente ou concluída). Não é possível criar uma nova solicitação de heterorelato."
 
   patients:
     index:
