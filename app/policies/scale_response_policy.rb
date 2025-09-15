@@ -36,6 +36,12 @@ class ScaleResponsePolicy < ApplicationPolicy
     end
   end
 
+  def interpretation?
+    # Apenas profissionais e administradores podem acessar a interpretação
+    user.email == "admin@admin.com" || 
+    (user.account_type == "Professional" && record.scale_request.professional == user.account)
+  end
+
   def update?
     false # Respostas não podem ser editadas após criadas
   end

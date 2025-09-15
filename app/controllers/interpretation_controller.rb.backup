@@ -1,0 +1,118 @@
+# frozen_string_literal: true
+
+class InterpretationController < ApplicationController
+  before_action :set_scale_response, only: [:srs2_interpretation]
+  before_action :set_patient, only: [:srs2_interpretation]
+
+  # GET /interpretation/srs2/:scale_response_id
+  def srs2_interpretation
+    authorize @scale_response, :srs2_interpretation?
+    
+    # Verificar se é uma escala SRS-2
+    unless @scale_response.srs2_scale?
+      redirect_to @scale_response, alert: "Esta não é uma escala SRS-2 válida."
+      return
+    end
+
+    # Obter dados da resposta
+    @self_report = @scale_response
+    @patient = @scale_response.patient
+    
+    # Buscar heterorelato correspondente se existir
+    @hetero_report = find_hetero_report
+    
+    # Gerar interpretação usando o serviço
+    @interpretation_service = Interpretation::Srs2InterpretationService.new
+    @interpretation_description = @interpretation_service.get_interpretation_description(@patient, @self_report)
+    
+    # Gerar tabela de comparação se houver heterorelato
+    @comparison_table = if @hetero_report
+      Interpretation::Srs2InterpretationService.get_comparison_table(@self_report, @hetero_report)
+    else
+      ""
+    end
+    
+    # Dados para exibição
+    @t_score = @self_report.results.dig("metrics", "t_score") || @self_report.results.dig("t_total")
+    @raw_score = @self_report.results.dig("metrics", "raw_score") || @self_report.total_score
+    @interpretation_level = @self_report.results.dig("interpretation", "level") || "Não disponível"
+    
+    # Dados dos domínios
+    @domains = extract_domain_data(@self_report)
+    
+    render :srs2_interpretation
+  end
+
+  private
+
+  def set_scale_response
+    @scale_response = ScaleResponse.find(params[:scale_response_id])
+  end
+
+  def set_patient
+    @patient = @scale_response.patient
+  end
+
+  def find_hetero_report
+    # Buscar heterorelato correspondente do mesmo paciente
+    # Assumindo que há uma relação temporal ou por scale_request
+    if @scale_response.psychometric_scale.code == "SRS2SR"
+      # Se é autorelato, buscar heterorelato
+      ScaleResponse.joins(:psychometric_scale)
+                   .where(patient: @patient, psychometric_scales: { code: "SRS2HR" })
+                   .where("completed_at IS NOT NULL")
+                   .recent
+                   .first
+    elsif @scale_response.psychometric_scale.code == "SRS2HR"
+      # Se é heterorelato, buscar autorelato
+      ScaleResponse.joins(:psychometric_scale)
+                   .where(patient: @patient, psychometric_scales: { code: "SRS2SR" })
+                   .where("completed_at IS NOT NULL")
+                   .recent
+                   .first
+    end
+  end
+
+  def extract_domain_data(scale_response)
+    return [] unless scale_response.results.present?
+    
+    domains = [
+      { key: "social_awareness", label: "Percepção Social" },
+      { key: "social_cognition", label: "Cognição Social" },
+      { key: "social_communication", label: "Comunicação Social" },
+      { key: "social_motivation", label: "Motivação Social" },
+      { key: "restricted_interests", label: "Interesses Restritos/Repetitivos" },
+      { key: "social_interaction", label: "Interação Social" }
+    ]
+    
+    domains.map do |domain|
+      t_score = Interpretation::Srs2InterpretationService.get_domain_t_score(scale_response, domain[:key])
+      raw_score = scale_response.results.dig("domains", domain[:key], "raw_score")
+      
+      {
+        label: domain[:label],
+        key: domain[:key],
+        t_score: t_score,
+        raw_score: raw_score,
+        interpretation: determine_domain_interpretation(t_score)
+      }
+    end
+  end
+
+  def determine_domain_interpretation(t_score)
+    return "N/A" unless t_score
+    
+    case t_score
+    when 0..54
+      "Normal"
+    when 55..64
+      "Leve"
+    when 65..74
+      "Moderado"
+    when 75..100
+      "Severo"
+    else
+      "N/A"
+    end
+  end
+end

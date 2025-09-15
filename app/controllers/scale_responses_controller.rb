@@ -1,9 +1,13 @@
 class ScaleResponsesController < ApplicationController
-  before_action :set_scale_response, only: [ :show ]
+  include ChartsHelper
+  
+  before_action :set_scale_response, only: [ :show, :interpretation ]
+  
   def index
     @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
     authorize @scale_responses
   end
+  
   def new
     @scale_request = ScaleRequest.find(params[:scale_request_id])
     authorize @scale_request, :respond?
@@ -66,6 +70,20 @@ class ScaleResponsesController < ApplicationController
     authorize @scale_response
   end
 
+  def interpretation
+    authorize @scale_response
+    
+    # Verificar se é uma escala SRS-2 e se há dados para comparação
+    if @scale_response.psychometric_scale.code == "SRS2SR"
+      @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
+      
+      if @chart_service.has_data?
+        @chart_data = @chart_service.chart_data
+        @report_info = @chart_service.report_info
+      end
+    end
+  end
+
   private
 
   def set_scale_response
@@ -118,8 +136,3 @@ class ScaleResponsesController < ApplicationController
     end
   end
 end
-
-  def index
-    @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
-    authorize @scale_responses
-  end

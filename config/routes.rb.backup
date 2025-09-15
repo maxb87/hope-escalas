@@ -1,0 +1,63 @@
+Rails.application.routes.draw do
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "users/sessions"
+  }
+
+  root "pages#home"
+
+  get "dashboard", to: "dashboards#index"
+  get "charts", to: "charts#index"
+
+  # Interpretation routes
+  get "srs2/:scale_response_id", to: "interpretation#srs2_interpretation", as: :srs2_interpretation
+
+  resources :professionals do
+    member do
+      patch :restore
+    end
+  end
+
+  resources :patients do
+    member do
+      patch :restore
+    end
+  end
+
+  resources :psychometric_scales do
+    member do
+      patch :restore
+    end
+  end
+
+  resources :scale_requests do
+    member do
+      patch :restore
+      patch :complete
+    end
+    resources :scale_responses, only: [ :new, :create ]
+  end
+
+  resources :scale_responses, only: [ :index, :show ] do
+    member do
+      patch :restore
+    end
+  end
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :charts, only: [ :index ] do
+        collection do
+          get :srs2_comparison
+          get :srs2_domain_comparison
+          get :srs2_individual
+          get :srs2_individual_domains
+        end
+      end
+    end
+  end
+
+  # Health check
+  get "health", to: "pages#health"
+end

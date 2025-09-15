@@ -35,4 +35,8 @@ class Patient < ApplicationRecord
     age -= 1 if today < birthday + age.years
     age
   end
+
+  def first_name
+    full_name.split(" ").first
+  end
 end

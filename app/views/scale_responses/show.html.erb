@@ -129,11 +129,11 @@
         <div class="alert alert-info d-flex align-items-center" role="alert">
           <i class="bi bi-info-circle me-2"></i>
           <div class="flex-grow-1">
-            <strong>Gráfico de Comparação SRS-2 disponível!</strong><br>
-            Compare este autorelato com o heterorelato mais recente para uma análise mais completa.
+            <strong>Interpretação de Resultados SRS-2 disponível!</strong><br>
+            Acesse a interpretação completa dos resultados com gráficos comparativos e análises detalhadas.
           </div>
           <div class="ms-3">
-            <%= srs2_comparison_chart_link(@scale_response.patient, "Ver Gráfico", class: "btn-sm") %>
+            <%= link_to "Ver Interpretação", interpretation_scale_response_path(@scale_response), class: "btn btn-outline-primary btn-sm" %>
           </div>
         </div>
       </div>

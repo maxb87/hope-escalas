@@ -11,7 +11,11 @@ Rails.application.routes.draw do
       get :cancelled
     end
   end
-  resources :scale_responses, only: [ :index, :new, :create, :show ]
+  resources :scale_responses, only: [ :index, :new, :create, :show ] do
+    member do
+      get :interpretation
+    end
+  end
 
   resources :professionals do
     member do

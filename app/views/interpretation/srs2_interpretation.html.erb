@@ -1,0 +1,181 @@
+<% content_for :title, "Interpretação SRS-2 - #{@patient.full_name}" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="mb-1">
+            <i class="bi bi-graph-up me-2"></i>
+            Interpretação SRS-2
+          </h1>
+          <p class="text-muted mb-0">
+            Paciente: <strong><%= @patient.full_name %></strong> | 
+            Data: <strong><%= @self_report.completed_at&.strftime("%d/%m/%Y às %H:%M") || "Não informada" %></strong>
+          </p>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <%= link_to @self_report, class: 'btn btn-outline-secondary d-flex align-items-center gap-2' do %>
+            <i class="bi bi-arrow-left"></i>
+            <span>Voltar à Resposta</span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Interpretação Textual em Formato Simples -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="interpretation-text">
+            <!-- Título -->
+            <h3 class="mb-4">5. 1 Responsividade Social (SRS-2)</h3>
+            
+            <!-- Descrição inicial -->
+            <p class="mb-4">
+              <%= @interpretation_description %>
+            </p>
+
+            <!-- Tabela de Comparação Autorelato vs Heterorelato -->
+            <% if @hetero_report.present? && @comparison_data.present? %>
+              <div class="mb-4">
+                <table class="table table-bordered">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Domínio</th>
+                      <th>Autorrelato</th>
+                      <th>Heterorrelato</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @comparison_data.each do |domain| %>
+                      <tr>
+                        <td><strong><%= domain[:label] %></strong></td>
+                        <td>
+                          <%= domain[:self_t_score] || 'N/A' %>
+                          <% if domain[:self_interpretation][:label] != 'N/A' %>
+                            (<%= domain[:self_interpretation][:label] == 'normal' ? 'sem prejuízo' : "prejuízo #{domain[:self_interpretation][:label]}" %>)
+                          <% end %>
+                        </td>
+                        <td>
+                          <%= domain[:hetero_t_score] || 'N/A' %>
+                          <% if domain[:hetero_interpretation][:label] != 'N/A' %>
+                            (<%= domain[:hetero_interpretation][:label] == 'normal' ? 'sem prejuízo' : "prejuízo #{domain[:hetero_interpretation][:label]}" %>)
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+
+            <!-- Interpretação do Autorelato -->
+            <% if @domain_interpretations[:self_report] %>
+              <div class="mb-4">
+                <p class="mb-3">
+                  <strong><%= @domain_interpretations[:self_report][:general] %></strong>
+                </p>
+                
+                <div class="ms-3">
+                  <p><strong>Cognição social:</strong> <%= @domain_interpretations[:self_report][:domains][:social_cognition] %></p>
+                  
+                  <p><strong>Comunicação social:</strong> <%= @domain_interpretations[:self_report][:domains][:social_communication] %></p>
+                  
+                  <p><strong>Motivação social:</strong> <%= @domain_interpretations[:self_report][:domains][:social_motivation] %></p>
+                  
+                  <p><strong>Interação social global:</strong> <%= @domain_interpretations[:self_report][:domains][:social_interaction] %></p>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- Padrões Restritos e Repetitivos -->
+            <% if @domain_interpretations[:comparison] %>
+              <div class="mb-4">
+                <p><strong>Padrões restritos e repetitivos:</strong> <%= @domain_interpretations[:comparison][:restricted_patterns] %></p>
+              </div>
+            <% end %>
+
+            <!-- Interpretação do Heterorelato -->
+            <% if @domain_interpretations[:hetero_report] %>
+              <div class="mb-4">
+                <p class="mb-3">
+                  <strong><%= @domain_interpretations[:hetero_report][:general] %></strong>
+                </p>
+                
+                <p class="mb-3">
+                  <%= @domain_interpretations[:hetero_report][:comparison] %>
+                </p>
+              </div>
+            <% end %>
+
+            <!-- Nota sobre SRS-2 -->
+            <div class="mt-4">
+              <p class="small text-muted">
+                <strong>Nota. SRS-2:</strong> >59 normal; 60-65 sintomatologia leve; 66-75 sintomatologia moderada; 76+ sintomatologia grave.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informações Adicionais -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Informações sobre a Escala
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Escala SRS-2</h6>
+              <p class="text-muted small">
+                A Social Responsiveness Scale-2 (SRS-2) é um instrumento de avaliação 
+                que mede a responsividade social e identifica sintomas associados ao 
+                Transtorno do Espectro Autista (TEA).
+              </p>
+            </div>
+            <div class="col-md-6">
+              <h6>Interpretação dos T-Scores</h6>
+              <ul class="text-muted small mb-0">
+                <li><strong>0-54:</strong> Normal</li>
+                <li><strong>55-64:</strong> Leve</li>
+                <li><strong>65-74:</strong> Moderado</li>
+                <li><strong>75-100:</strong> Severo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .interpretation-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: justify;
+  }
+  
+  .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+  }
+  
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+  
+  .table th {
+    border-top: none;
+    font-weight: 600;
+  }
+  
+  .table td {
+    vertical-align: middle;
+  }
+</style>
