@@ -9,9 +9,9 @@
       <div class="d-flex justify-content-around gap-2 col-md-3">
 
         <%= link_to t('patients.show.back_link'), patients_path, class: 'btn btn-primary', data: { turbo_method: :get } %>
-        <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient), class: 'btn btn-primary' %>
+        <%= link_to t('patients.show.edit_link'), edit_patient_path(@patient), class: 'btn btn-secondary' %>
    
-        <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy'), turbo_confirm: t('patients.show.confirm_destroy') }, class: 'btn btn-primary' %>
+        <%= button_to t('patients.show.destroy'), @patient, method: :delete, data: { confirm: t('patients.show.confirm_destroy'), turbo_confirm: t('patients.show.confirm_destroy') }, class: 'btn btn-danger' %>
       </div>
     <% end %>
 
@@ -23,14 +23,16 @@
   <div class="col-md-3">
     <h2>Escalas Solicitadas</h2>
   </div>
-  <div class="col-md-3">
-     <%= link_to new_scale_request_path, 
-        class: 'btn btn-warning',
-        data: { turbo_frame: "_top" } do %>
-      <i class="bi bi-plus-circle me-2"></i>
-      <%= t('scale_requests.new.button') %>
-    <% end %>
-  </div>
+  <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
+    <div class="col-md-3">
+       <%= link_to new_scale_request_path, 
+          class: 'btn btn-warning',
+          data: { turbo_frame: "_top" } do %>
+        <i class="bi bi-plus-circle me-2"></i>
+        <%= t('scale_requests.new.button') %>
+      <% end %>
+    </div>
+  <% end %>
 
 </div>
 
@@ -49,7 +51,7 @@
         <tr>
           <td><%= req.psychometric_scale.name %></td>
           <td><%= req.professional.full_name %></td>
-          <td><%= l(req.requested_at, format: :short) %></td>
+          <td><%= l(req.requested_at, format: '%d/%m/%Y %H:%M') %></td>
           <td>
             <%= link_to "Ver Solicitação", scale_request_path(req), class: 'btn btn-sm btn-outline-primary' %>
             <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
@@ -71,10 +73,9 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th><%= t('dashboards.patients.scale_col') %></th>
-        <th><%= t('patients.show.professional_col') %></th>
-        <th><%= t('dashboards.patients.requested_at_col') %></th>
-        <th><%= t('dashboards.patients.completed_at_col') %></th>
+        <th><%= t('Escala') %></th>
+        <th><%= t('Solicitação') %></th>
+        <th><%= t('Preenchimento') %></th>
         <th></th>
       </tr>
     </thead>
@@ -83,9 +84,8 @@
         <% resp = req.scale_response %>
         <tr>
           <td><%= req.psychometric_scale.name %></td>
-          <td><%= req.professional.full_name %></td>
-          <td><%= l(req.requested_at, format: :short) %></td>
-          <td><%= resp&.completed_at ? l(resp.completed_at, format: :short) : '-' %></td>
+          <td><%= l(req.requested_at, format: '%d/%m/%Y %H:%M') %></td>
+          <td><%= resp&.completed_at ? l(resp.completed_at, format: '%d/%m/%Y %H:%M') : '-' %></td>
           <td>
             <% if resp %>
               <%= link_to "Ver Respostas", scale_response_path(resp), class: 'btn btn-sm btn-outline-primary' %>

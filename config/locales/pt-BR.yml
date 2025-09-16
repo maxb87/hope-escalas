@@ -1,4 +1,13 @@
 pt-BR:
+  actions:
+    show: "Visualizar"
+    edit: "Editar"
+    delete: "Excluir"
+    cancel: "Cancelar"
+    save: "Salvar"
+    create: "Criar"
+    update: "Atualizar"
+    
   errors:
     messages:
       not_saved: "%{count} erro(s) impediram este %{resource} de ser salvo"
@@ -276,6 +285,9 @@ pt-BR:
   scale_requests:
     actions:
       fill_scale: "Preencher escala"
+      view_response: "Ver resposta"
+      cancel: "Cancelar"
+      cancel_confirm: "Tem certeza que deseja cancelar esta solicitação?"
     index:
       title: "Solicitações de Escalas"
       pending_tab: "Pendentes"
@@ -284,12 +296,18 @@ pt-BR:
       new_link: "Nova solicitação"
       show_link: "Ver solicitação"
       cancel_link: "Cancelar"
-      patient_col: "Paciente"
-      scale_col: "Escala"
-      professional_col: "Profissional"
-      requested_at_col: "Solicitada em"
-      status_col: "Status"
-      actions_col: "Ações"
+    table:
+      patient: "Paciente"
+      scale: "Escala"
+      professional: "Profissional"
+      requested_at: "Solicitada em"
+      status: "Status"
+      results: "Resultados"
+      actions: "Ações"
+      showing_count: "Mostrando %{count} solicitação(ões)"
+      empty_title: "Nenhuma solicitação encontrada"
+      empty_description: "Ainda não há solicitações de escalas cadastradas."
+      no_result: "Sem resultado"
     show:
       title: "Solicitação de Escala"
       back_link: "Voltar para solicitações"
@@ -319,6 +337,11 @@ pt-BR:
     cancel:
       success: "Solicitação cancelada com sucesso."
       failure: "Não foi possível cancelar a solicitação."
+    status:
+      pending: "Pendente"
+      completed: "Concluída"
+      cancelled: "Cancelada"
+      expired: "Expirada"
 
   scale_responses:
     index:

@@ -196,7 +196,7 @@ module Scoring
           t_score: subscale_lookups[:social_communication][:t_score],
           percentile: subscale_lookups[:social_communication][:percentile],
           level: determine_subscale_level(subscale_lookups[:social_communication][:t_score]),
-          description: "comunicação expressiva, lidando com os aspectos motores do comportamento social recíproco",
+          description: "comunicação expressiva, lidando com os aspectos motores do comportamento social recíproco.",
           interpretation: get_subscale_interpretation("social_communication", subscale_lookups[:social_communication][:t_score], patient),
           items: [ 12, 13, 16, 18, 19, 21, 22, 26, 33, 35, 36, 37, 38, 41, 46, 47, 51, 53, 55, 57, 60, 61 ]
         },
@@ -206,7 +206,7 @@ module Scoring
           t_score: subscale_lookups[:social_motivation][:t_score],
           percentile: subscale_lookups[:social_motivation][:percentile],
           level: determine_subscale_level(subscale_lookups[:social_motivation][:t_score]),
-          description: "interesse e capacidade de engajar-se em comportamentos sociais e interpessoais",
+          description: "interesse e capacidade de engajar-se em comportamentos sociais e interpessoais.",
           interpretation: get_subscale_interpretation("social_motivation", subscale_lookups[:social_motivation][:t_score], patient),
           items: [ 1, 3, 6, 9, 11, 23, 27, 34, 43, 64, 65 ]
         },
@@ -333,9 +333,9 @@ module Scoring
       when "restricted_interests"
         case level
         when "normal" then "#{patient&.first_name&.titleize } não apresenta, de acordo com sua percepção, traços associados a padrões de comportamento estereotipado, interesses restritos ou fixações."
-        when "leve" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo leve em sua rotina, hábitos e interesses"
-        when "moderado" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo moderado em sua rotina, hábitos e ações ligadas a seus interesses"
-        when "severo" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo severo e limitações em sua rotina com relação a hábitos e fixações"
+        when "leve" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo leve em sua rotina, hábitos e interesses."
+        when "moderado" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo moderado em sua rotina, hábitos e ações ligadas a seus interesses."
+        when "severo" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo severo e limitações em sua rotina com relação a hábitos e fixações."
         else "Interpretação não disponível."
         end
       when "social_interaction"
@@ -343,7 +343,7 @@ module Scoring
         when "normal" then "A soma dos domínios comprometidos sugere comportamento normal ou de baixa necessidade de adaptação em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
         when "leve" then "A soma dos domínios comprometidos indica prejuízo leve em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
         when "moderado" then "A soma dos domínios comprometidos indica prejuízo moderado e dificuldades em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
-        when "severo" then "A soma dos domínios comprometidos aponta prejuízo severo e dificuldades significativas em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
+        when "severo" then "A soma dos domínios comprometidos aponta prejuízo severo e dificuldades significativas em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
         else "Interpretação não disponível."
         end
       end

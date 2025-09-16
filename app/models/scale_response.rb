@@ -413,4 +413,8 @@ class ScaleResponse < ApplicationRecord
     age -= 1 if today < birthday + age.years
     age
   end
+
+  def cancel_associated_scale_request
+    scale_request.cancel! if scale_request.present?
+  end
 end

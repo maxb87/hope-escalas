@@ -127,8 +127,8 @@
               <% end%>
               
               <% if @hetero_response.moderado_domains.any?%>
-                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name.first.capitalize %> 
-                como de nível moderado,
+                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name.split(' ').first.capitalize %> 
+                em nível moderado,
                   identificando claramente <%= @hetero_response.moderado_domains.count > 1 ? "áreas" : "uma área" %> de dificuldade.
               <%end%>    
               
@@ -141,13 +141,13 @@
               <% end %>
               
               <% if @hetero_response.normal_domains.any?%>
-                <%= @hetero_response.relator_name.split.first.capitalize %>
-                não observou necessidades significativas em relação a <%= @hetero_response.print_normal_domains %>.
+                <%= @hetero_response.relator_name.split(' ').first.capitalize %>
+                não observou necessidades significativas em relação a <%= @hetero_response.print_normal_domains %>. 
               <% end %>
             </p>
           </div>
           
-          <div>
+          <div class="py-4">
             <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
             <script>
               <%= @chart_service.chart_js_function.html_safe %>

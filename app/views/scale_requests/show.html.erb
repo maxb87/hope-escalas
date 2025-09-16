@@ -20,19 +20,19 @@
     <dl class="row">
       <dt class="col-sm-3">
         <i class="bi bi-person me-1"></i>
-        <%= t('scale_requests.table.patient') %>
+        <%= t('Paciente') %>
       </dt>
       <dd class="col-sm-9"><%= @scale_request.patient.full_name %></dd>
 
       <dt class="col-sm-3">
         <i class="bi bi-person-badge me-1"></i>
-        <%= t('scale_requests.table.professional') %>
+        <%= t('Solicitante') %>
       </dt>
       <dd class="col-sm-9"><%= @scale_request.professional.full_name %></dd>
 
       <dt class="col-sm-3">
         <i class="bi bi-clipboard-pulse me-1"></i>
-        <%= t('scale_requests.table.scale') %>
+        <%= t('Escala') %>
       </dt>
       <dd class="col-sm-9"><%= @scale_request.psychometric_scale.name %></dd>
 
@@ -45,24 +45,24 @@
         <% when 'pending' %>
           <span class="badge bg-warning">
             <i class="bi bi-clock me-1"></i>
-            <%= t('scale_requests.status.pending') %>
+            <%= t('Pendente') %>
           </span>
         <% when 'completed' %>
           <span class="badge bg-success">
             <i class="bi bi-check-circle me-1"></i>
-            <%= t('scale_requests.status.completed') %>
+            <%= t('Concluído') %>
           </span>
         <% when 'cancelled' %>
           <span class="badge bg-danger">
             <i class="bi bi-x-circle me-1"></i>
-            <%= t('scale_requests.status.cancelled') %>
+            <%= t('Cancelado') %>
           </span>
         <% end %>
       </dd>
 
       <dt class="col-sm-3">
         <i class="bi bi-calendar me-1"></i>
-        <%= t('scale_requests.table.requested_at') %>
+        <%= t('Data da Solicitação') %>
       </dt>
       <dd class="col-sm-9">
         <%= l(@scale_request.requested_at, format: :short) %>

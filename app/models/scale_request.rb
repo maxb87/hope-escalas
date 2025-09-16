@@ -49,9 +49,6 @@ class ScaleRequest < ApplicationRecord
     completed! if pending?
   end
   def cancel!
-    if completed? && scale_response.present?
-      scale_response.destroy!
-    end
     cancelled! if pending? || completed?
   end
 

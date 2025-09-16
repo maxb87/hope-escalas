@@ -1,6 +1,10 @@
 <h2><%= @scale_response.psychometric_scale.name %></h2>
 
-<p>Responda a todos os itens abaixo. Selecione uma opção de 1 a 4 para cada pergunta.</p>
+<div class="text-center py-5">
+<h4>Em cada questão, selecione a opção que melhor descreve seu comportamento nos últimos seis meses.</h4>
+
+<h4>Responda todas as questões em um único acesso. Selecione uma opção de 1 a 4 para cada pergunta.</h4>
+</div>
 
 <% if current_user.email == "admin@admin.com" %>
   <div class="mb-3">
@@ -52,12 +56,14 @@
     <% @scale_items.each do |item| %>
       <div class="list-group-item mb-3">
         <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
-        <div class="d-flex gap-3">
+        <div>
           <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
-            <label class="form-check-label">
+            <div class="form-check">
               <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
-              <span><%= score %> — <%= label %></span>
-            </label>
+              <label class="form-check-label">
+                <%= score %> — <%= label %>
+              </label>
+            </div>
           <% end %>
         </div>
       </div>

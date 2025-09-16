@@ -25,7 +25,7 @@
           </th>
           <th class="py-3">
             <i class="bi bi-bar-chart me-1"></i>
-            Resultados
+            <%= t('scale_requests.table.results') %>
           </th>
           <th class="py-3 text-center">
             <i class="bi bi-gear me-1"></i>
@@ -159,7 +159,7 @@
                   <% end %>
                 <% end %>
                 
-                <% if (req.pending? || req.completed?) && policy(req).cancel? %>
+                <% if req.pending? && policy(req).cancel? %>
                   <%= link_to cancel_scale_request_path(req), 
                       class: 'btn btn-sm btn-outline-danger',
                       title: t('scale_requests.actions.cancel'),

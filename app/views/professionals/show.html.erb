@@ -17,9 +17,14 @@
           <div class="btn-group" role="group">
             <%= link_to t('professionals.show.edit_link'), edit_professional_path(@professional), class: 'btn btn-primary' %>
             <%= link_to t('professionals.show.back_link'), professionals_path, class: 'btn btn-secondary' %>
-            <%= button_to t('professionals.show.destroy'), @professional, method: :delete, 
-                data: { confirm: t('professionals.show.confirm_destroy') }, 
-                class: 'btn btn-danger' %>
+            <% if policy(@professional).destroy? %>
+              <%= button_to t('professionals.show.destroy'), @professional, method: :delete, 
+                  data: { 
+                    confirm: "Tem certeza que deseja excluir o profissional #{@professional.full_name}?",
+                    turbo_confirm: "Tem certeza que deseja excluir o profissional #{@professional.full_name}?"
+                  }, 
+                  class: 'btn btn-danger' %>
+            <% end %>
           </div>
         </div>
       </div>
