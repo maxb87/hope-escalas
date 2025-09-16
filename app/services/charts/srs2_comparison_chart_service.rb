@@ -319,8 +319,7 @@ module Charts
           },
           x: {
             title: {
-              display: true,
-              text: "Domínio avaliado"
+              display: false
             },
             ticks: {
               maxRotation: 45,

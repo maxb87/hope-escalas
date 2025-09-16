@@ -35,10 +35,12 @@
             </div>
             <div class="col-md-6">
               <h5 class="card-title">Informações da Avaliação</h5>
-              <p class="mb-1"><strong>Solicitado em:</strong> <%= l(@scale_response.scale_request.requested_at, format: :short) %></p>
-              <p class="mb-1"><strong>Preenchido em:</strong> <%= l(@scale_response.completed_at, format: :short) %></p>
-              <% if @scale_response.hetero_report? %>
-                <p class="mb-1"><strong>Relator:</strong> <%= @scale_response.relator_name %> (<%= @scale_response.relator_relationship %>)</p>
+              <p class="mb-1"><strong>Autorrelato solicitado em:</strong> <%= l(@scale_response.scale_request.requested_at, format: :short) %></p>
+              <p class="mb-1"><strong>Autorrelato preenchido em:</strong> <%= l(@scale_response.completed_at, format: :short) %></p>
+              <% if @hetero_response.present? %>
+                <p class="mb-1"><strong>Heterorrelato solicitado em:</strong> <%= l(@hetero_response.scale_request.requested_at, format: :short) %></p>
+                <p class="mb-1"><strong>Heterorrelato preenchido em:</strong> <%= l(@hetero_response.completed_at, format: :short) %></p>
+                <p class="mb-1"><strong>Relator:</strong> <%= @hetero_response.relator_name %> (<%= @hetero_response.relator_relationship %>)</p>
               <% end %>
             </div>
           </div>
@@ -64,9 +66,7 @@
               responsividade social e identificar sinais de comprometimento associados ao TEA.
             </p>
           </div>
-          <div>
-            <p> Tabela comparativa entre auto e hetero relato</p>
-            <!-- Gráfico Comparativo -->
+          <div class="my-4">
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -94,8 +94,13 @@
                 <% end %>
               </tbody>
             </table>
+            <div>
+              <p>
+                <i>Nota. SRS-2: >59 normal; 60-65 sintomatologia leve; 66-75 sintomatologia moderada; 76+ sintomatologia grave.</i>
+              </p>
+            </div>
           </div>
-          <div>
+          <div class="my-4">
 
             <% @scale_response.subscale_domains_with_levels.each do |domain| %>            
               <% if domain[:level] != "normal" %>
@@ -122,7 +127,8 @@
               <% end%>
               
               <% if @hetero_response.moderado_domains.any?%>
-                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name %> como de nível moderado,
+                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name.first.capitalize %> 
+                como de nível moderado,
                   identificando claramente <%= @hetero_response.moderado_domains.count > 1 ? "áreas" : "uma área" %> de dificuldade.
               <%end%>    
               
@@ -135,14 +141,17 @@
               <% end %>
               
               <% if @hetero_response.normal_domains.any?%>
-                <%= @hetero_response.relator_name %>
+                <%= @hetero_response.relator_name.split.first.capitalize %>
                 não observou necessidades significativas em relação a <%= @hetero_response.print_normal_domains %>.
               <% end %>
             </p>
           </div>
           
           <div>
-            <%= render 'scale_responses/srs2_comparison_chart' %>
+            <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
+            <script>
+              <%= @chart_service.chart_js_function.html_safe %>
+            </script>
           </div>
         </div>
 

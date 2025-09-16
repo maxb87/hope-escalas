@@ -5,11 +5,15 @@ module ChartsHelper
   def srs2_comparison_chart(chart_data, options = {})
     container_id = options[:id] || "srs2-comparison-chart"
     height = options[:height] || "400px"
+    max_width = options[:max_width] || nil
 
     # Debug: verificar se os dados estão presentes
     Rails.logger.debug "Chart data: #{chart_data.inspect}"
 
-    content_tag :div, class: "chart-container", style: "height: #{height};" do
+    style = "height: #{height};"
+    style += " max-width: #{max_width};" if max_width
+
+    content_tag :div, class: "chart-container", style: style do
       content_tag :canvas, "", id: container_id, data: { chart_data: chart_data.to_json }
     end
   end
