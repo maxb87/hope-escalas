@@ -77,6 +77,8 @@ class ScaleResponsesController < ApplicationController
     @chart_data = @chart_service.chart_data
     @report_info = @chart_service.report_info
 
+    @hetero_response = ScaleResponse.joins(:psychometric_scale).where(patient: @scale_response.patient).where(psychometric_scales: { code: "SRS2HR" }).order(created_at: :desc).first
+
     # Verificar se é uma escala SRS-2
     if @scale_response.srs2_scale?
       @interpretation_service = Interpretation::Srs2InterpretationService.new

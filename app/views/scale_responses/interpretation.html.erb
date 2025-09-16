@@ -57,9 +57,9 @@
         <div class="card-body">
           <div>
             <!-- interpretacao introducao -->
-            <p> <%= @scale_response.patient.full_name.titleize %> respondeu à Escala SRS-2 , instrumento que tem como objetivo
+            <p> <%= @scale_response.patient.full_name.titleize %> respondeu à Escala SRS-2 , este instrumento que tem como objetivo
               mensurar sintomas associados ao Transtorno do Espectro Autista (TEA),
-              bem como classificá-los em níveis leves, moderados ou severos. <%= @scale_response.patient.first_name.capitalize %> obteve como pontuação total neste instrumento <%=@scale_response.results.dig("metrics", "t_score")%> pontos,
+              bem como classificá-los em níveis leves, moderados ou severos. <%= @scale_response.patient.first_name.capitalize %> obteve como pontuação total nesse instrumento <%=@scale_response.results.dig("metrics", "t_score")%> pontos,
               caracterizando <%= @scale_response.results.dig("metrics","level_plural") %> relacionados ao TEA, de forma geral. A SRS é uma escala amplamente utilizada para avaliar a
               responsividade social e identificar sinais de comprometimento associados ao TEA.
             </p>
@@ -85,54 +85,29 @@
           </div>
           <div>
 
-            <p>Interpretação por domínio de subescala</p>
-            
-            <% if @scale_response.problematic_domains.any? %>
-              
-              <% @scale_response.problematic_domains.each do |domain| %>
-               
-                    <h6 class="mb-0">
-                      <i class="bi bi-exclamation-triangle me-2"></i>
-                      <strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%> 
-                      <span class="badge bg-light text-dark">
-                        <%= domain[:level].capitalize %>
-                      </span>
-                    </h6>
-                  
+            <% @scale_response.subscale_domains_with_levels.each do |domain| %>            
+              <% if domain[:level] != "normal" %>
+              <div>
+                <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
+              </div>
+              <% else %>
+                <div>
+                  <p><strong><%= domain[:title] %>:</strong> <%= domain[:interpretation]%></p>
+                </div>
               <% end %>
             <% end %>
 
-            <!-- Domínios normais (exibidos de forma diferente) -->
-            <% if @scale_response.normal_domains.any? %>
-              <div class="mt-4">
-                
-
-                  <% @scale_response.normal_domains.each do |domain| %>
-                    <div class="col-md-6 mb-2">
-                      <div class="card border-success">
-                        <div class="card-body py-2">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-success"><%= domain[:interpretation]%></span>
-                           
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-
-            <% end %>
-
-            <!-- Se não há domínios problemáticos -->
-            <% if @scale_response.problematic_domains.empty? %>
-              <div class="alert alert-success">
-                <i class="bi bi-check-circle me-2"></i>
-                <strong><%= @scale_response.patient.first_name.titleize %></strong> não apresenta, de acordo com sua percepção, dificuldades significativas em nenhum dos domínios avaliados.
-              </div>
-            <% end %>
-
-
+          <div>
+            <p>
+              Quanto ao heterorrelato, de acordo com <strong><%= @hetero_response.relator_name %></strong>, que é <strong><%= @hetero_response.relator_relationship.downcase%></strong> do paciente, 
+              <%= @scale_response.patient.first_name.capitalize %> apresenta <%= @hetero_response.results.dig("metrics", "level_plural").downcase%> de forma geral, nos domínios avaliados pela escala SRS-2.               
+              Em sua visão, <%= @scale_response.patient.first_name.capitalize %> demonstra algumas dificuldades nos domínios de {dominios}.
+              {DOMINIOS} foi/foram classificados por {ele/ela relator} como de nível moderado, identificando claramente (uma) área(s) de dificuldade. Destaca-se/Destacaram-se {domínios}
+              como ponto(s) em que <%= @scale_response.patient.gender == "male" ? "o" : "a" %> paciente apresenta nível severo de prejuízo e requer(em) maior atenção. <%= @hetero_response.relator_name %>
+              não observou necessidades significativas em relação a {dominios normais}.
+            </p>
           </div>
+          
           <div>
             <%= render 'scale_responses/srs2_comparison_chart' %>
           </div>

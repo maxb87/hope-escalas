@@ -154,9 +154,17 @@ class ScaleResponse < ApplicationRecord
   end
 
   # Retorna apenas os domínios com problemas (não normais) na ordem específica
-  def problematic_domains
-    # Manter a ordem específica dos domínios, apenas filtrando os problemáticos
-    subscale_domains_with_levels.select { |domain| domain[:level] != "normal" }
+  def leve_domains
+    # Manter a ordem específica dos domínios, apenas filtrando os leves
+    subscale_domains_with_levels.select { |domain| domain[:level] == "leve" }
+  end
+
+  def moderado_domains
+    subscale_domains_with_levels.select { |domain| domain[:level] == "moderado" }
+  end
+
+  def severo_domains
+    subscale_domains_with_levels.select { |domain| domain[:level] == "severo" }
   end
 
   # Retorna apenas os domínios normais
@@ -166,12 +174,60 @@ class ScaleResponse < ApplicationRecord
 
   # Retorna o domínio com maior severidade (primeiro da lista de problemáticos)
   def worst_domain
-    problematic_domains.first
+    if severo_domains.any?
+      severo_domains.max_by { |domain| domain[:t_score] }
+    elsif moderado_domains.any?
+      moderado_domains.max_by { |domain| domain[:t_score] }
+    elsif leve_domains.any?
+      leve_domains.max_by { |domain | domain[:t_score] }
+    else
+      normal_domains.max_by { |domain | domain[:t_score] }
+    end
   end
 
-  def cancel_associated_scale_request
-    scale_request.cancel! if scale_request.present?
+  def lowest_domain
+    if leve_domains.any?
+      leve_domains.min_by { |domain| domain[:t_score] }
+    elsif moderado_domains.any?
+      moderado_domains.min_by { |domain| domain[:t_score] }
+    elsif severo_domains.any?
+      severo_domains.min_by { |domain| domain[:t_score] }
+    else
+      normal_domains.min_by { |domain | domain[:t_score] }
+    end
   end
+
+  # Retorna o domínio com a segunda maior pontuação
+  def second_highest_domain
+    all_domains = subscale_domains_with_levels
+    return nil if all_domains.size < 2
+
+    # Ordenar por t_score em ordem decrescente e pegar o segundo
+    sorted_domains = all_domains.sort_by { |domain| -domain[:t_score] }
+    sorted_domains[1]
+  end
+
+  # Segundo maior dentro de cada categoria de severidade
+  def second_worst_domain
+    if severo_domains.size >= 2
+      severo_domains.sort_by { |domain| -domain[:t_score] }[1]
+    elsif severo_domains.size == 1 && moderado_domains.any?
+      moderado_domains.max_by { |domain| domain[:t_score] }
+    elsif severo_domains.empty? && moderado_domains.size >= 2
+      moderado_domains.sort_by { |domain| -domain[:t_score] }[1]
+    elsif moderado_domains.size == 1 && leve_domains.any?
+      leve_domains.max_by { |domain| domain[:t_score] }
+    elsif moderado_domains.empty? && leve_domains.size >= 2
+      leve_domains.sort_by { |domain| -domain[:t_score] }[1]
+    elsif leve_domains.size == 1 && normal_domains.any?
+      normal_domains.max_by { |domain| domain[:t_score] }
+    elsif leve_domains.empty? && normal_domains.size >= 2
+      normal_domains.sort_by { |domain| -domain[:t_score] }[1]
+    else
+      nil
+    end
+  end
+
   private
 
   def calculate_score

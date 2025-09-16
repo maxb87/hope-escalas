@@ -324,10 +324,10 @@ module Scoring
         end
       when "social_motivation"
         case level
-        when "normal" then "#{patient&.first_name&.titleize } não relata inibição ou desinteresse para interações espontâneas, considera-se #{patient&.gender == 'male' ? 'motivado' : 'motivada'} a realizar interações sociais e interpessoais."
-        when "leve" then "#{patient&.first_name&.titleize } relata inibição leve para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
-        when "moderado" then "#{patient&.first_name&.titleize } relata inibição moderada para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
-        when "severo" then "#{patient&.first_name&.titleize } relata graves dificuldades para interações espontâneas, manifestando-se como retraimento, desconforto em grupos e evitamento de situações sociais."
+        when "normal" then "#{patient&.gender == 'male' ? 'O' : 'A'} paciente não relata inibição ou desinteresse para interações espontâneas, considera-se #{patient&.gender == 'male' ? 'motivado' : 'motivada'} a realizar interações sociais e interpessoais."
+        when "leve" then "#{patient&.gender == 'male' ? 'O' : 'A'} paciente relata inibição leve para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
+        when "moderado" then "#{patient&.gender == 'male' ? 'O' : 'A'} paciente relata inibição moderada para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
+        when "severo" then "#{patient&.gender == 'male' ? 'O' : 'A'} paciente relata graves dificuldades para interações espontâneas, manifestando-se como retraimento, desconforto em grupos e evitamento de situações sociais."
         else "Interpretação não disponível."
         end
       when "restricted_interests"
@@ -343,7 +343,7 @@ module Scoring
         when "normal" then "A soma dos domínios comprometidos sugere comportamento normal ou de baixa necessidade de adaptação em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
         when "leve" then "A soma dos domínios comprometidos indica prejuízo leve em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
         when "moderado" then "A soma dos domínios comprometidos indica prejuízo moderado e dificuldades em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
-        when "severo" then "A soma dos domínios comprometidos aponta prejuízo severo e dificuldades em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
+        when "severo" then "A soma dos domínios comprometidos aponta prejuízo severo e dificuldades significativas em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
         else "Interpretação não disponível."
         end
       end
