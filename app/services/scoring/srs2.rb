@@ -151,8 +151,8 @@ module Scoring
         "scale_version" => scale_version,
         "computed_at" => Time.current.iso8601,
         "metrics" => build_metrics_hash(raw_score, level, lookup_results[:total]),
-        "subscales" => build_subscales_hash(subscale_scores, lookup_results[:subscales], patient)
-        #        "interpretation" => build_interpretation_hash(level)
+        "subscales" => build_subscales_hash(subscale_scores, lookup_results[:subscales], patient),
+        "interpretation" => build_interpretation_hash(level)
       }
     end
 
