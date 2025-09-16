@@ -159,17 +159,79 @@ class ScaleResponse < ApplicationRecord
     subscale_domains_with_levels.select { |domain| domain[:level] == "leve" }
   end
 
+  def print_leve_domains
+    domains = leve_domains.map { |domain| domain[:title] }
+
+    case domains.size
+    when 0
+      ""
+    when 1
+      domains.first
+    when 2
+      "#{domains.first} e #{domains.last}"
+    else
+      "#{domains[0..-2].join(', ')} e #{domains.last}"
+    end
+  end
+
+
+
   def moderado_domains
     subscale_domains_with_levels.select { |domain| domain[:level] == "moderado" }
+  end
+
+  def print_moderado_domains
+    domains = moderado_domains.map { |domain| domain[:title] }
+
+    case domains.size
+    when 0
+      ""
+    when 1
+      domains.first
+    when 2
+      "#{domains.first} e #{domains.last}"
+    else
+      "#{domains[0..-2].join(', ')} e #{domains.last}"
+    end
   end
 
   def severo_domains
     subscale_domains_with_levels.select { |domain| domain[:level] == "severo" }
   end
 
+  def print_severo_domains
+    domains = severo_domains.map { |domain| domain[:title] }
+
+    case domains.size
+    when 0
+      ""
+    when 1
+      domains.first
+    when 2
+      "#{domains.first} e #{domains.last}"
+    else
+      "#{domains[0..-2].join(', ')} e #{domains.last}"
+    end
+  end
+
   # Retorna apenas os domínios normais
   def normal_domains
     subscale_domains_with_levels.select { |domain| domain[:level] == "normal" }
+  end
+
+  def print_normal_domains
+    domains = normal_domains.map { |domain| domain[:title] }
+
+    case domains.size
+    when 0
+      ""
+    when 1
+      domains.first
+    when 2
+      "#{domains.first} e #{domains.last}"
+    else
+      "#{domains[0..-2].join(', ')} e #{domains.last}"
+    end
   end
 
   # Retorna o domínio com maior severidade (primeiro da lista de problemáticos)

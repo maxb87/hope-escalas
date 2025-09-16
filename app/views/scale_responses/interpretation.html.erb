@@ -67,21 +67,33 @@
           <div>
             <p> Tabela comparativa entre auto e hetero relato</p>
             <!-- Gráfico Comparativo -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h5 class="mb-0">
-                      <i class="bi bi-bar-chart me-2"></i>
-                      Comparação Auto vs Hetero Relato
-                    </h5>
-                  </div>
-                  <div class="card-body">
-                    <canvas id="comparisonChart" width="400" height="200"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Domínio</th>
+                  <th>Autorrelato</th>
+                  <th>Heterorrelato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @scale_response.subscale_domains_with_levels.each do |domain| %>
+                  <% hetero_domain = @hetero_response.subscale_domains_with_levels.find { |d| d[:key] == domain[:key] } %>
+                  <tr>
+                    <td><%= domain[:title] %></td>
+                    <td>
+                      <%= domain[:t_score] %> (<%= domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{domain[:level]}" %>)
+                    </td>
+                    <td>
+                      <% if hetero_domain %>
+                        <%= hetero_domain[:t_score] %> (<%= hetero_domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{hetero_domain[:level]}" %>)
+                      <% else %>
+                        -
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
           </div>
           <div>
 
@@ -99,12 +111,33 @@
 
           <div>
             <p>
-              Quanto ao heterorrelato, de acordo com <strong><%= @hetero_response.relator_name %></strong>, que é <strong><%= @hetero_response.relator_relationship.downcase%></strong> do paciente, 
+              Quanto ao heterorrelato, de acordo com <strong><%= @hetero_response.relator_name %></strong>, 
+              que é <strong><%= @hetero_response.relator_relationship.downcase%></strong> 
+              <%= @scale_response.patient.gender == "male" ? "do" : "da" %> paciente, 
               <%= @scale_response.patient.first_name.capitalize %> apresenta <%= @hetero_response.results.dig("metrics", "level_plural").downcase%> de forma geral, nos domínios avaliados pela escala SRS-2.               
-              Em sua visão, <%= @scale_response.patient.first_name.capitalize %> demonstra algumas dificuldades nos domínios de {dominios}.
-              {DOMINIOS} foi/foram classificados por {ele/ela relator} como de nível moderado, identificando claramente (uma) área(s) de dificuldade. Destaca-se/Destacaram-se {domínios}
-              como ponto(s) em que <%= @scale_response.patient.gender == "male" ? "o" : "a" %> paciente apresenta nível severo de prejuízo e requer(em) maior atenção. <%= @hetero_response.relator_name %>
-              não observou necessidades significativas em relação a {dominios normais}.
+              
+              <% if @hetero_response.leve_domains.any?%>
+                Em sua visão, <%= @scale_response.patient.first_name.capitalize %> 
+                demonstra algumas dificuldades nos domínios de <%= @hetero_response.print_leve_domains%>.
+              <% end%>
+              
+              <% if @hetero_response.moderado_domains.any?%>
+                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name %> como de nível moderado,
+                  identificando claramente <%= @hetero_response.moderado_domains.count > 1 ? "áreas" : "uma área" %> de dificuldade.
+              <%end%>    
+              
+              <% if @hetero_response.severo_domains.any?%>
+                <%= @hetero_response.severo_domains.count > 1 ? "Destacaram-se" : "Destaca-se" %> 
+                <%= @hetero_response.print_severo_domains %>
+                como <%= @hetero_response.severo_domains.count > 1 ? "ponto" : "pontos" %> em que 
+                <%= @scale_response.patient.gender == "male" ? "o" : "a" %> paciente apresenta nível severo de prejuízo 
+                e requer maior atenção. 
+              <% end %>
+              
+              <% if @hetero_response.normal_domains.any?%>
+                <%= @hetero_response.relator_name %>
+                não observou necessidades significativas em relação a <%= @hetero_response.print_normal_domains %>.
+              <% end %>
             </p>
           </div>
           
