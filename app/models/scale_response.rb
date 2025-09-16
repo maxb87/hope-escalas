@@ -14,6 +14,7 @@ class ScaleResponse < ApplicationRecord
 
   before_validation :calculate_score, if: :answers_changed?
   before_validation :set_completed_at, if: -> { answers.present? && !completed_at? }
+  before_destroy :cancel_associated_scale_request
 
   scope :recent, -> { order(completed_at: :desc) }
   scope :by_scale, ->(scale) { where(psychometric_scale: scale) }
@@ -72,7 +73,7 @@ class ScaleResponse < ApplicationRecord
     psychometric_scale.scale_items.ordered.map do |item|
       answer_key = "item_#{item.item_number}"
       answer_value = answers[answer_key]
-      
+
       if answer_value.present?
         {
           item_number: item.item_number,
@@ -102,6 +103,75 @@ class ScaleResponse < ApplicationRecord
   def unanswered_items
     formatted_answers.select { |item| item[:answer_value].blank? }
   end
+
+  # Retorna uma lista dos domínios das subescalas com seus níveis para uso na view
+  def subscale_domains_with_levels
+    return [] unless results.present? && results["subscales"].present?
+
+    subscales = results["subscales"]
+
+    # Ordem específica dos domínios conforme solicitado
+    domain_order = [
+      "social_awareness",      # Percepção Social
+      "social_cognition",      # Cognição Social
+      "social_communication",  # Comunicação Social
+      "social_motivation",     # Motivação Social
+      "restricted_interests",  # Padrões Restritos ou Repetitivos
+      "social_interaction"     # Interação Social Global
+    ]
+
+    # Criar array com informações dos domínios na ordem específica
+    ordered_domains = []
+    normal_domains = []
+
+    domain_order.each do |domain_key|
+      next unless subscales[domain_key]
+
+      domain_data = subscales[domain_key]
+      domain_info = {
+        key: domain_key,
+        title: domain_data["title"],
+        level: domain_data["level"],
+        t_score: domain_data["t_score"],
+        raw_score: domain_data["raw_score"],
+        percentile: domain_data["percentile"],
+        description: domain_data["description"],
+        interpretation: domain_data["interpretation"],
+        items: domain_data["items"]
+      }
+
+      # Separar domínios normais dos problemáticos
+      if domain_data["level"] == "normal"
+        normal_domains << domain_info
+      else
+        ordered_domains << domain_info
+      end
+    end
+
+    # NÃO ordenar por severidade - manter a ordem específica dos domínios
+    # Adicionar domínios normais no final
+    ordered_domains + normal_domains
+  end
+
+  # Retorna apenas os domínios com problemas (não normais) na ordem específica
+  def problematic_domains
+    # Manter a ordem específica dos domínios, apenas filtrando os problemáticos
+    subscale_domains_with_levels.select { |domain| domain[:level] != "normal" }
+  end
+
+  # Retorna apenas os domínios normais
+  def normal_domains
+    subscale_domains_with_levels.select { |domain| domain[:level] == "normal" }
+  end
+
+  # Retorna o domínio com maior severidade (primeiro da lista de problemáticos)
+  def worst_domain
+    problematic_domains.first
+  end
+
+  def cancel_associated_scale_request
+    scale_request.cancel! if scale_request.present?
+  end
   private
 
   def calculate_score
@@ -119,7 +189,8 @@ class ScaleResponse < ApplicationRecord
         scale_version: psychometric_scale.version,
         patient_gender: patient.gender,
         patient_age: patient_age,
-        scale_type: scale_type
+        scale_type: scale_type,
+        patient: patient  # Passar o objeto paciente
       )
       apply_results!(results_hash)
     else

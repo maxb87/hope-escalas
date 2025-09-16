@@ -180,4 +180,7 @@
 
 <div class="mt-3">
   <%= link_to "Voltar ao Perfil", patient_path(@scale_response.patient), class: "btn btn-secondary" %>
+  <% if policy(@scale_response).destroy? %>
+    <%= button_to "Descartar Escala", scale_response_path(@scale_response), method: :delete, data: { turbo_confirm: "Tem certeza que deseja descartar esta escala? Esta ação cancelará a solicitação correspondente e não pode ser desfeita." }, class: "btn btn-danger ms-2" %>
+  <% end %>
 </div>

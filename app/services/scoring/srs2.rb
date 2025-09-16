@@ -7,13 +7,19 @@ module Scoring
     # patient_gender: 'male' ou 'female'
     # patient_age: idade em anos
     # scale_type: 'self_report' ou 'parent_report'
-    def self.calculate(answers, scale_version: "2.0", patient_gender: nil, patient_age: nil, scale_type: nil)
+    def self.calculate(answers, scale_version: "2.0", patient_gender: nil, patient_age: nil, scale_type: nil, patient: nil)
+      # Armazenar o paciente em uma variável de classe para uso nas interpretações
+      @patient = patient
+
       raw_score = calculate_raw_score(answers)
-      level = determine_interpretation_level(raw_score)
       subscale_scores = calculate_subscale_scores(answers)
       lookup_results = calculate_lookup_results(raw_score, subscale_scores, patient_gender, patient_age, scale_type)
 
-      build_result_hash(raw_score, level, subscale_scores, lookup_results, scale_version)
+      # Use t-score for interpretation level determination
+      t_score = lookup_results[:total][:t_score]
+      level = determine_interpretation_level(t_score)
+
+      build_result_hash(raw_score, level, subscale_scores, lookup_results, scale_version, patient)
     end
 
     private
@@ -36,13 +42,15 @@ module Scoring
       end.sum
     end
 
-    # Determina o nível de interpretação baseado no raw score
-    def self.determine_interpretation_level(raw_score)
-      case raw_score
-      when 0..25 then "Normal"
-      when 26..55 then "Leve"
-      when 56..85 then "Moderado"
-      when 86..195 then "Severo"
+    # Determina o nível de interpretação baseado no t-score
+    def self.determine_interpretation_level(t_score)
+      return "Pontuação inválida" unless t_score
+
+      case t_score
+      when 0..54 then "normal"
+      when 55..64 then "leve"
+      when 65..74 then "moderado"
+      when 75..100 then "severo"
       else "Pontuação inválida"
       end
     end
@@ -136,15 +144,15 @@ module Scoring
     end
 
     # Constrói o hash de resultado final
-    def self.build_result_hash(raw_score, level, subscale_scores, lookup_results, scale_version)
+    def self.build_result_hash(raw_score, level, subscale_scores, lookup_results, scale_version, patient = nil)
       {
         "schema_version" => 1,
         "scale_code" => "SRS-2",
         "scale_version" => scale_version,
         "computed_at" => Time.current.iso8601,
         "metrics" => build_metrics_hash(raw_score, level, lookup_results[:total]),
-        "subscales" => build_subscales_hash(subscale_scores, lookup_results[:subscales]),
-        "interpretation" => build_interpretation_hash(level)
+        "subscales" => build_subscales_hash(subscale_scores, lookup_results[:subscales], patient)
+        #        "interpretation" => build_interpretation_hash(level)
       }
     end
 
@@ -154,35 +162,72 @@ module Scoring
         "raw_score" => raw_score,
         "t_score" => total_lookup[:t_score],
         "percentile" => total_lookup[:percentile],
-        "level" => level
+        "level" => level,
+        "level_plural" => level_pluralize(level)
       }
     end
 
     # Constrói o hash de subescalas
-    def self.build_subscales_hash(subscale_scores, subscale_lookups)
+    def self.build_subscales_hash(subscale_scores, subscale_lookups, patient = nil)
       subscale_configs = {
         social_awareness: {
-          description: "Percepção Social",
+          title: "Percepção Social",
+          raw_score: subscale_scores[:social_awareness],
+          t_score: subscale_lookups[:social_awareness][:t_score],
+          percentile: subscale_lookups[:social_awareness][:percentile],
+          level: determine_subscale_level(subscale_lookups[:social_awareness][:t_score]),
+          description: "captar pistas sociais básicas e compreender aspectos perceptivos do comportamento recíproco.",
+          interpretation: get_subscale_interpretation("social_awareness", subscale_lookups[:social_awareness][:t_score], patient),
           items: [ 2, 7, 25, 32, 45, 52, 54, 56 ]
         },
         social_cognition: {
-          description: "Cognição Social",
+          title: "Cognição Social",
+          raw_score: subscale_scores[:social_cognition],
+          t_score: subscale_lookups[:social_cognition][:t_score],
+          percentile: subscale_lookups[:social_cognition][:percentile],
+          level: determine_subscale_level(subscale_lookups[:social_cognition][:t_score]),
+          description: "capacidade de processar informações sociais, lidando com o aspecto cognitivo do comportamento social.",
+          interpretation: get_subscale_interpretation("social_cognition", subscale_lookups[:social_cognition][:t_score], patient),
           items: [ 5, 10, 15, 17, 30, 40, 42, 44, 48, 58, 59, 62 ]
         },
         social_communication: {
-          description: "Comunicação Social",
+          title: "Comunicação Social",
+          raw_score: subscale_scores[:social_communication],
+          t_score: subscale_lookups[:social_communication][:t_score],
+          percentile: subscale_lookups[:social_communication][:percentile],
+          level: determine_subscale_level(subscale_lookups[:social_communication][:t_score]),
+          description: "comunicação expressiva, lidando com os aspectos motores do comportamento social recíproco",
+          interpretation: get_subscale_interpretation("social_communication", subscale_lookups[:social_communication][:t_score], patient),
           items: [ 12, 13, 16, 18, 19, 21, 22, 26, 33, 35, 36, 37, 38, 41, 46, 47, 51, 53, 55, 57, 60, 61 ]
         },
         social_motivation: {
-          description: "Motivação Social",
+          title: "Motivação Social",
+          raw_score: subscale_scores[:social_motivation],
+          t_score: subscale_lookups[:social_motivation][:t_score],
+          percentile: subscale_lookups[:social_motivation][:percentile],
+          level: determine_subscale_level(subscale_lookups[:social_motivation][:t_score]),
+          description: "interesse e capacidade de engajar-se em comportamentos sociais e interpessoais",
+          interpretation: get_subscale_interpretation("social_motivation", subscale_lookups[:social_motivation][:t_score], patient),
           items: [ 1, 3, 6, 9, 11, 23, 27, 34, 43, 64, 65 ]
         },
         restricted_interests: {
-          description: "Interesses Restritos e Comportamentos Repetitivos",
+          title: "Interesses Restritos e Comportamentos Repetitivos",
+          raw_score: subscale_scores[:restricted_interests],
+          t_score: subscale_lookups[:restricted_interests][:t_score],
+          percentile: subscale_lookups[:restricted_interests][:percentile],
+          level: determine_subscale_level(subscale_lookups[:restricted_interests][:t_score]),
+          description: "comportamentos estereotipados, interesses restritos ou fixações (como foco excessivo em temas específicos ou insistência em rotinas).",
+          interpretation: get_subscale_interpretation("restricted_interests", subscale_lookups[:restricted_interests][:t_score], patient),
           items: [ 4, 8, 14, 20, 24, 28, 29, 31, 39, 49, 50, 63 ]
         },
         social_interaction: {
-          description: "Interação Social",
+          title: "Interação Social Global",
+          raw_score: subscale_scores[:social_interaction],
+          t_score: subscale_lookups[:social_interaction][:t_score],
+          percentile: subscale_lookups[:social_interaction][:percentile],
+          level: determine_subscale_level(subscale_lookups[:social_interaction][:t_score]),
+          description: "reconhecimento e interpretação de sinais sociais, bem como motivação para o contato interpessoal social expressivo.",
+          interpretation: get_subscale_interpretation("social_interaction", subscale_lookups[:social_interaction][:t_score], patient),
           items: [ 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 30, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65 ]
         }
       }
@@ -193,10 +238,13 @@ module Scoring
         lookup = subscale_lookups[subscale_key]
 
         {
+          "title" => config[:title],
           "raw_score" => raw_score,
           "t_score" => lookup[:t_score],
           "percentile" => lookup[:percentile],
+          "level" => config[:level],
           "description" => config[:description],
+          "interpretation" => config[:interpretation],
           "items" => config[:items]
         }
       end
@@ -233,17 +281,97 @@ module Scoring
     # Retorna descrição da interpretação baseada no nível
     def self.get_interpretation_description(level)
       case level
-      when "Normal"
-        "Funcionamento social dentro da faixa normal. Habilidades sociais adequadas para a idade."
-      when "Leve"
-        "Dificuldades leves em habilidades sociais. Pode apresentar algumas limitações sociais sutis."
-      when "Moderado"
-        "Dificuldades moderadas em habilidades sociais. Limitações sociais mais evidentes que podem impactar o funcionamento."
-      when "Severo"
-        "Dificuldades severas em habilidades sociais. Limitações significativas que impactam substancialmente o funcionamento social."
+      when "normal"
+        "Normal"
+      when "leve"
+        "Prejuízo Leve"
+      when "moderado"
+        "Prejuízo Moderado"
+      when "severo"
+        "Prejuízo Severo"
       else
         "Interpretação não disponível."
       end
     end
+
+    def self.get_subscale_interpretation(subscale_name, t_score, patient = nil)
+      level = determine_subscale_level(t_score)
+
+      case subscale_name
+      when "social_awareness"
+        case level
+        when "normal" then "#{patient&.first_name&.titleize } não apresenta, de acordo com seu entendimento, dificuldades em percepção social, ou seja, considera-se capaz de captar pistas sociais básicas e compreender aspectos perceptivos do comportamento recíproco."
+        when "leve" then "#{patient&.first_name&.titleize } percebe que possui dificuldades na interpretação de pistas sociais ou aspectos perceptivos do comportamento recíproco."
+        when "moderado" then "#{patient&.first_name&.titleize } reconhece dificuldades importantes na interpretação de pistas sociais e aspectos perceptivos do comportamento recíproco."
+        when "severo" then "#{patient&.first_name&.titleize } reconhece dificuldades graves e limitações significativas que impactam severamente a compreensão de pistas sociais e aspectos perceptivos do comportamento recíproco."
+        else "Interpretação não disponível."
+        end
+      when "social_cognition"
+        case level
+        when "normal" then "#{patient&.first_name&.titleize } não percebe dificuldades na compreensão de nuances do comportamento alheio, o que minimiza possíveis mal-entendidos ou interpretações literais."
+        when "leve" then "#{patient&.first_name&.titleize } percebe que possui dificuldades para compreender nuances do comportamento alheio, o que pode levar a mal-entendidos ou interpretações literais."
+        when "moderado" then "#{patient&.first_name&.titleize } reconhece dificuldades importantes para compreender nuances do comportamento alheio, o que pode levar a mal-entendidos, dificuldades de comunicação ou interpretações literais."
+        when "severo" then "#{patient&.first_name&.titleize } reconhece dificuldades graves e limitações significativas que impactam severamente a compreensão de nuances do comportamento alheio, o que pode causar mal-entendidos, interpretações literais e a poissibilidade de impacto funcional no fluxo de comunicação."
+        else "Interpretação não disponível."
+        end
+      when "social_communication"
+        case level
+        when "normal" then "#{patient&.gender == 'male' ? 'Ele' : 'Ela'} não percebe dificuldades significativas em sua comunicação social, considera-se capaz de expressar idéias, sentimentos ou respostas sociais."
+        when "leve" then "#{patient&.gender == 'male' ? 'Ele' : 'Ela'} percebe prejuízo leve na fluência da comunicação social, na expressäo adequada de idéias, sentimentos e respostas sociais."
+        when "moderado" then "#{patient&.gender == 'male' ? 'Ele' : 'Ela'} reconhece prejuízos na fluência comunicativa, especialmente na expressão adequada de idéias, de sentimentos e nas respostas sociais."
+        when "severo" then "#{patient&.gender == 'male' ? 'Ele' : 'Ela'} relata graves dificuldades na fluência de sua comunicação social, especialmente na expressão adequada de idéias, ou de seus sentimentos e respostas sociais."
+        else "Interpretação não disponível."
+        end
+      when "social_motivation"
+        case level
+        when "normal" then "#{patient&.first_name&.titleize } não relata inibição ou desinteresse para interações espontâneas, considera-se #{patient&.gender == 'male' ? 'motivado' : 'motivada'} a realizar interações sociais e interpessoais."
+        when "leve" then "#{patient&.first_name&.titleize } relata inibição leve para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
+        when "moderado" then "#{patient&.first_name&.titleize } relata inibição moderada para interações espontâneas, o que pode se manifestar como retraimento, desconforto em grupos ou evitamento de situações sociais."
+        when "severo" then "#{patient&.first_name&.titleize } relata graves dificuldades para interações espontâneas, manifestando-se como retraimento, desconforto em grupos e evitamento de situações sociais."
+        else "Interpretação não disponível."
+        end
+      when "restricted_interests"
+        case level
+        when "normal" then "#{patient&.first_name&.titleize } não apresenta, de acordo com sua percepção, traços associados a padrões de comportamento estereotipado, interesses restritos ou fixações."
+        when "leve" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo leve em sua rotina, hábitos e interesses"
+        when "moderado" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo moderado em sua rotina, hábitos e ações ligadas a seus interesses"
+        when "severo" then "#{patient&.first_name&.titleize } reconhece traços compatíveis com este padrão, com prejuízo severo e limitações em sua rotina com relação a hábitos e fixações"
+        else "Interpretação não disponível."
+        end
+      when "social_interaction"
+        case level
+        when "normal" then "A soma dos domínios comprometidos sugere comportamento normal ou de baixa necessidade de adaptação em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
+        when "leve" then "A soma dos domínios comprometidos indica prejuízo leve em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional."
+        when "moderado" then "A soma dos domínios comprometidos indica prejuízo moderado e dificuldades em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
+        when "severo" then "A soma dos domínios comprometidos aponta prejuízo severo e dificuldades em sua capacidade de estabelecer e sustentar trocas interpessoais de maneira funcional"
+        else "Interpretação não disponível."
+        end
+      end
+    end
+
+    # Determina o nível de interpretação para subescalas baseado no t-score
+    def self.determine_subscale_level(t_score)
+      return "Pontuação inválida" unless t_score
+
+      case t_score
+      when 0..54 then "normal"
+      when 55..64 then "leve"
+      when 65..74 then "moderado"
+      when 75..100 then "severo"
+      else "Pontuação inválida"
+      end
+    end
+
+    def self.level_pluralize(level)
+      case level
+      when "normal" then "prejuízos de baixa significância clínica"
+      when "leve" then "prejuízos leves"
+      when "moderado" then "prejuízos moderados"
+      when "severo" then "prejuízos severos"
+      else "Interpretação não disponível."
+      end
+    end
+
+    # Retorna interpretação específica para cada subescala
   end
 end

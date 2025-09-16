@@ -1,7 +1,7 @@
 class ScaleResponsesController < ApplicationController
   include ChartsHelper
 
-  before_action :set_scale_response, only: [ :show, :interpretation ]
+  before_action :set_scale_response, only: [ :show, :interpretation, :destroy ]
 
   def index
     @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
@@ -73,18 +73,33 @@ class ScaleResponsesController < ApplicationController
   def interpretation
     authorize @scale_response
 
+    @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
+    @chart_data = @chart_service.chart_data
+    @report_info = @chart_service.report_info
+
     # Verificar se é uma escala SRS-2
     if @scale_response.srs2_scale?
-      @interpretation_service = Interpretation::Srs2InterpretationService.new(@scale_response.patient)
+      @interpretation_service = Interpretation::Srs2InterpretationService.new
 
-      if @interpretation_service.has_data?
-        @interpretation_data = @interpretation_service.interpretation_data
-        @report_info = @interpretation_service.report_info
-      end
+
     end
   end
 
 
+
+  def destroy
+    authorize @scale_response
+
+    # Fazer destroy da scale_response
+    @scale_response.destroy!
+
+    # Cancelar a solicitação correspondente
+    @scale_response.scale_request.cancel!
+
+    redirect_to scale_responses_path, notice: "Escala descartada com sucesso. A solicitação foi cancelada."
+  rescue StandardError => e
+    redirect_to @scale_response, alert: "Erro ao descartar a escala: #{e.message}"
+  end
   private
 
   def set_scale_response

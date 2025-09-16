@@ -159,7 +159,7 @@
                   <% end %>
                 <% end %>
                 
-                <% if req.pending? && policy(req).cancel? %>
+                <% if (req.pending? || req.completed?) && policy(req).cancel? %>
                   <%= link_to cancel_scale_request_path(req), 
                       class: 'btn btn-sm btn-outline-danger',
                       title: t('scale_requests.actions.cancel'),

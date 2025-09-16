@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       get :cancelled
     end
   end
-  resources :scale_responses, only: [ :index, :new, :create, :show ] do
+  resources :scale_responses, only: [ :index, :new, :create, :show, :destroy ] do
     member do
       get :interpretation
     end

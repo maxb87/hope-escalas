@@ -48,9 +48,11 @@ class ScaleRequest < ApplicationRecord
     # Marcar como completa se estiver pendente
     completed! if pending?
   end
-
   def cancel!
-    cancelled! if pending?
+    if completed? && scale_response.present?
+      scale_response.destroy!
+    end
+    cancelled! if pending? || completed?
   end
 
   def expire!

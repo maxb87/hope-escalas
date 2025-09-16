@@ -47,6 +47,8 @@ class ScaleResponsePolicy < ApplicationPolicy
   end
 
   def destroy?
-    false # Respostas não podem ser excluídas
+    # Apenas profissionais e administradores podem descartar escalas
+    user.email == "admin@admin.com" ||
+    (user.account_type == "Professional" && record.scale_request.professional == user.account)
   end
 end
