@@ -2,6 +2,14 @@
 
 <p>Responda a todos os itens abaixo. Selecione uma opção de 1 a 4 para cada pergunta.</p>
 
+<% if current_user.email == "admin@admin.com" %>
+  <div class="mb-3">
+    <button type="button" class="btn btn-warning btn-sm" onclick="fillRandomAnswers()">
+      <i class="bi bi-shuffle"></i> Preenchimento Aleatório (Teste)
+    </button>
+  </div>
+<% end %>
+
 <%= form_with model: @scale_response, url: scale_responses_path, method: :post, data: { turbo: false } do |f| %>
   <% if @scale_response.errors.any? %>
     <div class="alert alert-danger" data-turbo-cache="false">
@@ -60,3 +68,40 @@
     <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<script>
+function fillRandomAnswers() {
+  // Preencher campos de relator se for heterorrelato
+  const relatorNameField = document.querySelector("input[name='scale_response[relator_name]']");
+  const relatorRelationshipField = document.querySelector("input[name='scale_response[relator_relationship]']");
+  
+  if (relatorNameField) {
+    const names = ["Maria Silva", "João Santos", "Ana Costa", "Pedro Oliveira", "Lucia Ferreira"];
+    relatorNameField.value = names[Math.floor(Math.random() * names.length)];
+  }
+  
+  if (relatorRelationshipField) {
+    const relationships = ["Mãe", "Pai", "Cônjuge", "Irmão", "Amigo", "Cuidador"];
+    relatorRelationshipField.value = relationships[Math.floor(Math.random() * relationships.length)];
+  }
+  
+  // Preencher todas as respostas aleatoriamente
+  const radioButtons = document.querySelectorAll("input[type='radio'][name*='scale_response[answers]']");
+  
+  // Agrupar por item
+  const items = {};
+  radioButtons.forEach(radio => {
+    const name = radio.name;
+    if (!items[name]) items[name] = [];
+    items[name].push(radio);
+  });
+  
+  // Selecionar uma opção aleatória para cada item
+  Object.values(items).forEach(itemRadios => {
+    const randomIndex = Math.floor(Math.random() * itemRadios.length);
+    itemRadios[randomIndex].checked = true;
+  });
+  
+  alert("Formulário preenchido aleatoriamente!");
+}
+</script>
