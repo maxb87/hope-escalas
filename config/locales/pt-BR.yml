@@ -211,6 +211,7 @@ pt-BR:
         status: "Status"
         requested_at: "Solicitada em"
         notes: "Observações"
+        
     errors:
       messages:
         record_invalid: "Registro inválido"
