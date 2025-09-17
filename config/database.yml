@@ -86,9 +86,9 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: hope_escalas_production
-    username: hope_escalas
-    password: <%= ENV["HOPE_ESCALAS_DATABASE_PASSWORD"] %>
+    database: <%= ENV["PGDATABASE"] %>
+    username: <%= ENV["PGUSER"] %>
+    password: <%= ENV["PGPASSWORD"] %>
   cache:
     <<: *primary_production
     database: hope_escalas_production_cache
