@@ -13,7 +13,6 @@ Sistema para solicitação e registro de escalas psicométricas de pacientes da 
 - Arquitetura de software (boas práticas)
 - Segurança (master key, magic link)
 - Observabilidade
-- CI/CD
 - Deploy (Railway)
 - Roadmap
 - Licença
@@ -312,30 +311,62 @@ Subdomínio de escalas psicométricas (alto nível):
 - Métricas: `prometheus_exporter` (HTTP/DB/Sidekiq)
 - Healthchecks: `/up`, `/healthz`, `/readyz`
 
-## CI/CD
-
-- CI (ex.: GitHub Actions): lint → segurança → testes → cobertura; cache do bundler
-- CD: migrations com `db:prepare`; feature flags para mudanças arriscadas
-- Railway: configure um comando de `release` para `rails db:migrate` a cada deploy
-- Versionamento: Conventional Commits + CHANGELOG; tags semânticas
-
 ## Deploy (Railway)
 
-- Commitar: `config/credentials/production.yml.enc`
-- Railway (Settings → Variables):
-  - `RAILS_ENV=production`
-  - `RAILS_MASTER_KEY` (conteúdo da sua `production.key`)
-  - `RAILS_LOG_TO_STDOUT=1`, `RAILS_SERVE_STATIC_FILES=1`
-  - `DATABASE_URL` (do Postgres da Railway)
-  - `REDIS_URL` (se usar Sidekiq/Action Cable)
-  - `MAILER_URL_HOST`, `MAILER_FROM`
-- Build/Release/Start:
-  - Build: `bundle exec rails assets:precompile`
-  - Release: `bundle exec rails db:migrate`
-  - Web: `bundle exec puma -C config/puma.rb`
-- Opcional `Procfile`:
-  - `web: bundle exec puma -C config/puma.rb`
-  - `release: bundle exec rails db:migrate`
+### Pré-requisitos
+
+- Instalar Railway CLI: `curl -fsSL https://railway.app/install.sh | sh`
+- Login: `railway login`
+
+### Configuração Inicial
+
+```bash
+# Inicializar projeto Railway
+railway init
+
+# Adicionar banco de dados PostgreSQL
+railway add postgresql
+
+# Adicionar Redis (opcional)
+railway add redis
+```
+
+### Variáveis de Ambiente
+
+Configure as seguintes variáveis no Railway:
+
+```bash
+railway variables set RAILS_ENV=production
+railway variables set RAILS_MASTER_KEY=$(cat config/master.key)
+railway variables set RAILS_LOG_TO_STDOUT=true
+railway variables set RAILS_SERVE_STATIC_FILES=true
+railway variables set DATABASE_URL='${{Postgres.DATABASE_URL}}'
+railway variables set REDIS_URL='${{Redis.REDIS_URL}}'
+railway variables set MAILER_URL_HOST=your-app.railway.app
+railway variables set MAILER_FROM=noreply@hopeneuro.com.br
+```
+
+### Deploy
+
+```bash
+# Deploy da aplicação
+railway up
+
+# Verificar logs
+railway logs
+
+# Abrir aplicação no browser
+railway open
+```
+
+### Procfile (Opcional)
+
+Criar arquivo `Procfile` na raiz do projeto:
+
+```
+web: bundle exec puma -C config/puma.rb
+release: bundle exec rails db:migrate
+```
 
 ## Roadmap
 
