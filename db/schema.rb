@@ -32,7 +32,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_184422) do
     t.check_constraint "char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text", name: "patients_cpf_format"
     t.check_constraint "char_length(full_name::text) >= 5", name: "patients_full_name_minlen"
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "patients_email_format"
-    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying, 'female'::character varying]::text[])", name: "patients_gender_values"
+    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying::text, 'female'::character varying::text])", name: "patients_gender_values"
   end
 
   create_table "professionals", force: :cascade do |t|
@@ -55,7 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_184422) do
     t.check_constraint "char_length(cpf::text) = 11 AND cpf::text ~ '^[0-9]{11}$'::text", name: "professionals_cpf_format"
     t.check_constraint "char_length(full_name::text) >= 5", name: "professionals_full_name_minlen"
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "professionals_email_format"
-    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying, 'female'::character varying]::text[])", name: "professionals_gender_values"
+    t.check_constraint "gender::text = ANY (ARRAY['male'::character varying::text, 'female'::character varying::text])", name: "professionals_gender_values"
   end
 
   create_table "psychometric_scale_items", force: :cascade do |t|

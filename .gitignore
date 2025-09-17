@@ -1,4 +1,5 @@
 # Rails standard ignores
+./log/*
 /log/*
 /tmp/*
 /tmp/
