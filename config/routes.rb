@@ -33,12 +33,6 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Charts
-  # Interpretation
-  resources :interpretation, only: [] do
-    collection do
-      get "srs2/:patient_id", to: "interpretation#srs2_interpretation", as: :srs2_interpretation
-    end
-  end
   resources :charts, only: [] do
     collection do
       get "srs2_comparison/:patient_id", to: "charts#srs2_comparison", as: :srs2_comparison

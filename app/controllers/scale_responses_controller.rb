@@ -73,23 +73,42 @@ class ScaleResponsesController < ApplicationController
   def interpretation
     authorize @scale_response
 
-    # Verificar se é uma escala SRS-2
-    unless @scale_response.srs2_scale?
-      redirect_to @scale_response, alert: "Interpretação disponível apenas para escalas SRS-2."
+    # Verificar se a escala suporta interpretação
+    unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
+      supported_scales = Interpretation::InterpretationServiceFactory.supported_scales.join(", ")
+      redirect_to @scale_response, alert: "Interpretação não disponível para esta escala. Escalas suportadas: #{supported_scales}."
       return
     end
 
-    # Criar adapters usando o serviço
-    @scale_response_adapter = Interpretation::Srs2InterpretationService.adapter_for(@scale_response)
-    @hetero_response = Interpretation::Srs2InterpretationService.find_hetero_response(@scale_response)
+    begin
+      # Gerar interpretação usando o factory
+      interpretation_data = Interpretation::InterpretationServiceFactory.generate_interpretation(@scale_response)
 
-    # Gerar interpretação integrada
-    @interpretation = Interpretation::Srs2InterpretationService.generate_integrated_interpretation(
-      @scale_response_adapter,
-      @hetero_response
-    )
+      # Extrair dados para as variáveis de instância
+      @scale_response_adapter = interpretation_data[:scale_response_adapter]
+      @hetero_response = interpretation_data[:hetero_response]
+      @interpretation = interpretation_data[:interpretation]
+      @scale_type = interpretation_data[:scale_type]
 
-    # Gerar dados para o gráfico
+      # Gerar dados específicos baseados no tipo de escala
+      generate_scale_specific_data
+
+    rescue Interpretation::InterpretationServiceFactory::UnsupportedScaleError => e
+      redirect_to @scale_response, alert: "Erro na interpretação: #{e.message}"
+    end
+  end
+
+  def generate_scale_specific_data
+    case @scale_type
+    when :srs2
+      generate_srs2_chart_data
+      # Futuras escalas podem ser adicionadas aqui
+      # when :another_scale
+      #   generate_another_scale_data
+    end
+  end
+
+  def generate_srs2_chart_data
     @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
     @chart_data = @chart_service.chart_data
     @report_info = @chart_service.report_info
@@ -110,6 +129,7 @@ class ScaleResponsesController < ApplicationController
   rescue StandardError => e
     redirect_to @scale_response, alert: "Erro ao descartar a escala: #{e.message}"
   end
+
   private
 
   def set_scale_response
