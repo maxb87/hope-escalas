@@ -35,3 +35,26 @@
     }
   }
 }
+
+// Login page styles
+.login-background {
+  background-color: hsl(0, 0%, 96%);
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.login-logo {
+  max-height: auto;
+  max-width: 250px;
+  width: 100%;
+}
