@@ -1,60 +1,71 @@
-<h2>Entrar</h2>
+        <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+            <div class="row justify-content-center w-100">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+          <div class="card shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="card-body p-4 p-md-5 text-center">
+              <!-- Logo -->
+              <div class="mb-4">
+                <%= image_tag("hope_purple.png", style: 'max-height: auto; max-width: 250px; width: 100%;', alt: "Hope Neuropsiquiatria", class: "img-fluid") %>
+              </div>
+              
+              <!-- Título -->
+              <h2 class="text-center mb-4">Acesse sua Conta</h2>
+              
+              <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+                <%# Lógica personalizada para mensagens de tentativas restantes e bloqueio %>
+                <% if resource.respond_to?(:email) && resource.email.present? %>
+                  <% user = User.find_by(email: resource.email) %>
+                  <% if user %>
+                    <% if user.access_locked? %>
+                      <% remaining_time = distance_of_time_in_words(Time.current, user.locked_at + Devise.unlock_in) %>
+                      <div class="alert alert-danger">
+                        <%= I18n.t("devise.failure.locked_with_time", time: remaining_time) %>
+                      </div>
+                    <% else %>
+                      <% remaining_attempts = [Devise.maximum_attempts - user.failed_attempts.to_i, 0].max %>
+                      <% if remaining_attempts == 1 %>
+                        <div class="alert alert-danger">
+                          <%= I18n.t("devise.failure.last_attempt") %>
+                        </div>
+                      <% elsif remaining_attempts < Devise.maximum_attempts %>
+                        <div class="alert alert-danger">
+                          <%= I18n.t("devise.failure.invalid_with_attempts", attempts: remaining_attempts) %>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  <% else %>
+                    <%# Fallback: mensagem genérica apenas quando o usuário não existe %>
+                    <% if flash[:alert].present? %>
+                      <div class="alert alert-danger"><%= flash[:alert] %></div>
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  <%# Fallback: mensagem genérica quando não há e-mail preenchido %>
+                  <% if flash[:alert].present? %>
+                    <div class="alert alert-danger"><%= flash[:alert] %></div>
+                  <% end %>
+                <% end %>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <%# Lógica personalizada para mensagens de tentativas restantes e bloqueio %>
-  <% if resource.respond_to?(:email) && resource.email.present? %>
-    <% user = User.find_by(email: resource.email) %>
-    <% if user %>
-      <% if user.access_locked? %>
-        <% remaining_time = distance_of_time_in_words(Time.current, user.locked_at + Devise.unlock_in) %>
-        <div class="alert alert-danger">
-          <%= I18n.t("devise.failure.locked_with_time", time: remaining_time) %>
-        </div>
-      <% else %>
-        <% remaining_attempts = [Devise.maximum_attempts - user.failed_attempts.to_i, 0].max %>
-        <% if remaining_attempts == 1 %>
-          <div class="alert alert-danger">
-            <%= I18n.t("devise.failure.last_attempt") %>
-          </div>
-        <% elsif remaining_attempts < Devise.maximum_attempts %>
-          <div class="alert alert-danger">
-            <%= I18n.t("devise.failure.invalid_with_attempts", attempts: remaining_attempts) %>
-          </div>
-        <% end %>
-      <% end %>
-    <% else %>
-      <%# Fallback: mensagem genérica apenas quando o usuário não existe %>
-      <% if flash[:alert].present? %>
-        <div class="alert alert-danger"><%= flash[:alert] %></div>
-      <% end %>
-    <% end %>
-  <% else %>
-    <%# Fallback: mensagem genérica quando não há e-mail preenchido %>
-    <% if flash[:alert].present? %>
-      <div class="alert alert-danger"><%= flash[:alert] %></div>
-    <% end %>
-  <% end %>
+                <!-- Email input -->
+                <div class="form-group mb-4 text-start">
+                  <%= f.label :email, "E-mail", class: "form-label fs-4", for: "form3Example3" %>
+                  <%= f.email_field :email, autofocus: true, autocomplete: "email", id: "form3Example3", class: "form-control" %>
+                </div>
+
+                <!-- Password input -->
+                <div class="form-group mb-4 text-start">
+                  <%= f.label :password, "Senha", class: "form-label fs-4", for: "form3Example4" %>
+                  <%= f.password_field :password, autocomplete: "current-password", id: "form3Example4", class: "form-control" %>
+                </div>
+
+                <!-- Submit button -->
+                <%= f.submit "Entrar", data: { mdb_button_init: "", mdb_ripple_init: "" }, class: "btn btn-primary w-100 fs-4 mb-4" %>
+
   
-  <div class="field">
-    <%= f.label :email, "E-mail" %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password, "Senha" %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me, "Lembrar-me" %>
+              <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Entrar" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
