@@ -59,12 +59,7 @@
         <div class="card-body">
           <div>
             <!-- interpretacao introducao -->
-            <p> <%= @scale_response.patient.full_name.titleize %> respondeu à Escala SRS-2 , este instrumento que tem como objetivo
-              mensurar sintomas associados ao Transtorno do Espectro Autista (TEA),
-              bem como classificá-los em níveis leves, moderados ou severos. <%= @scale_response.patient.first_name.capitalize %> obteve como pontuação total nesse instrumento <%=@scale_response.results.dig("metrics", "t_score")%> pontos,
-              caracterizando <%= @scale_response.results.dig("metrics","level_plural") %> relacionados ao TEA, de forma geral. A SRS é uma escala amplamente utilizada para avaliar a
-              responsividade social e identificar sinais de comprometimento associados ao TEA.
-            </p>
+            <p><%= @interpretation[:introduction] %></p>
           </div>
           <div class="my-4">
             <table class="table table-striped">
@@ -76,8 +71,8 @@
                 </tr>
               </thead>
               <tbody>
-                <% @scale_response.subscale_domains_with_levels.each do |domain| %>
-                  <% hetero_domain = @hetero_response.subscale_domains_with_levels.find { |d| d[:key] == domain[:key] } %>
+                <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>
+                  <% hetero_domain = @hetero_response&.subscale_domains_with_levels&.find { |d| d[:key] == domain[:key] } %>
                   <tr>
                     <td><%= domain[:title] %></td>
                     <td>
@@ -102,7 +97,7 @@
           </div>
           <div class="my-4">
 
-            <% @scale_response.subscale_domains_with_levels.each do |domain| %>            
+            <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>            
               <% if domain[:level] != "normal" %>
               <div>
                 <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
@@ -114,38 +109,11 @@
               <% end %>
             <% end %>
 
-          <div>
-            <p>
-              Quanto ao heterorrelato, de acordo com <strong><%= @hetero_response.relator_name %></strong>, 
-              que é <strong><%= @hetero_response.relator_relationship.downcase%></strong> 
-              <%= @scale_response.patient.gender == "male" ? "do" : "da" %> paciente, 
-              <%= @scale_response.patient.first_name.capitalize %> apresenta <%= @hetero_response.results.dig("metrics", "level_plural").downcase%> de forma geral, nos domínios avaliados pela escala SRS-2.               
-              
-              <% if @hetero_response.leve_domains.any?%>
-                Em sua visão, <%= @scale_response.patient.first_name.capitalize %> 
-                demonstra algumas dificuldades nos domínios de <%= @hetero_response.print_leve_domains%>.
-              <% end%>
-              
-              <% if @hetero_response.moderado_domains.any?%>
-                <%= @hetero_response.print_moderado_domains %> <%= @hetero_response.moderado_domains.count > 1 ? "foram classificados" : "foi classificado" %> por <%= @hetero_response.relator_name.split(' ').first.capitalize %> 
-                em nível moderado,
-                  identificando claramente <%= @hetero_response.moderado_domains.count > 1 ? "áreas" : "uma área" %> de dificuldade.
-              <%end%>    
-              
-              <% if @hetero_response.severo_domains.any?%>
-                <%= @hetero_response.severo_domains.count > 1 ? "Destacaram-se" : "Destaca-se" %> 
-                <%= @hetero_response.print_severo_domains %>
-                como <%= @hetero_response.severo_domains.count > 1 ? "ponto" : "pontos" %> em que 
-                <%= @scale_response.patient.gender == "male" ? "o" : "a" %> paciente apresenta nível severo de prejuízo 
-                e requer maior atenção. 
-              <% end %>
-              
-              <% if @hetero_response.normal_domains.any?%>
-                <%= @hetero_response.relator_name.split(' ').first.capitalize %>
-                não observou necessidades significativas em relação a <%= @hetero_response.print_normal_domains %>. 
-              <% end %>
-            </p>
-          </div>
+          <% if @interpretation[:hetero_report].present? %>
+            <div>
+              <p><%= @interpretation[:hetero_report] %></p>
+            </div>
+          <% end %>
           
           <div class="py-4">
             <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>

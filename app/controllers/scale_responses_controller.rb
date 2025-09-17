@@ -73,18 +73,26 @@ class ScaleResponsesController < ApplicationController
   def interpretation
     authorize @scale_response
 
+    # Verificar se é uma escala SRS-2
+    unless @scale_response.srs2_scale?
+      redirect_to @scale_response, alert: "Interpretação disponível apenas para escalas SRS-2."
+      return
+    end
+
+    # Criar adapters usando o serviço
+    @scale_response_adapter = Interpretation::Srs2InterpretationService.adapter_for(@scale_response)
+    @hetero_response = Interpretation::Srs2InterpretationService.find_hetero_response(@scale_response)
+
+    # Gerar interpretação integrada
+    @interpretation = Interpretation::Srs2InterpretationService.generate_integrated_interpretation(
+      @scale_response_adapter,
+      @hetero_response
+    )
+
+    # Gerar dados para o gráfico
     @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
     @chart_data = @chart_service.chart_data
     @report_info = @chart_service.report_info
-
-    @hetero_response = ScaleResponse.joins(:psychometric_scale).where(patient: @scale_response.patient).where(psychometric_scales: { code: "SRS2HR" }).order(created_at: :desc).first
-
-    # Verificar se é uma escala SRS-2
-    if @scale_response.srs2_scale?
-      @interpretation_service = Interpretation::Srs2InterpretationService.new
-
-
-    end
   end
 
 

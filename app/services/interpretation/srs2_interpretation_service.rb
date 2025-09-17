@@ -151,5 +151,134 @@ module Interpretation
       end
       IMPAIRMENT_LEVELS[:severe_impairment] # fallback
     end
+
+    # Cria um adapter para uma resposta SRS-2
+    def self.adapter_for(scale_response)
+      Srs2ResponseAdapter.new(scale_response)
+    end
+
+    # Busca heterorelato correspondente
+    def self.find_hetero_response(scale_response)
+      patient = scale_response.patient
+
+      if scale_response.psychometric_scale.code == "SRS2SR"
+        # Se é autorelato, buscar heterorelato
+        hetero_response = ScaleResponse.joins(:psychometric_scale)
+                                     .where(patient: patient, psychometric_scales: { code: "SRS2HR" })
+                                     .where("completed_at IS NOT NULL")
+                                     .recent
+                                     .first
+      elsif scale_response.psychometric_scale.code == "SRS2HR"
+        # Se é heterorelato, buscar autorelato
+        hetero_response = ScaleResponse.joins(:psychometric_scale)
+                                     .where(patient: patient, psychometric_scales: { code: "SRS2SR" })
+                                     .where("completed_at IS NOT NULL")
+                                     .recent
+                                     .first
+      end
+
+      hetero_response ? adapter_for(hetero_response) : nil
+    end
+
+    # Gera a interpretação textual integrada
+    def self.generate_integrated_interpretation(self_adapter, hetero_adapter = nil)
+      patient = self_adapter.patient
+
+      interpretation = {
+        introduction: generate_introduction_text(patient, self_adapter),
+        self_report: generate_self_report_text(patient, self_adapter),
+        hetero_report: hetero_adapter ? generate_hetero_report_text(patient, hetero_adapter) : ""
+      }
+
+      interpretation
+    end
+
+    private
+
+    def self.generate_introduction_text(patient, self_adapter)
+      t_score = self_adapter.results.dig("metrics", "t_score")
+      level_plural = level_pluralize(determine_impairment_level(t_score)[:label])
+
+      "#{patient.full_name.titleize} respondeu à Escala SRS-2, este instrumento que tem como objetivo " \
+      "mensurar sintomas associados ao Transtorno do Espectro Autista (TEA), " \
+      "bem como classificá-los em níveis leves, moderados ou severos. #{patient.first_name.capitalize} obteve como pontuação total nesse instrumento #{t_score} pontos, " \
+      "caracterizando #{level_plural} relacionados ao TEA, de forma geral. A SRS é uma escala amplamente utilizada para avaliar a " \
+      "responsividade social e identificar sinais de comprometimento associados ao TEA."
+    end
+
+    def self.generate_self_report_text(patient, self_adapter)
+      # Implementar lógica de texto do autorrelato baseado nos domínios
+      domains_with_issues = self_adapter.subscale_domains_with_levels.reject { |d| d[:level] == "normal" }
+
+      if domains_with_issues.any?
+        "#{patient.first_name.capitalize} apresenta dificuldades nos seguintes domínios: #{format_domains_list(domains_with_issues)}."
+      else
+        "#{patient.first_name.capitalize} não apresenta dificuldades significativas nos domínios avaliados."
+      end
+    end
+
+    def self.generate_hetero_report_text(patient, hetero_adapter)
+      relator_name = hetero_adapter.relator_name
+      relator_relationship = hetero_adapter.relator_relationship
+      level_plural = level_pluralize(determine_impairment_level(hetero_adapter.results.dig("metrics", "t_score"))[:label])
+
+      # Verificar se os dados necessários estão presentes
+      return "" if relator_name.blank? || relator_relationship.blank?
+
+      text = "Quanto ao heterorrelato, de acordo com #{relator_name}, " \
+             "que é #{relator_relationship.downcase} #{patient.gender == 'male' ? 'do' : 'da'} paciente, " \
+             "#{patient.first_name.capitalize} apresenta #{level_plural&.downcase || 'resultados'} de forma geral, nos domínios avaliados pela escala SRS-2."
+
+      # Adicionar textos específicos por nível
+      text += generate_level_specific_text(patient, hetero_adapter, relator_name)
+
+      text
+    end
+
+    def self.generate_level_specific_text(patient, hetero_adapter, relator_name)
+      text = ""
+
+      # Verificar se relator_name não é nil
+      return text if relator_name.blank?
+
+      relator_first_name = relator_name.split(" ").first&.capitalize || relator_name
+
+      if hetero_adapter.leve_domains.any?
+        text += " Em sua visão, #{patient.first_name.capitalize} " \
+                "demonstra algumas dificuldades nos domínios de #{hetero_adapter.print_leve_domains}."
+      end
+
+      if hetero_adapter.moderado_domains.any?
+        text += " #{hetero_adapter.print_moderado_domains} #{hetero_adapter.moderado_domains.count > 1 ? 'foram classificados' : 'foi classificado'} por #{relator_first_name} " \
+                "em nível moderado, identificando claramente #{hetero_adapter.moderado_domains.count > 1 ? 'áreas' : 'uma área'} de dificuldade."
+      end
+
+      if hetero_adapter.severo_domains.any?
+        text += " #{hetero_adapter.severo_domains.count > 1 ? 'Destacaram-se' : 'Destaca-se'} " \
+                "#{hetero_adapter.print_severo_domains} " \
+                "como #{hetero_adapter.severo_domains.count > 1 ? 'pontos' : 'ponto'} em que " \
+                "#{patient.gender == 'male' ? 'o' : 'a'} paciente apresenta nível severo de prejuízo " \
+                "e requer maior atenção."
+      end
+
+      if hetero_adapter.normal_domains.any?
+        text += " #{relator_first_name} " \
+                "não observou necessidades significativas em relação a #{hetero_adapter.print_normal_domains}."
+      end
+
+      text
+    end
+
+    def self.format_domains_list(domains)
+      domain_names = domains.map { |d| d[:title] }
+      case domain_names.size
+      when 1
+        domain_names.first
+      when 2
+        "#{domain_names.first} e #{domain_names.last}"
+      else
+        "#{domain_names[0..-2].join(', ')} e #{domain_names.last}"
+      end
+    end
   end
 end

@@ -19,15 +19,7 @@ class ScaleResponse < ApplicationRecord
   scope :recent, -> { order(completed_at: :desc) }
   scope :by_scale, ->(scale) { where(psychometric_scale: scale) }
 
-  def srs2_score
-    return nil unless srs2_scale?
-    total_score
-  end
 
-  def srs2_interpretation
-    return nil unless srs2_scale?
-    interpretation
-  end
 
   def answered_items_count
     answers.keys.count
@@ -51,14 +43,6 @@ class ScaleResponse < ApplicationRecord
     results.dig("interpretation", "level") || "Não disponível"
   end
 
-  def total_score
-    results.dig("metrics", "raw_score") || 0
-  end
-
-  # Check if this is a hetero-report scale
-  def hetero_report?
-    psychometric_scale.code == "SRS2HR"
-  end
 
   # Check if this is any SRS-2 scale
   def srs2_scale?
@@ -104,190 +88,24 @@ class ScaleResponse < ApplicationRecord
     formatted_answers.select { |item| item[:answer_value].blank? }
   end
 
-  # Retorna uma lista dos domínios das subescalas com seus níveis para uso na view
-  def subscale_domains_with_levels
-    return [] unless results.present? && results["subscales"].present?
-
-    subscales = results["subscales"]
-
-    # Ordem específica dos domínios conforme solicitado
-    domain_order = [
-      "social_awareness",      # Percepção Social
-      "social_cognition",      # Cognição Social
-      "social_communication",  # Comunicação Social
-      "social_motivation",     # Motivação Social
-      "restricted_interests",  # Padrões Restritos ou Repetitivos
-      "social_interaction"     # Interação Social Global
-    ]
-
-    # Criar array com informações dos domínios na ordem específica
-    ordered_domains = []
-    normal_domains = []
-
-    domain_order.each do |domain_key|
-      next unless subscales[domain_key]
-
-      domain_data = subscales[domain_key]
-      domain_info = {
-        key: domain_key,
-        title: domain_data["title"],
-        level: domain_data["level"],
-        t_score: domain_data["t_score"],
-        raw_score: domain_data["raw_score"],
-        percentile: domain_data["percentile"],
-        description: domain_data["description"],
-        interpretation: domain_data["interpretation"],
-        items: domain_data["items"]
-      }
-
-      # Separar domínios normais dos problemáticos
-      if domain_data["level"] == "normal"
-        normal_domains << domain_info
-      else
-        ordered_domains << domain_info
-      end
-    end
-
-    # NÃO ordenar por severidade - manter a ordem específica dos domínios
-    # Adicionar domínios normais no final
-    ordered_domains + normal_domains
+  # SRS-2 score and interpretation
+  def srs2_score
+    return nil unless srs2_scale?
+    total_score
   end
 
-  # Retorna apenas os domínios com problemas (não normais) na ordem específica
-  def leve_domains
-    # Manter a ordem específica dos domínios, apenas filtrando os leves
-    subscale_domains_with_levels.select { |domain| domain[:level] == "leve" }
+  def srs2_interpretation
+    return nil unless srs2_scale?
+    interpretation
   end
 
-  def print_leve_domains
-    domains = leve_domains.map { |domain| domain[:title] }
-
-    case domains.size
-    when 0
-      ""
-    when 1
-      domains.first
-    when 2
-      "#{domains.first} e #{domains.last}"
-    else
-      "#{domains[0..-2].join(', ')} e #{domains.last}"
-    end
+  def total_score
+    results.dig("metrics", "raw_score") || 0
   end
 
-
-
-  def moderado_domains
-    subscale_domains_with_levels.select { |domain| domain[:level] == "moderado" }
-  end
-
-  def print_moderado_domains
-    domains = moderado_domains.map { |domain| domain[:title] }
-
-    case domains.size
-    when 0
-      ""
-    when 1
-      domains.first
-    when 2
-      "#{domains.first} e #{domains.last}"
-    else
-      "#{domains[0..-2].join(', ')} e #{domains.last}"
-    end
-  end
-
-  def severo_domains
-    subscale_domains_with_levels.select { |domain| domain[:level] == "severo" }
-  end
-
-  def print_severo_domains
-    domains = severo_domains.map { |domain| domain[:title] }
-
-    case domains.size
-    when 0
-      ""
-    when 1
-      domains.first
-    when 2
-      "#{domains.first} e #{domains.last}"
-    else
-      "#{domains[0..-2].join(', ')} e #{domains.last}"
-    end
-  end
-
-  # Retorna apenas os domínios normais
-  def normal_domains
-    subscale_domains_with_levels.select { |domain| domain[:level] == "normal" }
-  end
-
-  def print_normal_domains
-    domains = normal_domains.map { |domain| domain[:title] }
-
-    case domains.size
-    when 0
-      ""
-    when 1
-      domains.first
-    when 2
-      "#{domains.first} e #{domains.last}"
-    else
-      "#{domains[0..-2].join(', ')} e #{domains.last}"
-    end
-  end
-
-  # Retorna o domínio com maior severidade (primeiro da lista de problemáticos)
-  def worst_domain
-    if severo_domains.any?
-      severo_domains.max_by { |domain| domain[:t_score] }
-    elsif moderado_domains.any?
-      moderado_domains.max_by { |domain| domain[:t_score] }
-    elsif leve_domains.any?
-      leve_domains.max_by { |domain | domain[:t_score] }
-    else
-      normal_domains.max_by { |domain | domain[:t_score] }
-    end
-  end
-
-  def lowest_domain
-    if leve_domains.any?
-      leve_domains.min_by { |domain| domain[:t_score] }
-    elsif moderado_domains.any?
-      moderado_domains.min_by { |domain| domain[:t_score] }
-    elsif severo_domains.any?
-      severo_domains.min_by { |domain| domain[:t_score] }
-    else
-      normal_domains.min_by { |domain | domain[:t_score] }
-    end
-  end
-
-  # Retorna o domínio com a segunda maior pontuação
-  def second_highest_domain
-    all_domains = subscale_domains_with_levels
-    return nil if all_domains.size < 2
-
-    # Ordenar por t_score em ordem decrescente e pegar o segundo
-    sorted_domains = all_domains.sort_by { |domain| -domain[:t_score] }
-    sorted_domains[1]
-  end
-
-  # Segundo maior dentro de cada categoria de severidade
-  def second_worst_domain
-    if severo_domains.size >= 2
-      severo_domains.sort_by { |domain| -domain[:t_score] }[1]
-    elsif severo_domains.size == 1 && moderado_domains.any?
-      moderado_domains.max_by { |domain| domain[:t_score] }
-    elsif severo_domains.empty? && moderado_domains.size >= 2
-      moderado_domains.sort_by { |domain| -domain[:t_score] }[1]
-    elsif moderado_domains.size == 1 && leve_domains.any?
-      leve_domains.max_by { |domain| domain[:t_score] }
-    elsif moderado_domains.empty? && leve_domains.size >= 2
-      leve_domains.sort_by { |domain| -domain[:t_score] }[1]
-    elsif leve_domains.size == 1 && normal_domains.any?
-      normal_domains.max_by { |domain| domain[:t_score] }
-    elsif leve_domains.empty? && normal_domains.size >= 2
-      normal_domains.sort_by { |domain| -domain[:t_score] }[1]
-    else
-      nil
-    end
+  # Check if this is a hetero-report scale
+  def hetero_report?
+    psychometric_scale.code == "SRS2HR"
   end
 
   private
