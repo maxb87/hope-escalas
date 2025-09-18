@@ -66,6 +66,46 @@ class ScaleRequest < ApplicationRecord
     psychometric_scale&.code == "SRS2HR"
   end
 
+  # Métodos de classe para verificar se paciente pode receber solicitações
+  def self.can_create_srs2_self_report_for?(patient)
+    return false unless patient
+
+    !joins(:psychometric_scale)
+      .where(patient: patient)
+      .where(psychometric_scales: { code: "SRS2SR" })
+      .where(status: [ :pending, :completed ])
+      .exists?
+  end
+
+  def self.can_create_srs2_hetero_report_for?(patient)
+    return false unless patient
+
+    !joins(:psychometric_scale)
+      .where(patient: patient)
+      .where(psychometric_scales: { code: "SRS2HR" })
+      .where(status: [ :pending, :completed ])
+      .exists?
+  end
+
+  # Método para verificar se uma solicitação pode ser criada
+  def self.can_create_for?(patient, psychometric_scale)
+    return false unless patient && psychometric_scale
+
+    case psychometric_scale.code
+    when "SRS2SR"
+      can_create_srs2_self_report_for?(patient)
+    when "SRS2HR"
+      can_create_srs2_hetero_report_for?(patient)
+    else
+      # Para outras escalas, verifica apenas se não há pendentes
+      !where(
+        patient: patient,
+        psychometric_scale: psychometric_scale,
+        status: :pending
+      ).exists?
+    end
+  end
+
   private
 
   def set_requested_at
@@ -135,6 +175,9 @@ class ScaleRequest < ApplicationRecord
   def unique_srs2_hetero_report_request
     return unless patient_id.present?
 
+    # Log para debug
+    Rails.logger.info "[VALIDATION] Verificando heterorelato SRS-2 para paciente ID: #{patient_id}"
+
     # Buscar qualquer solicitação de heterorelato SRS-2 (pendente ou concluída) para o mesmo paciente
     existing_requests = ScaleRequest.joins(:psychometric_scale)
       .where(
@@ -146,12 +189,38 @@ class ScaleRequest < ApplicationRecord
     # Excluir o próprio registro se estiver sendo atualizado
     existing_requests = existing_requests.where.not(id: id) if persisted?
 
+    Rails.logger.info "[VALIDATION] Solicitações SRS2HR existentes: #{existing_requests.count}"
+
     if existing_requests.exists?
       patient_name = patient&.full_name || "paciente selecionado"
       scale_name = psychometric_scale&.name || "SRS-2 Heterorrelato"
+
+      Rails.logger.warn "[VALIDATION] BLOQUEANDO criação de heterorelato SRS-2 duplicado para #{patient_name}"
 
       errors.add(:base, I18n.t("activerecord.errors.models.scale_request.attributes.base.duplicate_srs2_hetero_report",
                              scale: scale_name, patient: patient_name))
     end
   end
+
+  # Método adicional para debug - forçar validação de heterorelato
+  def validate_hetero_report_uniqueness!
+    return unless psychometric_scale&.code == "SRS2HR"
+    return unless patient_id.present?
+
+    # Verificação mais rigorosa
+    existing_count = ScaleRequest.joins(:psychometric_scale)
+                                 .where(patient_id: patient_id)
+                                 .where(psychometric_scales: { code: "SRS2HR" })
+                                 .where(status: [ :pending, :completed ])
+                                 .where.not(id: id || 0)
+                                 .count
+
+    Rails.logger.info "[DEBUG] Verificação rigorosa - heterorelatos existentes: #{existing_count}"
+
+    if existing_count > 0
+      raise ActiveRecord::RecordInvalid.new(self)
+    end
+  end
+
+  private
 end

@@ -89,6 +89,20 @@
           <td>
             <% if resp %>
               <%= link_to "Ver Respostas", scale_response_path(resp), class: 'btn btn-sm btn-outline-primary' %>
+              
+              <!-- Botão de Interpretação seguindo as regras estabelecidas -->
+              <% if resp.psychometric_scale.code == "SRS2SR" %>
+                <!-- Para autorelato SRS-2: link direto para interpretação -->
+                <%= link_to "Interpretação", interpretation_scale_response_path(resp), class: 'btn btn-sm btn-warning ms-2' %>
+              <% elsif resp.psychometric_scale.code == "SRS2HR" %>
+                <!-- Para heterorelato SRS-2: buscar autorrelato correspondente -->
+                <% self_report_response = find_corresponding_self_report_for(resp.patient) %>
+                <% if self_report_response %>
+                  <%= link_to "Interpretação", interpretation_scale_response_path(self_report_response), class: 'btn btn-sm btn-warning ms-2' %>
+                <% else %>
+                  <span class="btn btn-sm btn-secondary ms-2 disabled" title="Autorrelato SRS-2 necessário para interpretação">Interpretação</span>
+                <% end %>
+              <% end %>
             <% end %>
           </td>
         </tr>

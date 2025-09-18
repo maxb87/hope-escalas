@@ -1,3 +1,27 @@
 <h1 class="mb-5">Solicitar Preenchimento de Escala</h1>
 
+<!-- Indicador de status SRS-2 para paciente selecionado -->
+<% if @scale_request.patient.present? %>
+  <div class="alert alert-info mb-4" id="srs2-status-indicator">
+    <h6><i class="bi bi-info-circle me-2"></i>Status das Escalas SRS-2 para <%= @scale_request.patient.full_name %></h6>
+    <%= srs2_status_badge_for(@scale_request.patient) %>
+  </div>
+<% end %>
+
 <%= render 'form' %>
+
+<script>
+// Adicionar listener para mudança de paciente
+$(document).ready(function() {
+  $('#patient-select').on('change', function() {
+    const patientId = $(this).val();
+    if (patientId) {
+      // Aqui você poderia fazer uma requisição AJAX para atualizar o status
+      // Por enquanto, vamos apenas mostrar/esconder o indicador
+      $('#srs2-status-indicator').show();
+    } else {
+      $('#srs2-status-indicator').hide();
+    }
+  });
+});
+</script>

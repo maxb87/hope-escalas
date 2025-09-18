@@ -168,32 +168,35 @@
   <!-- Link para Interpretação SRS-2 a partir do Heterorelato -->
   <% if is_professional_or_admin && @scale_response.psychometric_scale.code == "SRS2HR" %>
     <% 
-      # Verificar se há autorrelato SRS-2 concluído para o mesmo paciente
-      has_self_report = ScaleRequest.joins(:psychometric_scale, :scale_response)
-        .where(patient: @scale_response.patient, status: :completed)
-        .where(psychometric_scales: { code: "SRS2SR" })
-        .exists?
+      # Usar o helper para buscar o autorrelato correspondente
+      self_report_response = find_corresponding_self_report_for(@scale_response.patient)
     %>
     
-    <% if has_self_report %>
+    <% if self_report_response %>
       <div class="mt-4">
         <div class="alert alert-info d-flex align-items-center" role="alert">
           <i class="bi bi-info-circle me-2"></i>
           <div class="flex-grow-1">
             <strong>Interpretação de Resultados SRS-2 disponível!</strong><br>
             Acesse a interpretação completa dos resultados com gráficos comparativos e análises detalhadas.
+            <br><small class="text-muted">
+              <i class="bi bi-info-circle-fill me-1"></i>
+              A interpretação será baseada no autorrelato correspondente e incluirá a comparação com este heterorelato.
+            </small>
           </div>
           <div class="ms-3">
-            <%= link_to "Ver Interpretação", interpretation_scale_response_path(@scale_response), class: "btn btn-outline-primary btn-sm" %>
+            <%= link_to "Ver Interpretação", interpretation_scale_response_path(self_report_response), class: "btn btn-outline-primary btn-sm" %>
           </div>
         </div>
       </div>
     <% else %>
       <div class="mt-4">
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-          <i class="bi bi-info-circle me-2"></i>
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           <div class="flex-grow-1">
-            <%= link_to "Solicite o autorrelato", new_scale_request_path %> SRS-2 para ver a interpretação completa dos resultados.
+            <strong>Interpretação completa não disponível</strong><br>
+            Para acessar a interpretação completa com comparação, é necessário que o paciente tenha um 
+            <%= link_to "autorrelato SRS-2", new_scale_request_path, class: "alert-link" %> concluído.
           </div>
         </div>
       </div>

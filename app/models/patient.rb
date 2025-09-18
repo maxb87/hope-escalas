@@ -27,6 +27,48 @@ class Patient < ApplicationRecord
     (completed_scale_responses_count.to_f / open_scale_requests_count * 100).round(1)
   end
 
+  # Verifica se o paciente tem autorelato SRS-2 ativo (pendente ou concluído)
+  def has_active_srs2_self_report?
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2SR" })
+                  .where(status: [ :pending, :completed ])
+                  .exists?
+  end
+
+  # Verifica se o paciente tem heterorelato SRS-2 ativo (pendente ou concluído)
+  def has_active_srs2_hetero_report?
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2HR" })
+                  .where(status: [ :pending, :completed ])
+                  .exists?
+  end
+
+  # Verifica se o paciente pode receber uma nova solicitação de autorelato SRS-2
+  def can_receive_srs2_self_report?
+    !has_active_srs2_self_report?
+  end
+
+  # Verifica se o paciente pode receber uma nova solicitação de heterorelato SRS-2
+  def can_receive_srs2_hetero_report?
+    !has_active_srs2_hetero_report?
+  end
+
+  # Obtém o autorelato SRS-2 ativo (se existir)
+  def active_srs2_self_report
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2SR" })
+                  .where(status: [ :pending, :completed ])
+                  .first
+  end
+
+  # Obtém o heterorelato SRS-2 ativo (se existir)
+  def active_srs2_hetero_report
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2HR" })
+                  .where(status: [ :pending, :completed ])
+                  .first
+  end
+
   def age
     return nil if birthday.nil?
 

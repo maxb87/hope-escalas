@@ -199,7 +199,7 @@ module Interpretation
       t_score = self_adapter.results.dig("metrics", "t_score")
       level_plural = level_pluralize(determine_impairment_level(t_score)[:label])
 
-      "<strong>#{patient.full_name.titleize}</strong> respondeu à Escala SRS-2, este instrumento que tem como objetivo " \
+      "<strong>#{patient.full_name.titleize}</strong> respondeu à Escala SRS-2, instrumento que tem como objetivo " \
       "mensurar sintomas associados ao Transtorno do Espectro Autista (TEA), " \
       "bem como classificá-los em níveis leves, moderados ou severos. #{patient.first_name.capitalize} obteve como pontuação total nesse instrumento #{t_score} pontos, " \
       "caracterizando #{level_plural} relacionados ao TEA, de forma geral. A SRS é uma escala amplamente utilizada para avaliar a " \
