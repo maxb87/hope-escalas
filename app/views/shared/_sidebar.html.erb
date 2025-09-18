@@ -21,10 +21,18 @@
     <!-- Desktop Sidebar -->
     <nav class="sidebar d-none d-lg-flex flex-column p-3 bg-white border-end shadow-sm">
       <div class="sidebar-header mb-4">
-          <%= image_tag "logo-text.webp", class: "me-2", style: "width: 150px; height: 75px;" %>
+        <div>
 
-        
+          <%= image_tag "logo-text.webp", class: "me-2", style: "width: 150px; height: 75px;" %>       
+        </div>
+        <div>
+        <% if current_user.account.is_a?(Professional)%>
+          <strong><%= current_user.account.full_name %></strong>
+        <% end %>
+          
+        </div>
       </div>
+      
 
       <ul class="nav nav-pills flex-column mb-auto">
         <% if is_patient %>

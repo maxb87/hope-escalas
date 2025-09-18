@@ -31,7 +31,6 @@
 /.vscode
 
 # Credentials (keep encrypted files, ignore plaintext keys)
-/config/master.key
 /config/credentials/*.key
 
 # dotenv: we WANT to commit .env for team/dev parity per request
