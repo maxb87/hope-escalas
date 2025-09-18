@@ -199,7 +199,7 @@ module Interpretation
       t_score = self_adapter.results.dig("metrics", "t_score")
       level_plural = level_pluralize(determine_impairment_level(t_score)[:label])
 
-      "#{patient.full_name.titleize} respondeu à Escala SRS-2, este instrumento que tem como objetivo " \
+      "<strong>#{patient.full_name.titleize}</strong> respondeu à Escala SRS-2, este instrumento que tem como objetivo " \
       "mensurar sintomas associados ao Transtorno do Espectro Autista (TEA), " \
       "bem como classificá-los em níveis leves, moderados ou severos. #{patient.first_name.capitalize} obteve como pontuação total nesse instrumento #{t_score} pontos, " \
       "caracterizando #{level_plural} relacionados ao TEA, de forma geral. A SRS é uma escala amplamente utilizada para avaliar a " \
@@ -225,8 +225,8 @@ module Interpretation
       # Verificar se os dados necessários estão presentes
       return "" if relator_name.blank? || relator_relationship.blank?
 
-      text = "Quanto ao heterorrelato, de acordo com #{relator_name}, " \
-             "que é #{relator_relationship.downcase} #{patient.gender == 'male' ? 'do' : 'da'} paciente, " \
+      text = "Quanto ao heterorrelato, de acordo com <strong>#{relator_name}</strong>, " \
+             "que é <strong>#{relator_relationship.downcase}</strong> #{patient.gender == 'male' ? 'do' : 'da'} paciente, " \
              "#{patient.first_name.capitalize} apresenta #{level_plural&.downcase || 'resultados'} de forma geral, nos domínios avaliados pela escala SRS-2."
 
       # Adicionar textos específicos por nível
