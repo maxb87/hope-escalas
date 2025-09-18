@@ -4,8 +4,8 @@ class ScaleResponsePolicy < ApplicationPolicy
       if user.email == "admin@admin.com"
         scope.includes(:patient, :psychometric_scale, :scale_request).recent
       elsif user.account_type == "Professional"
-        scope.joins(:scale_request).where(scale_requests: { professional: user.account })
-             .includes(:patient, :psychometric_scale).recent
+        # Permitir acesso a todas as respostas para todos os profissionais
+        scope.includes(:patient, :psychometric_scale, :scale_request).recent
       else
         scope.none
       end
@@ -18,7 +18,7 @@ class ScaleResponsePolicy < ApplicationPolicy
 
   def show?
     user.email == "admin@admin.com" ||
-    (user.account_type == "Professional" && record.scale_request.professional == user.account) ||
+    user.account_type == "Professional" ||  # Qualquer profissional pode ver qualquer resposta
     (user.account_type == "Patient" && record.patient == user.account)
   end
 
@@ -26,20 +26,20 @@ class ScaleResponsePolicy < ApplicationPolicy
     return true if user.email == "admin@admin.com"
     # Permite criar resposta se:
     # 1. Usuário é paciente E a resposta pertence ao paciente logado
-    # 2. OU usuário é profissional E a solicitação pertence ao profissional logado
+    # 2. OU usuário é profissional (qualquer profissional pode criar)
     if user.account_type == "Patient"
       record.patient == user.account
     elsif user.account_type == "Professional"
-      record.scale_request.professional == user.account
+      true  # Qualquer profissional pode criar respostas
     else
       false
     end
   end
 
   def interpretation?
-    # Apenas profissionais e administradores podem acessar a interpretação
-    user.email == "admin@admin.com" || 
-    (user.account_type == "Professional" && record.scale_request.professional == user.account)
+    # Profissionais e administradores podem acessar interpretação de qualquer resposta
+    user.email == "admin@admin.com" ||
+    user.account_type == "Professional"  # Qualquer profissional pode acessar interpretações
   end
 
   def update?
@@ -47,8 +47,8 @@ class ScaleResponsePolicy < ApplicationPolicy
   end
 
   def destroy?
-    # Apenas profissionais e administradores podem descartar escalas
+    # Profissionais e administradores podem descartar qualquer escala
     user.email == "admin@admin.com" ||
-    (user.account_type == "Professional" && record.scale_request.professional == user.account)
+    user.account_type == "Professional"  # Qualquer profissional pode descartar qualquer escala
   end
 end

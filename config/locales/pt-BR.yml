@@ -289,6 +289,10 @@ pt-BR:
       view_response: "Ver resposta"
       cancel: "Cancelar"
       cancel_confirm: "Tem certeza que deseja cancelar esta solicitação?"
+    filters:
+      pending: "Pendentes"
+      completed: "Concluídas"
+      cancelled: "Canceladas"
     index:
       title: "Solicitações de Escalas"
       pending_tab: "Pendentes"
