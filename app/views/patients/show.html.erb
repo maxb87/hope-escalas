@@ -53,7 +53,15 @@
           <td><%= req.professional.full_name %></td>
           <td><%= l(req.requested_at, format: '%d/%m/%Y %H:%M') %></td>
           <td>
-            <%= link_to "Ver Solicitação", scale_request_path(req), class: 'btn btn-sm btn-outline-primary' %>
+            <% if req.pending? && req.scale_response.nil? %>
+              <%= link_to new_scale_response_path(scale_request_id: req.id), 
+                  class: 'btn btn-sm btn-warning' do %>
+                <i class="bi bi-pencil-square me-1"></i>
+                Responder Questionário
+              <% end %>
+            <% else %>
+              <%= link_to "Ver Solicitação", scale_request_path(req), class: 'btn btn-sm btn-outline-primary' %>
+            <% end %>
             <% if user_signed_in? && (current_user.email == "admin@admin.com" || current_user.account_type == "Professional") %>
               <%= link_to t('scale_requests.actions.cancel'), cancel_scale_request_path(req),
                   data: { turbo_method: :patch, turbo_confirm: t('scale_requests.actions.confirm_cancel') },
