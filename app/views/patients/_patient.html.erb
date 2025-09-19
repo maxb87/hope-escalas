@@ -3,10 +3,12 @@
     <h2><%= patient.full_name %></h2>
   </p>
 
-  <p>
-    <strong>Gênero:</strong>
-    <%= patient.gender == "male" ? "Masculino" : "Feminino" %>
-  </p>
+  <% if professional_or_admin? %>
+    <p>
+      <strong>Gênero:</strong>
+      <%= patient.gender == "male" ? "Masculino" : "Feminino" %>
+    </p>
+  <% end %>
 
   <p>
     <strong>Data de Nascimento:</strong>
