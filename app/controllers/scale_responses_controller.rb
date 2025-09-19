@@ -71,7 +71,7 @@ class ScaleResponsesController < ApplicationController
   end
 
   def interpretation
-    authorize @scale_response
+    authorize @scale_response, :interpretation?
 
     # Verificar se a escala suporta interpretação
     unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
