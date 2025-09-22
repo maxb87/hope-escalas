@@ -16,7 +16,7 @@
           </p>
         </div>
         <div>
-          <%= link_to srs2_scale_response_path(@scale_response), class: "btn btn-outline-secondary" do %>
+          <%= link_to scale_response_path(@scale_response), class: "btn btn-outline-secondary" do %>
             <i class="bi bi-arrow-left me-1"></i>
             Voltar aos Resultados
           <% end %>
@@ -47,14 +47,85 @@
         </div>
       </div>
 
-      <!-- Renderizar partial específico para interpretação SRS-2 -->
-      <%= render 'srs2/scale_responses/interpretation', 
-          scale_response: @scale_response,
-          scale_response_adapter: @scale_response_adapter,
-          hetero_response: @hetero_response,
-          interpretation: @interpretation,
-          chart_data: @chart_data,
-          chart_service: @chart_service %>
+
+      <!-- Interpretação -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="bi bi-clipboard-check me-2"></i>
+            Interpretação
+          </h4>
+        </div>
+        <div class="card-body">
+          <div>
+            <!-- interpretacao introducao -->
+            <p><%= @interpretation[:introduction].html_safe %></p>
+          </div>
+          <div class="my-4">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Domínio</th>
+                  <th>Autorrelato</th>
+                  <th>Heterorrelato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>
+                  <% hetero_domain = @hetero_response&.subscale_domains_with_levels&.find { |d| d[:key] == domain[:key] } %>
+                  <tr>
+                    <td><%= domain[:title] %></td>
+                    <td>
+                      <%= domain[:t_score] %> (<%= domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{domain[:level]}" %>)
+                    </td>
+                    <td>
+                      <% if hetero_domain %>
+                        <%= hetero_domain[:t_score] %> (<%= hetero_domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{hetero_domain[:level]}" %>)
+                      <% else %>
+                        -
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div>
+              <p>
+                <i>Nota. SRS-2: >59 normal; 60-65 sintomatologia leve; 66-75 sintomatologia moderada; 76+ sintomatologia grave.</i>
+              </p>
+            </div>
+          </div>
+          <div class="my-4">
+
+            <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>            
+              <% if domain[:level] != "normal" %>
+              <div>
+                <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
+              </div>
+              <% else %>
+                <div>
+                  <p><strong><%= domain[:title] %>:</strong> <%= domain[:interpretation]%></p>
+                </div>
+              <% end %>
+            <% end %>
+
+          <% if @interpretation[:hetero_report].present? %>
+            <div>
+              <p><%= @interpretation[:hetero_report].html_safe %></p>
+            </div>
+          <% end %>
+          
+          <div class="py-4">
+            <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
+            <script>
+              <%= @chart_service.chart_js_function.html_safe %>
+            </script>
+          </div>
+        </div>
+
+      </div>
+
+     
 
     </div>
   </div>

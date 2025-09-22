@@ -92,10 +92,18 @@
         </p>
         <hr>
         <p class="mb-0">
-          <%= link_to scale_response_path(@scale_request.scale_response), 
-              class: 'btn btn-success btn-sm' do %>
-            <i class="bi bi-bar-chart me-1"></i>
-            Ver Resultado da Escala
+          <% if @scale_request.scale_response.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+            <%= link_to srs2_scale_response_path(@scale_request.scale_response), 
+                class: 'btn btn-success btn-sm' do %>
+              <i class="bi bi-bar-chart me-1"></i>
+              Ver Resultado da Escala
+            <% end %>
+          <% else %>
+            <%= link_to scale_response_path(@scale_request.scale_response), 
+                class: 'btn btn-success btn-sm' do %>
+              <i class="bi bi-bar-chart me-1"></i>
+              Ver Resultado da Escala
+            <% end %>
           <% end %>
         </p>
       </div>
@@ -117,10 +125,18 @@
   <% end %>
 
   <% if @scale_request.pending? && policy(@scale_request).respond? %>
-    <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
-        class: 'btn btn-primary ms-auto' do %>
-      <i class="bi bi-clipboard-check me-1"></i>
-      <%= t('scale_requests.actions.fill_scale') %>
+    <% if @scale_request.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+      <%= link_to new_srs2_scale_response_path(scale_request_id: @scale_request.id), 
+          class: 'btn btn-primary ms-auto' do %>
+        <i class="bi bi-clipboard-check me-1"></i>
+        <%= t('scale_requests.actions.fill_scale') %>
+      <% end %>
+    <% else %>
+      <%= link_to new_scale_response_path(scale_request_id: @scale_request.id), 
+          class: 'btn btn-primary ms-auto' do %>
+        <i class="bi bi-clipboard-check me-1"></i>
+        <%= t('scale_requests.actions.fill_scale') %>
+      <% end %>
     <% end %>
   <% end %>
 </div>

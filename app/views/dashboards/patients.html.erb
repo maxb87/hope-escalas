@@ -78,9 +78,15 @@
                 </small>
               </p>
               <% if req.pending? && req.scale_response.nil? %>
-                <%= link_to t('dashboards.patients.fill_scale'), 
-                    new_scale_response_path(scale_request_id: req.id), 
-                    class: 'btn btn-warning btn-sm' %>
+                <% if req.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+                  <%= link_to t('dashboards.patients.fill_scale'), 
+                      new_srs2_scale_response_path(scale_request_id: req.id), 
+                      class: 'btn btn-warning btn-sm' %>
+                <% else %>
+                  <%= link_to t('dashboards.patients.fill_scale'), 
+                      new_scale_response_path(scale_request_id: req.id), 
+                      class: 'btn btn-warning btn-sm' %>
+                <% end %>
               <% elsif req.scale_response.present? %>
                 <span class="btn btn-outline-success btn-sm disabled">
                   <i class="bi bi-check-circle me-1"></i>
@@ -126,7 +132,11 @@
                 </small>
               </p>
               <div class="mt-2">
-                <%= link_to "Ver respostas", scale_response_path(resp), class: "btn btn-outline-primary btn-sm" %>
+                <% if resp.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+                  <%= link_to "Ver respostas", srs2_scale_response_path(resp), class: "btn btn-outline-primary btn-sm" %>
+                <% else %>
+                  <%= link_to "Ver respostas", scale_response_path(resp), class: "btn btn-outline-primary btn-sm" %>
+                <% end %>
               </div>
             </div>
           </div>

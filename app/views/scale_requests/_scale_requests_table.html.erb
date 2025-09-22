@@ -98,11 +98,20 @@
             </td>
             <td class="py-3">
                 <% if req.pending? && policy(req).respond? %>
-                  <%= link_to new_scale_response_path(scale_request_id: req.id), 
-                      class: 'btn btn-sm btn-outline-warning',
-                      title: t('scale_requests.actions.fill_scale'),
-                      data: { turbo_frame: "_top" } do %>
-                    <i class="bi bi-pencil"></i>
+                  <% if req.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+                    <%= link_to new_srs2_scale_response_path(scale_request_id: req.id), 
+                        class: 'btn btn-sm btn-outline-warning',
+                        title: t('scale_requests.actions.fill_scale'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                  <% else %>
+                    <%= link_to new_scale_response_path(scale_request_id: req.id), 
+                        class: 'btn btn-sm btn-outline-warning',
+                        title: t('scale_requests.actions.fill_scale'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
                   <% end %>
                 <% end %>
               <% if req.scale_response.present? %>
@@ -143,19 +152,37 @@
                 <% end %>
                 
                 <% if req.pending? && policy(req).respond? %>
-                  <%= link_to new_scale_response_path(scale_request_id: req.id), 
-                      class: 'btn btn-sm btn-outline-warning',
-                      title: t('scale_requests.actions.fill_scale'),
-                      data: { turbo_frame: "_top" } do %>
-                    <i class="bi bi-pencil"></i>
+                  <% if req.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+                    <%= link_to new_srs2_scale_response_path(scale_request_id: req.id), 
+                        class: 'btn btn-sm btn-outline-warning',
+                        title: t('scale_requests.actions.fill_scale'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                  <% else %>
+                    <%= link_to new_scale_response_path(scale_request_id: req.id), 
+                        class: 'btn btn-sm btn-outline-warning',
+                        title: t('scale_requests.actions.fill_scale'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
                   <% end %>
                 <% end %>
                 <% if req.scale_response.present? %>
-                  <%= link_to scale_response_path(req.scale_response), 
-                      class: 'btn btn-sm btn-outline-success',
-                      title: t('scale_requests.actions.view_response'),
-                      data: { turbo_frame: "_top" } do %>
-                    <i class="bi bi-bar-chart"></i>
+                  <% if req.scale_response.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+                    <%= link_to srs2_scale_response_path(req.scale_response), 
+                        class: 'btn btn-sm btn-outline-success',
+                        title: t('scale_requests.actions.view_response'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-bar-chart"></i>
+                    <% end %>
+                  <% else %>
+                    <%= link_to scale_response_path(req.scale_response), 
+                        class: 'btn btn-sm btn-outline-success',
+                        title: t('scale_requests.actions.view_response'),
+                        data: { turbo_frame: "_top" } do %>
+                      <i class="bi bi-bar-chart"></i>
+                    <% end %>
                   <% end %>
                 <% end %>
                 
