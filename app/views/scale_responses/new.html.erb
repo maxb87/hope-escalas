@@ -9,8 +9,13 @@
   </div>
   <div class="card-body">
     <div class="alert alert-warning mb-3">
-      <h3 class="mb-2"><strong>Em cada questão, selecione a opção que melhor descreve seu comportamento nos últimos seis meses.</strong></h3>
-      <h3 class="mb-0"><strong>Responda todas as 60 questões em um único acesso. Selecione uma opção de 1 a 4 para cada pergunta.</strong></h3>
+      <% if @scale_response.psychometric_scale.code == "PSA" %>
+        <p class="mb-2"><strong>Responda as 60 questões sobre suas experiências sensoriais do dia a dia.</strong></p>
+        <p class="mb-0"><strong>Use a escala de 1 a 5 pontos e adicione comentários sobre suas experiências em cada categoria.</strong></p>
+      <% else %>
+        <p class="mb-2"><strong>Em cada questão, selecione a opção que melhor descreve seu comportamento nos últimos seis meses.</strong></p>
+        <p class="mb-0"><strong>Responda todas as questões em um único acesso. Selecione uma opção para cada pergunta.</strong></p>
+      <% end %>
     </div>
   </div>
 </div>
@@ -61,23 +66,27 @@
     </div>
   <% end %>
 
-  <div class="list-group">
-    <% @scale_items.each do |item| %>
-      <div class="list-group-item mb-3">
-        <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
-        <div>
-          <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
-            <div class="form-check">
-              <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
-              <label class="form-check-label">
-                <%= score %> — <%= label %>
-              </label>
-            </div>
-          <% end %>
+  <% if @scale_response.psychometric_scale.code == "PSA" %>
+    <%= render 'psa_form' %>
+  <% else %>
+    <div class="list-group">
+      <% @scale_items.each do |item| %>
+        <div class="list-group-item mb-3">
+          <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
+          <div>
+            <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+              <div class="form-check">
+                <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
+                <label class="form-check-label">
+                  <%= score %> — <%= label %>
+                </label>
+              </div>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="mt-4">
     <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>

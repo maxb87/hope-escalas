@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_11_184422) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_19_211258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,6 +66,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_184422) do
     t.boolean "is_required", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["metadata"], name: "index_psychometric_scale_items_on_metadata", using: :gin
     t.index ["options"], name: "index_psychometric_scale_items_on_options", using: :gin
     t.index ["psychometric_scale_id", "item_number"], name: "index_scale_items_on_scale_and_number", unique: true
     t.index ["psychometric_scale_id"], name: "index_psychometric_scale_items_on_psychometric_scale_id"

@@ -49,6 +49,11 @@ class ScaleResponse < ApplicationRecord
     [ "SRS2SR", "SRS2HR" ].include?(psychometric_scale.code)
   end
 
+  # Check if this is PSA scale
+  def psa_scale?
+    psychometric_scale.code == "PSA"
+  end
+
 
   # Métodos para obter respostas formatadas para exibição
   def formatted_answers
@@ -127,6 +132,18 @@ class ScaleResponse < ApplicationRecord
         patient_age: patient_age,
         scale_type: scale_type,
         patient: patient  # Passar o objeto paciente
+      )
+      apply_results!(results_hash)
+    when "PSA"
+      # Calcular idade do paciente
+      patient_age = calculate_patient_age
+
+      results_hash = Scoring::Psa.calculate(
+        answers,
+        scale_version: psychometric_scale.version,
+        patient_gender: patient.gender,
+        patient_age: patient_age,
+        patient: patient
       )
       apply_results!(results_hash)
     else

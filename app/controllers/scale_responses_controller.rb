@@ -102,6 +102,8 @@ class ScaleResponsesController < ApplicationController
     case @scale_type
     when :srs2
       generate_srs2_chart_data
+    when :psa
+      generate_psa_data
       # Futuras escalas podem ser adicionadas aqui
       # when :another_scale
       #   generate_another_scale_data
@@ -112,6 +114,13 @@ class ScaleResponsesController < ApplicationController
     @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
     @chart_data = @chart_service.chart_data
     @report_info = @chart_service.report_info
+  end
+
+  def generate_psa_data
+    # Para PSA, não temos gráficos específicos ainda, apenas dados estruturados
+    @psa_categories = @scale_response_adapter.category_domains_with_levels
+    @psa_comments = @scale_response_adapter.category_comments
+    @psa_summary = @interpretation[:summary]
   end
 
 
