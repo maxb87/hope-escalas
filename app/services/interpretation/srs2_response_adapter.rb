@@ -2,7 +2,7 @@
 
 module Interpretation
   class Srs2ResponseAdapter
-    delegate :patient, :relator_name, :relator_relationship, :results, :scale_request, :completed_at, :psychometric_scale, to: :@scale_response
+    delegate :patient, :relator_name, :relator_relationship, :results, :scale_request, :completed_at, :psychometric_scale, :total_score, to: :@scale_response
 
     def initialize(scale_response)
       @scale_response = scale_response
