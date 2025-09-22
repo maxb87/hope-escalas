@@ -23,7 +23,11 @@
   </div>
 <% end %>
 
-<%= form_with model: @scale_response, url: scale_responses_path, method: :post, data: { turbo: false } do |f| %>
+<% if @scale_response.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+  <%= form_with model: @scale_response, url: srs2_scale_responses_path, method: :post, data: { turbo: false } do |f| %>
+<% else %>
+  <%= form_with model: @scale_response, url: scale_responses_path, method: :post, data: { turbo: false } do |f| %>
+<% end %>
   <% if @scale_response.errors.any? %>
     <div class="alert alert-danger" data-turbo-cache="false">
       <h4 class="mb-2"><%= t('errors.messages.not_saved', count: @scale_response.errors.count, resource: @scale_response.class.model_name.human.downcase) %></h4>
@@ -61,23 +65,28 @@
     </div>
   <% end %>
 
-  <div class="list-group">
-    <% @scale_items.each do |item| %>
-      <div class="list-group-item mb-3">
-        <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
-        <div>
-          <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
-            <div class="form-check">
-              <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
-              <label class="form-check-label">
-                <%= score %> — <%= label %>
-              </label>
-            </div>
-          <% end %>
+  <% if @scale_response.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"]) %>
+    <!-- Renderizar partial específico para SRS-2 -->
+    <%= render 'srs2/scale_responses/form', scale_response: @scale_response, scale_items: @scale_items %>
+  <% else %>
+    <div class="list-group">
+      <% @scale_items.each do |item| %>
+        <div class="list-group-item mb-3">
+          <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
+          <div>
+            <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+              <div class="form-check">
+                <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
+                <label class="form-check-label">
+                  <%= score %> — <%= label %>
+                </label>
+              </div>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="mt-4">
     <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>

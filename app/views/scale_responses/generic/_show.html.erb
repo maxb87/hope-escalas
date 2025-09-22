@@ -1,0 +1,118 @@
+<div class="generic-show">
+  <!-- Header genérico -->
+  <div class="alert alert-secondary mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-clipboard-data me-3 fs-4"></i>
+      <div>
+        <h5 class="mb-1">
+          <i class="bi bi-list-check me-2"></i>
+          <%= @scale_response.psychometric_scale.name %>
+        </h5>
+        <p class="mb-0">
+          <strong>Paciente:</strong> <%= @scale_response.patient.full_name %> | 
+          <strong>Pontuação Total:</strong> <%= @scale_response.total_score %> pontos | 
+          <strong>Interpretação:</strong> <%= @scale_response.interpretation %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo dos Resultados -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-primary"><%= @scale_response.total_score %></h3>
+          <p class="mb-0">Pontuação Total</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-success"><%= @scale_response.completion_percentage %>%</h3>
+          <p class="mb-0">Completude</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-info"><%= @scale_response.interpretation %></h3>
+          <p class="mb-0">Interpretação</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Respostas -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-list-check me-2"></i>
+        Respostas do Paciente
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <% @scale_response.formatted_answers.each do |response| %>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">
+                  <span class="badge bg-secondary me-2">Item <%= response[:item_number] %></span>
+                  <%= response[:question_text] %>
+                </h6>
+                <p class="mb-0">
+                  <strong>Resposta:</strong> 
+                  <span class="badge bg-primary"><%= response[:answer_value] %></span> 
+                  — <%= response[:answer_text] %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informações Adicionais -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-info-circle me-2"></i>
+        Informações da Avaliação
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Escala:</strong> <%= @scale_response.psychometric_scale.name %></p>
+          <p class="mb-1"><strong>Versão:</strong> <%= @scale_response.psychometric_scale.version %></p>
+          <p class="mb-1"><strong>Total de Itens:</strong> <%= @scale_response.total_items_count %></p>
+        </div>
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Itens Respondidos:</strong> <%= @scale_response.answered_items_count %></p>
+          <p class="mb-1"><strong>Completude:</strong> <%= @scale_response.completion_percentage %>%</p>
+          <p class="mb-1"><strong>Concluída em:</strong> <%= l(@scale_response.completed_at, format: :short) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Links para Interpretação (apenas para profissionais/admin) -->
+  <% if is_professional_or_admin %>
+    <div class="mt-4">
+      <div class="alert alert-info d-flex align-items-center" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <div class="flex-grow-1">
+          <strong>Interpretação de Resultados disponível!</strong><br>
+          Acesse a interpretação completa dos resultados.
+        </div>
+        <div class="ms-3">
+          <%= link_to "Ver Interpretação", interpretation_scale_response_path(@scale_response), class: "btn btn-outline-primary btn-sm" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

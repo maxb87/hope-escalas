@@ -1,0 +1,22 @@
+<!-- Gráfico de Comparação SRS-2 -->
+<div class="card my-4">
+  <div class="card-header">
+    <h4 class="mb-0">
+      <i class="bi bi-graph-up me-2"></i>
+      Gráfico de Comparação SRS-2
+    </h4>
+  </div>
+  <div class="card-body">
+    <!-- Informações dos Relatórios -->
+    <div class="row mb-4">
+      <%= chart_report_info(@report_info) %>
+    </div>
+
+    <!-- Gráfico -->
+    <%= srs2_comparison_chart(@chart_data, height: "500px") %>
+  </div>
+</div>
+
+<script>
+<%= @chart_service.chart_js_function.html_safe %>
+</script>

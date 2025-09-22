@@ -45,8 +45,10 @@
 
 <% unless is_patient %>
 
-
-  <% if @scale_response.results.present? %>
+  <% if @scale_response.srs2_scale? %>
+    <!-- Renderizar partial específico para SRS-2 -->
+    <%= render 'srs2/scale_responses/show', scale_response: @scale_response, is_professional_or_admin: is_professional_or_admin %>
+  <% elsif @scale_response.results.present? %>
     <% metrics = @scale_response.results["metrics"] || {} %>
     <% subscales = @scale_response.results["subscales"] || {} %>
     <% interp = @scale_response.results["interpretation"] || {} %>
@@ -149,7 +151,7 @@
             Acesse a interpretação completa dos resultados com gráficos comparativos e análises detalhadas.
           </div>
           <div class="ms-3">
-            <%= link_to "Ver Interpretação", interpretation_scale_response_path(@scale_response), class: "btn btn-outline-primary btn-sm" %>
+            <%= link_to "Ver Interpretação", interpretation_srs2_scale_response_path(@scale_response), class: "btn btn-outline-primary btn-sm" %>
           </div>
         </div>
       </div>
@@ -185,7 +187,7 @@
             </small>
           </div>
           <div class="ms-3">
-            <%= link_to "Ver Interpretação", interpretation_scale_response_path(self_report_response), class: "btn btn-outline-primary btn-sm" %>
+            <%= link_to "Ver Interpretação", interpretation_srs2_scale_response_path(self_report_response), class: "btn btn-outline-primary btn-sm" %>
           </div>
         </div>
       </div>

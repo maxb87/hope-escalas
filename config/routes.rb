@@ -17,6 +17,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Rotas específicas para SRS-2
+  namespace :srs2 do
+    resources :scale_responses, only: [ :show, :new, :create ] do
+      member do
+        get :interpretation
+      end
+    end
+  end
+
   resources :professionals do
     member do
       patch :restore

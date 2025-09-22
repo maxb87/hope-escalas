@@ -1,0 +1,61 @@
+<% content_for :title, "Interpretação de Resultados - #{@scale_response.psychometric_scale.name} - #{@scale_response.patient.full_name}" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">
+            <i class="bi bi-clipboard-data me-2"></i>
+            Interpretação de Resultados
+          </h1>
+          <p class="text-muted mb-0">
+            <strong><%= @scale_response.psychometric_scale.name %></strong> - 
+            <strong><%= @scale_response.patient.full_name %></strong>
+          </p>
+        </div>
+        <div>
+          <%= link_to srs2_scale_response_path(@scale_response), class: "btn btn-outline-secondary" do %>
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar aos Resultados
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Informações do Paciente -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="card-title">Informações do Paciente</h5>
+              <p class="mb-1"><strong>Nome:</strong> <%= @scale_response.patient.full_name %></p>
+              <p class="mb-1"><strong>Idade:</strong> <%= @scale_response.patient.age %> anos</p>
+              <p class="mb-1"><strong>Data de Nascimento:</strong> <%= l(@scale_response.patient.birthday, format: :short) %></p>
+            </div>
+            <div class="col-md-6">
+              <h5 class="card-title">Informações da Avaliação</h5>
+              <p class="mb-1"><strong>Autorrelato solicitado em:</strong> <%= l(@scale_response.scale_request.requested_at, format: :short) %></p>
+              <p class="mb-1"><strong>Autorrelato preenchido em:</strong> <%= l(@scale_response.completed_at, format: :short) %></p>
+              <% if @hetero_response.present? %>
+                <p class="mb-1"><strong>Heterorrelato solicitado em:</strong> <%= l(@hetero_response.scale_request.requested_at, format: :short) %></p>
+                <p class="mb-1"><strong>Heterorrelato preenchido em:</strong> <%= l(@hetero_response.completed_at, format: :short) %></p>
+                <p class="mb-1"><strong>Relator:</strong> <%= @hetero_response.relator_name %> (<%= @hetero_response.relator_relationship %>)</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Renderizar partial específico para interpretação SRS-2 -->
+      <%= render 'srs2/scale_responses/interpretation', 
+          scale_response: @scale_response,
+          scale_response_adapter: @scale_response_adapter,
+          hetero_response: @hetero_response,
+          interpretation: @interpretation,
+          chart_data: @chart_data,
+          chart_service: @chart_service %>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,179 @@
+<% 
+  # Determinar se é autorelato ou heterorelato
+  is_self_report = scale_response.psychometric_scale.code == "SRS2SR"
+  is_hetero_report = scale_response.psychometric_scale.code == "SRS2HR"
+  
+  # Mapeamento dos domínios SRS-2
+  srs2_domains = {
+    'A' => { name: 'Percepção Social', items: (1..11).to_a },
+    'B' => { name: 'Cognição Social', items: (12..22).to_a },
+    'C' => { name: 'Comunicação Social', items: (23..33).to_a },
+    'D' => { name: 'Motivação Social', items: (34..44).to_a },
+    'E' => { name: 'Padrões Restritos ou Repetitivos', items: (45..55).to_a },
+    'F' => { name: 'Interação Social Global', items: (56..65).to_a }
+  }
+%>
+
+<div class="srs2-form">
+  <!-- Header específico para SRS-2 -->
+  <div class="alert alert-info mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-clipboard-data me-3 fs-4"></i>
+      <div>
+        <h5 class="mb-1">
+          <% if is_self_report %>
+            <i class="bi bi-person me-2"></i>Escala SRS-2 - Autorrelato
+          <% else %>
+            <i class="bi bi-people me-2"></i>Escala SRS-2 - Heterorrelato
+          <% end %>
+        </h5>
+        <p class="mb-0 text-muted">
+          <% if is_self_report %>
+            Responda às questões baseado em sua própria experiência
+          <% else %>
+            Responda às questões baseado no comportamento observado do paciente
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instruções específicas -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-info-circle me-2"></i>
+        Instruções para Preenchimento
+      </h6>
+    </div>
+    <div class="card-body">
+      <p class="mb-2">
+        <strong>Escala de Resposta:</strong>
+      </p>
+      <ul class="mb-0">
+        <li><strong>1</strong> - Nunca verdadeiro</li>
+        <li><strong>2</strong> - Raramente verdadeiro</li>
+        <li><strong>3</strong> - Frequentemente verdadeiro</li>
+        <li><strong>4</strong> - Sempre verdadeiro</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Formulário organizado por domínios -->
+  <div class="accordion" id="srs2FormAccordion">
+    <% srs2_domains.each_with_index do |(domain_code, domain_data), index| %>
+      <% domain_items = scale_items.select { |item| domain_data[:items].include?(item.item_number) } %>
+      
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading<%= domain_code %>">
+          <button class="accordion-button <%= 'collapsed' unless index == 0 %>" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#collapse<%= domain_code %>" 
+                  aria-expanded="<%= index == 0 ? 'true' : 'false' %>" 
+                  aria-controls="collapse<%= domain_code %>">
+            <i class="bi bi-list-check me-2"></i>
+            <strong>Domínio <%= domain_code %>: <%= domain_data[:name] %></strong>
+            <span class="badge bg-primary ms-2"><%= domain_items.count %> questões</span>
+          </button>
+        </h2>
+        
+        <div id="collapse<%= domain_code %>" 
+             class="accordion-collapse collapse <%= 'show' if index == 0 %>" 
+             aria-labelledby="heading<%= domain_code %>" 
+             data-bs-parent="#srs2FormAccordion">
+          <div class="accordion-body">
+            <% domain_items.each do |item| %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h6 class="card-title">
+                    <span class="badge bg-secondary me-2">Item <%= item.item_number %></span>
+                    <%= item.question_text %>
+                  </h6>
+                  
+                  <div class="row">
+                    <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+                      <div class="col-md-6 col-lg-3 mb-2">
+                        <div class="form-check">
+                          <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, 
+                              class: "form-check-input", 
+                              id: "item_#{item.item_number}_#{score}" %>
+                          <label class="form-check-label" for="item_<%= item.item_number %>_<%= score %>">
+                            <strong><%= score %></strong> — <%= label %>
+                          </label>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Progresso do preenchimento -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="mb-1">Progresso do Preenchimento</h6>
+          <small class="text-muted">Responda todas as questões para completar a escala</small>
+        </div>
+        <div class="text-end">
+          <span id="progress-text">0/65</span>
+          <div class="progress mt-1" style="width: 200px;">
+            <div class="progress-bar" role="progressbar" style="width: 0%" id="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Script específico para SRS-2
+document.addEventListener('DOMContentLoaded', function() {
+  const radioButtons = document.querySelectorAll('input[type="radio"][name*="scale_response[answers]"]');
+  const progressBar = document.getElementById('progress-bar');
+  const progressText = document.getElementById('progress-text');
+  
+  function updateProgress() {
+    const answeredItems = new Set();
+    radioButtons.forEach(radio => {
+      if (radio.checked) {
+        const itemNumber = radio.name.match(/item_(\d+)/)[1];
+        answeredItems.add(itemNumber);
+      }
+    });
+    
+    const totalItems = 65; // SRS-2 tem 65 itens
+    const answeredCount = answeredItems.size;
+    const percentage = (answeredCount / totalItems) * 100;
+    
+    progressBar.style.width = percentage + '%';
+    progressText.textContent = `${answeredCount}/${totalItems}`;
+    
+    // Mudar cor da barra baseado no progresso
+    if (percentage < 25) {
+      progressBar.className = 'progress-bar bg-danger';
+    } else if (percentage < 50) {
+      progressBar.className = 'progress-bar bg-warning';
+    } else if (percentage < 75) {
+      progressBar.className = 'progress-bar bg-info';
+    } else {
+      progressBar.className = 'progress-bar bg-success';
+    }
+  }
+  
+  // Atualizar progresso quando uma resposta for selecionada
+  radioButtons.forEach(radio => {
+    radio.addEventListener('change', updateProgress);
+  });
+  
+  // Atualizar progresso inicial
+  updateProgress();
+});
+</script>

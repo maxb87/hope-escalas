@@ -24,6 +24,12 @@ class ScaleResponsesController < ApplicationController
       return
     end
 
+    # Redirecionar para controller específico se for SRS-2
+    if @scale_request.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"])
+      redirect_to new_srs2_scale_response_path(scale_request_id: @scale_request.id)
+      return
+    end
+
     @scale_response = ScaleResponse.new
     @scale_response.scale_request = @scale_request
     @scale_response.patient = @scale_request.patient
@@ -49,6 +55,12 @@ class ScaleResponsesController < ApplicationController
       return
     end
 
+    # Redirecionar para controller específico se for SRS-2
+    if @scale_request.psychometric_scale.code.in?(["SRS2SR", "SRS2HR"])
+      redirect_to new_srs2_scale_response_path(scale_request_id: @scale_request.id)
+      return
+    end
+
     @scale_response = ScaleResponse.new(scale_response_params)
     @scale_response.scale_request = @scale_request
     @scale_response.patient = @scale_request.patient
@@ -68,10 +80,22 @@ class ScaleResponsesController < ApplicationController
 
   def show
     authorize @scale_response
+    
+    # Redirecionar para controller específico se for SRS-2
+    if @scale_response.srs2_scale?
+      redirect_to srs2_scale_response_path(@scale_response)
+      return
+    end
   end
 
   def interpretation
     authorize @scale_response, :interpretation?
+
+    # Redirecionar para controller específico se for SRS-2
+    if @scale_response.srs2_scale?
+      redirect_to interpretation_srs2_scale_response_path(@scale_response)
+      return
+    end
 
     # Verificar se a escala suporta interpretação
     unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)

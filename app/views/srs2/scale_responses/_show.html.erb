@@ -1,0 +1,205 @@
+<% 
+  # Determinar se é autorelato ou heterorelato
+  is_self_report = scale_response.psychometric_scale.code == "SRS2SR"
+  is_hetero_report = scale_response.psychometric_scale.code == "SRS2HR"
+  
+  # Mapeamento dos domínios SRS-2
+  srs2_domains = {
+    'A' => { name: 'Percepção Social', items: (1..11).to_a },
+    'B' => { name: 'Cognição Social', items: (12..22).to_a },
+    'C' => { name: 'Comunicação Social', items: (23..33).to_a },
+    'D' => { name: 'Motivação Social', items: (34..44).to_a },
+    'E' => { name: 'Padrões Restritos ou Repetitivos', items: (45..55).to_a },
+    'F' => { name: 'Interação Social Global', items: (56..65).to_a }
+  }
+%>
+
+<div class="srs2-show">
+  <!-- Header específico para SRS-2 -->
+  <div class="alert alert-primary mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-clipboard-data me-3 fs-4"></i>
+      <div>
+        <h5 class="mb-1">
+          <% if is_self_report %>
+            <i class="bi bi-person me-2"></i>Escala SRS-2 - Autorrelato
+          <% else %>
+            <i class="bi bi-people me-2"></i>Escala SRS-2 - Heterorrelato
+          <% end %>
+        </h5>
+        <p class="mb-0">
+          <strong>Paciente:</strong> <%= scale_response.patient.full_name %> | 
+          <strong>Pontuação Total:</strong> <%= scale_response.total_score %> pontos | 
+          <strong>Interpretação:</strong> <%= scale_response.interpretation %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informações do Relator (apenas para heterorelato) -->
+  <% if is_hetero_report && scale_response.relator_name.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="bi bi-person-badge me-2"></i>
+          Informações do Relator
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Nome:</strong> <%= scale_response.relator_name %></p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Relação:</strong> <%= scale_response.relator_relationship %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Resumo dos Resultados -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-primary"><%= scale_response.total_score %></h3>
+          <p class="mb-0">Pontuação Total</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-success"><%= scale_response.completion_percentage %>%</h3>
+          <p class="mb-0">Completude</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h3 class="text-info"><%= scale_response.interpretation %></h3>
+          <p class="mb-0">Nível de Prejuízo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Respostas organizadas por domínios -->
+  <div class="accordion" id="srs2ResponsesAccordion">
+    <% srs2_domains.each_with_index do |(domain_code, domain_data), index| %>
+      <% domain_responses = scale_response.formatted_answers.select { |item| domain_data[:items].include?(item[:item_number]) } %>
+      <% domain_score = domain_responses.sum { |item| item[:answer_value].to_i } %>
+      
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading<%= domain_code %>">
+          <button class="accordion-button <%= 'collapsed' unless index == 0 %>" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#collapse<%= domain_code %>" 
+                  aria-expanded="<%= index == 0 ? 'true' : 'false' %>" 
+                  aria-controls="collapse<%= domain_code %>">
+            <i class="bi bi-list-check me-2"></i>
+            <strong>Domínio <%= domain_code %>: <%= domain_data[:name] %></strong>
+            <span class="badge bg-primary ms-2"><%= domain_responses.count %> questões</span>
+            <span class="badge bg-success ms-2"><%= domain_score %> pts</span>
+          </button>
+        </h2>
+        
+        <div id="collapse<%= domain_code %>" 
+             class="accordion-collapse collapse <%= 'show' if index == 0 %>" 
+             aria-labelledby="heading<%= domain_code %>" 
+             data-bs-parent="#srs2ResponsesAccordion">
+          <div class="accordion-body">
+            <div class="row">
+              <% domain_responses.each do |response| %>
+                <div class="col-md-6 mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <span class="badge bg-secondary me-2">Item <%= response[:item_number] %></span>
+                        <%= response[:question_text] %>
+                      </h6>
+                      <p class="mb-0">
+                        <strong>Resposta:</strong> 
+                        <span class="badge bg-primary"><%= response[:answer_value] %></span> 
+                        — <%= response[:answer_text] %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Links para Interpretação (apenas para profissionais/admin) -->
+  <% if is_professional_or_admin %>
+    <div class="mt-4">
+      <% if is_self_report %>
+        <% 
+          # Verificar se há heterorelato SRS-2 concluído para o mesmo paciente
+          has_hetero_report = ScaleRequest.joins(:psychometric_scale, :scale_response)
+            .where(patient: scale_response.patient, status: :completed)
+            .where(psychometric_scales: { code: "SRS2HR" })
+            .exists?
+        %>
+        
+        <% if has_hetero_report %>
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <div class="flex-grow-1">
+              <strong>Interpretação de Resultados SRS-2 disponível!</strong><br>
+              Acesse a interpretação completa dos resultados com gráficos comparativos e análises detalhadas.
+            </div>
+            <div class="ms-3">
+              <%= link_to "Ver Interpretação", interpretation_srs2_scale_response_path(scale_response), class: "btn btn-outline-primary btn-sm" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <div class="flex-grow-1">
+              <%= link_to "Solicite o heterorrelato", new_scale_request_path %> SRS-2 para ver a interpretação completa dos resultados.
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <% 
+          # Usar o helper para buscar o autorrelato correspondente
+          self_report_response = find_corresponding_self_report_for(scale_response.patient)
+        %>
+        
+        <% if self_report_response %>
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <div class="flex-grow-1">
+              <strong>Interpretação de Resultados SRS-2 disponível!</strong><br>
+              Acesse a interpretação completa dos resultados com gráficos comparativos e análises detalhadas.
+              <br><small class="text-muted">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                A interpretação será baseada no autorrelato correspondente e incluirá a comparação com este heterorelato.
+              </small>
+            </div>
+            <div class="ms-3">
+              <%= link_to "Ver Interpretação", interpretation_srs2_scale_response_path(self_report_response), class: "btn btn-outline-primary btn-sm" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <div class="flex-grow-1">
+              <strong>Interpretação completa não disponível</strong><br>
+              Para acessar a interpretação completa com comparação, é necessário que o paciente tenha um 
+              <%= link_to "autorrelato SRS-2", new_scale_request_path, class: "alert-link" %> concluído.
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

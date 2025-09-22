@@ -1,0 +1,152 @@
+<div class="generic-interpretation">
+  <!-- Header genérico para interpretação -->
+  <div class="alert alert-secondary mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-graph-up me-3 fs-4"></i>
+      <div>
+        <h5 class="mb-1">
+          <i class="bi bi-clipboard-data me-2"></i>
+          Interpretação - <%= @scale_response.psychometric_scale.name %>
+        </h5>
+        <p class="mb-0">
+          <strong>Paciente:</strong> <%= @scale_response.patient.full_name %> | 
+          <strong>Pontuação Total:</strong> <%= @scale_response.total_score %> pontos | 
+          <strong>Interpretação:</strong> <%= @scale_response.interpretation %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo da Interpretação -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-file-text me-2"></i>
+        Resumo da Interpretação
+      </h6>
+    </div>
+    <div class="card-body">
+      <% if @interpretation %>
+        <div class="interpretation-content">
+          <%= simple_format(@interpretation) %>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          Interpretação detalhada será gerada em breve.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Estatísticas da Escala -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-bar-chart me-2"></i>
+        Estatísticas da Escala
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Informações Básicas</h6>
+          <ul class="list-unstyled">
+            <li><strong>Escala:</strong> <%= @scale_response.psychometric_scale.name %></li>
+            <li><strong>Versão:</strong> <%= @scale_response.psychometric_scale.version %></li>
+            <li><strong>Total de Itens:</strong> <%= @scale_response.total_items_count %></li>
+            <li><strong>Itens Respondidos:</strong> <%= @scale_response.answered_items_count %></li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h6>Resultados</h6>
+          <ul class="list-unstyled">
+            <li><strong>Pontuação Total:</strong> <%= @scale_response.total_score %></li>
+            <li><strong>Completude:</strong> <%= @scale_response.completion_percentage %>%</li>
+            <li><strong>Interpretação:</strong> <%= @scale_response.interpretation %></li>
+            <li><strong>Concluída em:</strong> <%= l(@scale_response.completed_at, format: :short) %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Respostas Detalhadas -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-list-check me-2"></i>
+        Respostas Detalhadas
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <% @scale_response.formatted_answers.each do |response| %>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">
+                  <span class="badge bg-secondary me-2">Item <%= response[:item_number] %></span>
+                  <%= response[:question_text] %>
+                </h6>
+                <p class="mb-0">
+                  <strong>Resposta:</strong> 
+                  <span class="badge bg-primary"><%= response[:answer_value] %></span> 
+                  — <%= response[:answer_text] %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recomendações -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-lightbulb me-2"></i>
+        Recomendações
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Próximos Passos</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="bi bi-check-circle text-success me-2"></i>
+              Revisar resultados com equipe multidisciplinar
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-check-circle text-success me-2"></i>
+              Considerar avaliação complementar se necessário
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-check-circle text-success me-2"></i>
+              Desenvolver plano de intervenção baseado nos resultados
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h6>Considerações Clínicas</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="bi bi-arrow-right text-primary me-2"></i>
+              Interpretar resultados no contexto clínico
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-arrow-right text-primary me-2"></i>
+              Considerar fatores ambientais e situacionais
+            </li>
+            <li class="mb-2">
+              <i class="bi bi-arrow-right text-primary me-2"></i>
+              Estabelecer metas de tratamento específicas
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
