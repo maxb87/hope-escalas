@@ -30,6 +30,12 @@ class ScaleResponsesController < ApplicationController
       return
     end
 
+    # Redirecionar para controller específico se for PSA
+    if @scale_request.psychometric_scale.code == "PSA"
+      redirect_to new_psa_scale_response_path(scale_request_id: @scale_request.id)
+      return
+    end
+
     @scale_response = ScaleResponse.new
     @scale_response.scale_request = @scale_request
     @scale_response.patient = @scale_request.patient
@@ -61,6 +67,12 @@ class ScaleResponsesController < ApplicationController
       return
     end
 
+    # Redirecionar para controller específico se for PSA
+    if @scale_request.psychometric_scale.code == "PSA"
+      redirect_to new_psa_scale_response_path(scale_request_id: @scale_request.id)
+      return
+    end
+
     @scale_response = ScaleResponse.new(scale_response_params)
     @scale_response.scale_request = @scale_request
     @scale_response.patient = @scale_request.patient
@@ -86,6 +98,12 @@ class ScaleResponsesController < ApplicationController
       redirect_to srs2_scale_response_path(@scale_response)
       return
     end
+
+    # Redirecionar para controller específico se for PSA
+    if @scale_response.psa_scale?
+      redirect_to psa_scale_response_path(@scale_response)
+      return
+    end
   end
 
   def interpretation
@@ -94,6 +112,12 @@ class ScaleResponsesController < ApplicationController
     # Redirecionar para controller específico se for SRS-2
     if @scale_response.srs2_scale?
       redirect_to interpretation_srs2_scale_response_path(@scale_response)
+      return
+    end
+
+    # Redirecionar para controller específico se for PSA
+    if @scale_response.psa_scale?
+      redirect_to interpretation_psa_scale_response_path(@scale_response)
       return
     end
 

@@ -7,7 +7,8 @@ module Interpretation
     # Mapeamento de códigos de escala para seus serviços de interpretação
     SCALE_SERVICES = {
       "SRS2SR" => Interpretation::Srs2InterpretationService,
-      "SRS2HR" => Interpretation::Srs2InterpretationService
+      "SRS2HR" => Interpretation::Srs2InterpretationService,
+      "PSA" => Interpretation::PsaInterpretationService
     }.freeze
 
     def self.service_for(scale_response)
@@ -35,6 +36,8 @@ module Interpretation
       case scale_response.psychometric_scale.code
       when "SRS2SR", "SRS2HR"
         generate_srs2_interpretation(scale_response, service_class)
+      when "PSA"
+        generate_psa_interpretation(scale_response, service_class)
       else
         # Template para futuras escalas
         raise UnsupportedScaleError, "Interpretation generation not implemented for: #{scale_response.psychometric_scale.code}"
@@ -64,6 +67,29 @@ module Interpretation
         hetero_reports: all_hetero_responses,
         interpretation: interpretation,
         scale_type: :srs2
+      }
+    end
+
+    def self.generate_psa_interpretation(scale_response, service_class)
+      # Criar adapter usando o serviço PSA
+      scale_response_adapter = service_class.adapter_for(scale_response)
+      
+      # PSA não possui heterorrelatos
+      hetero_response = nil
+      all_hetero_responses = []
+
+      # Gerar interpretação integrada
+      interpretation = service_class.generate_integrated_interpretation(
+        scale_response_adapter
+      )
+
+      # Retornar estrutura padronizada
+      {
+        scale_response_adapter: scale_response_adapter,
+        hetero_response: hetero_response,
+        hetero_reports: all_hetero_responses,
+        interpretation: interpretation,
+        scale_type: :psa
       }
     end
   end

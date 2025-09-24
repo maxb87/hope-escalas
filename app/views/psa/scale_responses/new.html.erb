@@ -1,0 +1,80 @@
+<% content_for :title, "PSA - Perfil Sensorial do Adulto/Adolescente" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">PSA - Perfil Sensorial do Adulto/Adolescente</h1>
+          <p class="text-muted mb-0">
+            <strong>Paciente:</strong> <%= @scale_response.patient.full_name %>
+          </p>
+        </div>
+        <div class="text-end">
+          <span class="badge bg-primary fs-6">Autorelato</span>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <h5 class="alert-heading">
+          <i class="bi bi-info-circle me-2"></i>
+          Instruções
+        </h5>
+        <p class="mb-2">
+          Este questionário avalia seu perfil sensorial em diferentes categorias. 
+          Para cada afirmação, marque a opção que melhor descreve sua experiência.
+        </p>
+        <p class="mb-0">
+          <strong>Escala:</strong> 1 = Quase nunca, 2 = Raramente, 3 = Ocasionalmente, 4 = Frequentemente, 5 = Quase sempre
+        </p>
+      </div>
+
+      <%= form_with model: [@scale_response], local: true, class: "psa-form" do |form| %>
+        <%= form.hidden_field :scale_request_id, value: @scale_request.id %>
+        
+        <!-- Renderizar partial específico para PSA -->
+        <%= render 'psa/scale_responses/form', form: form, scale_response: @scale_response, scale_items: @scale_items %>
+
+        <div class="d-flex justify-content-between mt-4">
+          <div>
+            <small class="text-muted">
+              Progresso: <span id="completion-percentage">0</span>% 
+              (<span id="answered-items">0</span>/<%= @scale_items.count %> itens)
+            </small>
+          </div>
+          <div>
+            <%= form.submit "Finalizar PSA", class: "btn btn-primary btn-lg", 
+                data: { 
+                  confirm: "Tem certeza que deseja finalizar o PSA? Você não poderá alterar as respostas após o envio.",
+                  disable_with: "Finalizando..."
+                } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('.psa-form');
+  const completionPercentage = document.getElementById('completion-percentage');
+  const answeredItems = document.getElementById('answered-items');
+  const totalItems = <%= @scale_items.count %>;
+  
+  function updateProgress() {
+    const radioButtons = form.querySelectorAll('input[type="radio"]:checked');
+    const answered = radioButtons.length;
+    const percentage = Math.round((answered / totalItems) * 100);
+    
+    completionPercentage.textContent = percentage;
+    answeredItems.textContent = answered;
+  }
+  
+  // Atualizar progresso quando qualquer radio button for clicado
+  form.addEventListener('change', updateProgress);
+  
+  // Atualizar progresso inicial
+  updateProgress();
+});
+</script>

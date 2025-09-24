@@ -26,6 +26,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Rotas específicas para PSA
+  namespace :psa do
+    resources :scale_responses, only: [ :show, :new, :create ] do
+      member do
+        get :interpretation
+      end
+    end
+  end
+
   resources :professionals do
     member do
       patch :restore

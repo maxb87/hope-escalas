@@ -1,0 +1,160 @@
+<% 
+  # Mapeamento das categorias PSA
+  psa_categories = {
+    'A' => { name: 'Processamento Tátil/Olfativo', color: 'primary' },
+    'B' => { name: 'Processamento Vestibular/Proprioceptivo', color: 'success' },
+    'C' => { name: 'Processamento Visual', color: 'info' },
+    'D' => { name: 'Processamento Tátil', color: 'warning' },
+    'E' => { name: 'Nível de Atividade', color: 'danger' },
+    'F' => { name: 'Processamento Auditivo', color: 'secondary' }
+  }
+%>
+
+<div class="psa-interpretation">
+  <!-- Resumo Geral -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-graph-up me-2"></i>
+        Resumo Geral do PSA
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Pontuação Total</h6>
+          <p class="h4 text-primary"><%= @scale_response.total_score %> pontos</p>
+        </div>
+        <div class="col-md-6">
+          <h6>Nível Geral</h6>
+          <% if @scale_response_adapter %>
+            <span class="badge bg-<%= @scale_response_adapter.level_color(@scale_response_adapter.overall_level) %> fs-6">
+              <%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level) %>
+            </span>
+          <% else %>
+            <span class="badge bg-secondary fs-6">Não disponível</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interpretação Detalhada -->
+  <% if @interpretation %>
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-lightbulb me-2"></i>
+          Interpretação dos Resultados
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @interpretation[:introduction] %>
+          <div class="mb-4">
+            <h6>Introdução</h6>
+            <p><%= @interpretation[:introduction].html_safe %></p>
+          </div>
+        <% end %>
+
+        <% if @interpretation[:categories_analysis] %>
+          <div class="mb-4">
+            <h6>Análise das Categorias</h6>
+            <p><%= @interpretation[:categories_analysis].html_safe %></p>
+          </div>
+        <% end %>
+
+        <% if @interpretation[:overall_interpretation] %>
+          <div class="mb-4">
+            <h6>Interpretação Geral</h6>
+            <p><%= @interpretation[:overall_interpretation].html_safe %></p>
+          </div>
+        <% end %>
+
+        <% if @interpretation[:recommendations] %>
+          <div class="mb-4">
+            <h6>Recomendações</h6>
+            <p><%= @interpretation[:recommendations].html_safe %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Tabela de Categorias -->
+  <% if @scale_response_adapter %>
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-table me-2"></i>
+          Análise Detalhada por Categorias
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Categoria</th>
+                <th>Pontuação</th>
+                <th>Nível</th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @scale_response_adapter.categories_with_levels.each do |category| %>
+                <tr>
+                  <td>
+                    <strong>Categoria <%= category[:code] %></strong><br>
+                    <small class="text-muted"><%= category[:title] %></small>
+                  </td>
+                  <td>
+                    <strong><%= category[:score] %></strong>/<%= category[:max_possible_score] %>
+                    <br>
+                    <small class="text-muted">
+                      <%= category[:items_count] %> itens
+                    </small>
+                  </td>
+                  <td>
+                    <span class="badge bg-<%= @scale_response_adapter.level_color(category[:level]) %>">
+                      <%= @scale_response_adapter.level_description(category[:level]) %>
+                    </span>
+                  </td>
+                  <td>
+                    <small><%= category[:description] %></small>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="mt-3">
+          <p class="text-muted small">
+            <i>Nota. PSA: Escala Likert de 5 pontos (1-5) para avaliação do processamento sensorial em 6 categorias.</i>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Recomendações Específicas -->
+  <% if @scale_response_adapter && @scale_response_adapter.recommendations.any? %>
+    <div class="card mb-4">
+      <div class="card-header bg-warning text-dark">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Recomendações Específicas
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <% @scale_response_adapter.recommendations.each_with_index do |recommendation, index| %>
+            <li class="list-group-item">
+              <strong><%= index + 1 %>.</strong> <%= recommendation %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,6 +1,7 @@
 class ScaleResponse < ApplicationRecord
   acts_as_paranoid
   include Srs2ScaleResponse
+  include PsaScaleResponse
 
   belongs_to :scale_request
   belongs_to :patient
@@ -58,6 +59,8 @@ class ScaleResponse < ApplicationRecord
 
     if srs2_scale?
       calculate_srs2_score_with_service
+    elsif psa_scale?
+      calculate_psa_score_with_service
     else
       calculate_generic_score
     end
@@ -118,6 +121,8 @@ class ScaleResponse < ApplicationRecord
     # Validações específicas por escala
     if srs2_scale?
       validate_srs2_answers
+    elsif psa_scale?
+      validate_psa_answers
     else
       validate_generic_answers
     end

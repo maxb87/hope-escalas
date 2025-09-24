@@ -1,0 +1,41 @@
+<% content_for :title, "Interpretação PSA - Perfil Sensorial do Adulto/Adolescente" %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">Interpretação PSA - Perfil Sensorial do Adulto/Adolescente</h1>
+          <p class="text-muted mb-0">
+            <strong>Paciente:</strong> <%= @scale_response.patient.full_name %>
+          </p>
+        </div>
+        <div class="text-end">
+          <span class="badge bg-primary fs-6">Autorelato</span>
+          <span class="badge bg-success ms-2">Completado</span>
+        </div>
+      </div>
+
+      <!-- Renderizar partial específico para interpretação PSA -->
+      <%= render 'psa/scale_responses/interpretation', 
+          scale_response: @scale_response, 
+          scale_response_adapter: @scale_response_adapter,
+          interpretation: @interpretation,
+          is_professional_or_admin: current_user.account_type.in?(['Professional', 'Admin']) %>
+
+      <!-- Ações -->
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <div>
+          <%= link_to "Voltar para PSA", psa_scale_response_path(@scale_response), class: "btn btn-outline-secondary" %>
+          <%= link_to "Voltar para Escalas", scale_responses_path, class: "btn btn-outline-secondary ms-2" %>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer me-2"></i>
+            Imprimir Interpretação
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

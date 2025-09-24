@@ -3,11 +3,21 @@
 module PsaScaleResponse
   extend ActiveSupport::Concern
 
-  # Check if this is PSA scale
+  # Check if this is a PSA scale
   def psa_scale?
     psychometric_scale.code == "PSA"
   end
 
+  # PSA score and interpretation
+  def psa_score
+    return nil unless psa_scale?
+    total_score
+  end
+
+  def psa_interpretation
+    return nil unless psa_scale?
+    interpretation
+  end
 
   # Validação específica para PSA (escala 1-5)
   def validate_psa_answers
@@ -24,5 +34,33 @@ module PsaScaleResponse
         break
       end
     end
+  end
+
+  # Método para calcular score usando o serviço PSA
+  def calculate_psa_score_with_service
+    # Calcular idade do paciente
+    patient_age = calculate_patient_age
+
+    results_hash = Scoring::Psa.calculate(
+      answers,
+      scale_version: psychometric_scale.version,
+      patient_gender: patient.gender,
+      patient_age: patient_age,
+      patient: patient  # Passar o objeto paciente
+    )
+    apply_results!(results_hash)
+  end
+
+  private
+
+  def calculate_patient_age
+    return nil unless patient&.birthday
+
+    today = Date.current
+    birthday = patient.birthday
+
+    age = today.year - birthday.year
+    age -= 1 if today < birthday + age.years
+    age
   end
 end
