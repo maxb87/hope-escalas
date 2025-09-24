@@ -60,7 +60,7 @@ module Scoring
       when 0..8 then "normal"
       when 9..16 then "leve"
       when 17..24 then "moderado"
-      when 25..40 then "severo"
+      when 25..55 then "severo"
       else "pontuação_inválida"
       end
     end
@@ -71,7 +71,7 @@ module Scoring
       when 0..48 then "normal"
       when 49..96 then "leve"
       when 97..144 then "moderado"
-      when 145..240 then "severo"
+      when 145..300 then "severo"
       else "pontuação_inválida"
       end
     end
@@ -79,17 +79,44 @@ module Scoring
     # Constrói o hash de resultados final
     def self.build_result_hash(total_score, category_scores, category_levels, overall_level, scale_version, patient)
       {
-        "version" => scale_version,
-        "total_score" => total_score,
-        "overall_level" => overall_level,
+        "schema_version" => 1,
+        "scale_code" => "PSA",
+        "scale_version" => scale_version,
+        "computed_at" => Time.current.iso8601,
+        "metrics" => {
+          "total_score"=> total_score
+        },
+        "comments" => {},
+        "subscales" => build_subscales_hash(category_scores, category_levels),
         "categories" => build_categories_hash(category_scores, category_levels),
-        "interpretation" => build_interpretation_hash(overall_level, category_levels),
-        "patient_info" => {
-          "name" => patient&.full_name,
-          "age" => patient&.age,
-          "gender" => patient&.gender
-        }
+        "interpretation" => build_interpretation_hash(overall_level, category_levels, total_score),
+        
       }
+    end
+
+    # Constrói hash das subscalas (formato da imagem)
+    def self.build_subscales_hash(category_scores, category_levels)
+      category_names = {
+        'A' => 'Processamento Tátil/Olfativo',
+        'B' => 'Processamento Vestibular/Proprioceptivo', 
+        'C' => 'Processamento Visual',
+        'D' => 'Processamento Tátil',
+        'E' => 'Nível de Atividade',
+        'F' => 'Processamento Auditivo'
+      }
+
+      result = {}
+      category_scores.each do |key, score|
+        items_count = get_category_items_count(key)
+        average_score = items_count > 0 ? (score.to_f / items_count).round(2) : 0.0
+        
+        result["category_#{key.downcase}"] = {
+          "raw_score" => score,
+          "average_score" => average_score,
+          "interpretation" => get_interpretation_text(category_levels[key]),
+        }
+      end
+      result
     end
 
     # Constrói hash das categorias com informações detalhadas
@@ -105,16 +132,32 @@ module Scoring
 
       result = {}
       category_scores.each do |key, score|
+        items_count = get_category_items_count(key)
+        average_score = items_count > 0 ? (score.to_f / items_count).round(2) : 0.0
+        
         result[key] = {
-          "code" => key,
-          "name" => category_names[key],
-          "score" => score,
-          "level" => category_levels[key],
-          "description" => get_category_description(key, category_levels[key]),
-          "items_count" => get_category_items_count(key)
+          "total" => score,
+          "average" => average_score,
+          "interpretation" => get_interpretation_text(category_levels[key]),
         }
       end
       result
+    end
+
+    # Converte nível para texto de interpretação
+    def self.get_interpretation_text(level)
+      case level
+      when "normal"
+        "Raramente/Ocasionalmente"
+      when "leve"
+        "Ocasionalmente/Frequentemente"
+      when "moderado"
+        "Frequentemente/Sempre"
+      when "severo"
+        "Sempre"
+      else
+        "Não disponível"
+      end
     end
 
     # Retorna descrição de uma categoria específica
@@ -174,28 +217,48 @@ module Scoring
     end
 
     # Constrói hash de interpretação geral
-    def self.build_interpretation_hash(overall_level, category_levels)
+    def self.build_interpretation_hash(overall_level, category_levels, total_score)
+      categories_with_low_responsiveness = category_levels.select { |_, level| level == "normal" }.keys
+      
       {
-        "overall_level" => overall_level,
-        "description" => get_overall_interpretation_description(overall_level),
-        "categories_with_difficulties" => category_levels.select { |_, level| level != "normal" },
-        "recommendations" => get_recommendations(overall_level, category_levels)
+        "level" => get_overall_interpretation_level(overall_level),
+        "description" => get_overall_interpretation_description(overall_level, total_score, categories_with_low_responsiveness)
       }
     end
 
-    # Retorna descrição da interpretação geral
-    def self.get_overall_interpretation_description(level)
+    # Retorna nível de interpretação geral
+    def self.get_overall_interpretation_level(level)
       case level
       when "normal"
-        "Perfil sensorial dentro da normalidade. Todas as categorias de processamento sensorial estão funcionando adequadamente."
+        "Padrão típico de responsividade sensorial"
       when "leve"
-        "Leve dificuldade no processamento sensorial. Algumas categorias podem apresentar pequenas alterações."
+        "Padrão leve de responsividade sensorial"
       when "moderado"
-        "Moderada dificuldade no processamento sensorial. Várias categorias apresentam alterações que podem impactar o funcionamento diário."
+        "Padrão moderado de responsividade sensorial"
       when "severo"
-        "Severa dificuldade no processamento sensorial. Múltiplas categorias apresentam alterações significativas que impactam significativamente o funcionamento diário."
+        "Padrão severo de responsividade sensorial"
       else
-        "Interpretação não disponível para esta pontuação."
+        "Padrão não disponível"
+      end
+    end
+
+    # Retorna descrição da interpretação geral
+    def self.get_overall_interpretation_description(level, total_score, categories_with_low_responsiveness)
+      category_names = {
+        'A' => 'Processamento Tátil/Olfativo',
+        'B' => 'Processamento Vestibular/Proprioceptivo', 
+        'C' => 'Processamento Visual',
+        'D' => 'Processamento Tátil',
+        'E' => 'Nível de Atividade',
+        'F' => 'Processamento Auditivo'
+      }
+      
+      low_categories = categories_with_low_responsiveness.map { |cat| category_names[cat] }.join(", ")
+      
+      if low_categories.present?
+        "Pontuação total: #{total_score}/300. Categorias com baixa responsividade: #{low_categories}"
+      else
+        "Pontuação total: #{total_score}/300. Todas as categorias dentro da normalidade." 
       end
     end
 

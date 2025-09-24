@@ -14,7 +14,7 @@ class ScaleResponse < ApplicationRecord
   validate :validate_answers
   validate :validate_hetero_report_fields
 
-  before_validation :calculate_score, if: :answers_changed?
+  before_validation :calculate_score
   before_validation :set_completed_at, if: -> { answers.present? && !completed_at? }
   before_destroy :cancel_associated_scale_request
 
@@ -48,7 +48,7 @@ class ScaleResponse < ApplicationRecord
 
 
   def total_score
-    results.dig("metrics", "raw_score") || 0
+    results.dig("metrics", "total_score") || 0
   end
 
 
@@ -93,7 +93,9 @@ class ScaleResponse < ApplicationRecord
     self.results_schema_version = hash["schema_version"] || 1
     self.computed_at = Time.zone.parse(hash["computed_at"]) rescue Time.current
     # Preencher campos legados
-    if (total = hash.dig("metrics", "total"))
+    if (total = hash.dig("metrics", "raw_score"))
+      self.total_score = total.to_i
+    elsif (total = hash.dig("metrics", "total"))
       self.total_score = total.to_i
     elsif (total = hash["total_score"])
       self.total_score = total.to_i
