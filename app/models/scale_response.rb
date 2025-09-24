@@ -9,7 +9,7 @@ class ScaleResponse < ApplicationRecord
 
   # Validações: quando não há respostas, permitimos campos calculados em branco
   validates :total_score, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :interpretation, presence: true, if: -> { answers.present? }
+  validates :interpretation, presence: true, if: -> { answers.present? && !new_record? }
   validates :completed_at, presence: true, if: -> { answers.present? }
   validate :validate_answers
   validate :validate_hetero_report_fields
@@ -94,6 +94,8 @@ class ScaleResponse < ApplicationRecord
     self.computed_at = Time.zone.parse(hash["computed_at"]) rescue Time.current
     # Preencher campos legados
     if (total = hash.dig("metrics", "total"))
+      self.total_score = total.to_i
+    elsif (total = hash["total_score"])
       self.total_score = total.to_i
     end
     if (level = hash.dig("interpretation", "level"))

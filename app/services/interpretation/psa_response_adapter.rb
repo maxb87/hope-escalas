@@ -2,11 +2,17 @@
 
 module Interpretation
   class PsaResponseAdapter
-    delegate :patient, :results, :scale_request, :completed_at, :psychometric_scale, :total_score, to: :@scale_response
+    delegate :patient, :results, :scale_request, :completed_at, :psychometric_scale, to: :@scale_response
 
     def initialize(scale_response)
       @scale_response = scale_response
       raise ArgumentError, "Scale response must be PSA" unless @scale_response.psa_scale?
+    end
+
+    # Calcula o total_score corretamente a partir dos results
+    def total_score
+      return @scale_response.total_score unless results.present? && results["total_score"].present?
+      results["total_score"]
     end
 
     # Ordem específica das categorias PSA
@@ -102,21 +108,6 @@ module Interpretation
       false
     end
 
-    private
-
-    # Constrói informações de uma categoria
-    def build_category_info(category_code, category_data)
-      {
-        code: category_code,
-        title: category_data["name"],
-        score: category_data["score"],
-        level: category_data["level"],
-        description: category_data["description"],
-        items_count: category_data["items_count"],
-        max_possible_score: category_data["items_count"] * 5  # 5 é o máximo na escala Likert
-      }
-    end
-
     # Retorna descrição do nível para exibição
     def level_description(level)
       case level
@@ -137,6 +128,22 @@ module Interpretation
       when "severo" then "danger"
       else "secondary"
       end
+    end
+
+    private
+
+    # Constrói informações de uma categoria
+    def build_category_info(category_code, category_data)
+      items_count = category_data["items_count"] || 0
+      {
+        code: category_code,
+        title: category_data["name"],
+        score: category_data["score"],
+        level: category_data["level"],
+        description: category_data["description"],
+        items_count: items_count,
+        max_possible_score: items_count * 5  # 5 é o máximo na escala Likert
+      }
     end
   end
 end

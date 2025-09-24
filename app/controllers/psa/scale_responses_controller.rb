@@ -1,8 +1,8 @@
 class Psa::ScaleResponsesController < ApplicationController
   include ChartsHelper
 
-  before_action :set_scale_response, only: [ :show, :interpretation ]
-  before_action :ensure_psa_scale, only: [ :show, :interpretation ]
+  before_action :set_scale_response, only: [ :show, :destroy ]
+  before_action :ensure_psa_scale, only: [ :show, :destroy ]
 
   def show
     authorize @scale_response
@@ -111,31 +111,19 @@ class Psa::ScaleResponsesController < ApplicationController
     end
   end
 
-  def interpretation
-    authorize @scale_response, :interpretation?
+  def destroy
+    authorize @scale_response
 
-    # Verificar se a escala suporta interpretação
-    unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
-      supported_scales = Interpretation::InterpretationServiceFactory.supported_scales.join(", ")
-      redirect_to psa_scale_response_path(@scale_response), alert: "Interpretação não disponível para esta escala. Escalas suportadas: #{supported_scales}."
-      return
-    end
+    # Fazer destroy da scale_response
+    @scale_response.destroy!
 
-    begin
-      # Gerar interpretação usando o factory
-      interpretation_data = Interpretation::InterpretationServiceFactory.generate_interpretation(@scale_response)
+    # Cancelar a solicitação correspondente
+    @scale_response.scale_request.cancel!
 
-      # Extrair dados para as variáveis de instância
-      @scale_response_adapter = interpretation_data[:scale_response_adapter]
-      @interpretation = interpretation_data[:interpretation]
-      @scale_type = interpretation_data[:scale_type]
-
-      # Gerar dados específicos baseados no tipo de escala
-      generate_scale_specific_data
-
-    rescue Interpretation::InterpretationServiceFactory::UnsupportedScaleError => e
-      redirect_to psa_scale_response_path(@scale_response), alert: "Erro na interpretação: #{e.message}"
-    end
+    redirect_to scale_responses_path, notice: "Escala PSA descartada com sucesso. A solicitação foi cancelada."
+  rescue StandardError => e
+    Rails.logger.error "Erro ao descartar escala PSA: #{e.message}"
+    redirect_to psa_scale_response_path(@scale_response), alert: "Erro ao descartar escala: #{e.message}"
   end
 
   private
@@ -172,6 +160,7 @@ class Psa::ScaleResponsesController < ApplicationController
     # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
     if params[:scale_response].present?
       permitted_params = params.require(:scale_response).permit(
+        :scale_request_id,
         answers: {}
       )
 

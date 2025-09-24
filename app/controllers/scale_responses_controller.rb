@@ -1,7 +1,7 @@
 class ScaleResponsesController < ApplicationController
   include ChartsHelper
 
-  before_action :set_scale_response, only: [ :show, :interpretation, :destroy ]
+  before_action :set_scale_response, only: [ :show, :destroy ]
 
   def index
     @scale_responses = policy_scope(ScaleResponse).includes(:patient, :psychometric_scale, :scale_request)
@@ -106,45 +106,6 @@ class ScaleResponsesController < ApplicationController
     end
   end
 
-  def interpretation
-    authorize @scale_response, :interpretation?
-
-    # Redirecionar para controller específico se for SRS-2
-    if @scale_response.srs2_scale?
-      redirect_to interpretation_srs2_scale_response_path(@scale_response)
-      return
-    end
-
-    # Redirecionar para controller específico se for PSA
-    if @scale_response.psa_scale?
-      redirect_to interpretation_psa_scale_response_path(@scale_response)
-      return
-    end
-
-    # Verificar se a escala suporta interpretação
-    unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
-      supported_scales = Interpretation::InterpretationServiceFactory.supported_scales.join(", ")
-      redirect_to @scale_response, alert: "Interpretação não disponível para esta escala. Escalas suportadas: #{supported_scales}."
-      return
-    end
-
-    begin
-      # Gerar interpretação usando o factory
-      interpretation_data = Interpretation::InterpretationServiceFactory.generate_interpretation(@scale_response)
-
-      # Extrair dados para as variáveis de instância
-      @scale_response_adapter = interpretation_data[:scale_response_adapter]
-      @hetero_response = interpretation_data[:hetero_response]
-      @interpretation = interpretation_data[:interpretation]
-      @scale_type = interpretation_data[:scale_type]
-
-      # Gerar dados específicos baseados no tipo de escala
-      generate_scale_specific_data
-
-    rescue Interpretation::InterpretationServiceFactory::UnsupportedScaleError => e
-      redirect_to @scale_response, alert: "Erro na interpretação: #{e.message}"
-    end
-  end
 
   def generate_scale_specific_data
     case @scale_type

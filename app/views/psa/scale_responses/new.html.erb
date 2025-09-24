@@ -10,42 +10,51 @@
             <strong>Paciente:</strong> <%= @scale_response.patient.full_name %>
           </p>
         </div>
-        <div class="text-end">
-          <span class="badge bg-primary fs-6">Autorelato</span>
-        </div>
       </div>
 
-      <div class="alert alert-info">
-        <h5 class="alert-heading">
+      <div class="alert alert-warning">
+        <h3 class="alert-heading">
           <i class="bi bi-info-circle me-2"></i>
           Instruções
-        </h5>
+        </h3>
         <p class="mb-2">
           Este questionário avalia seu perfil sensorial em diferentes categorias. 
           Para cada afirmação, marque a opção que melhor descreve sua experiência.
         </p>
-        <p class="mb-0">
-          <strong>Escala:</strong> 1 = Quase nunca, 2 = Raramente, 3 = Ocasionalmente, 4 = Frequentemente, 5 = Quase sempre
+        <p>
+          Responda todas as 60 questões em um único acesso. Selecione uma opção de 1 a 5 para cada pergunta.
+        </p>
+        <p>
+          <strong>Escala:</strong> 
+          <ul>
+            <li>1 = Quase nunca</li>
+            <li>2 = Raramente</li>
+            <li>3 = Ocasionalmente</li>
+            <li>4 = Frequentemente</li>
+            <li>5 = Quase sempre</li>
+          </ul>
         </p>
       </div>
 
-      <%= form_with model: [@scale_response], local: true, class: "psa-form" do |form| %>
-        <%= form.hidden_field :scale_request_id, value: @scale_request.id %>
+      <% if current_user.email == "admin@admin.com" %>
+        <div class="mb-3">
+          <button type="button" class="btn btn-warning btn-sm" onclick="fillRandomAnswers()">
+            <i class="bi bi-shuffle"></i> Preenchimento Aleatório (Teste)
+          </button>
+        </div>
+      <% end %>
+
+      <%= form_with model: [@scale_response], url: psa_scale_responses_path, method: :post, local: true, class: "psa-form" do |form| %>
+        <%= hidden_field_tag :scale_request_id, @scale_request.id %>
         
         <!-- Renderizar partial específico para PSA -->
         <%= render 'psa/scale_responses/form', form: form, scale_response: @scale_response, scale_items: @scale_items %>
 
-        <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex justify-content-end mt-4">
           <div>
-            <small class="text-muted">
-              Progresso: <span id="completion-percentage">0</span>% 
-              (<span id="answered-items">0</span>/<%= @scale_items.count %> itens)
-            </small>
-          </div>
-          <div>
-            <%= form.submit "Finalizar PSA", class: "btn btn-primary btn-lg", 
+            <%= form.submit "Enviar Respostas", class: "btn btn-primary btn-lg", 
                 data: { 
-                  confirm: "Tem certeza que deseja finalizar o PSA? Você não poderá alterar as respostas após o envio.",
+                  confirm: "Tem certeza que deseja finalizar o preenchimento do PSA? Você não poderá alterar as respostas após o envio.",
                   disable_with: "Finalizando..."
                 } %>
           </div>
@@ -56,25 +65,25 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.querySelector('.psa-form');
-  const completionPercentage = document.getElementById('completion-percentage');
-  const answeredItems = document.getElementById('answered-items');
-  const totalItems = <%= @scale_items.count %>;
+function fillRandomAnswers() {
+  // Preencher todas as respostas aleatoriamente
+  const radioButtons = document.querySelectorAll("input[type='radio'][name*='scale_response[answers]']");
   
-  function updateProgress() {
-    const radioButtons = form.querySelectorAll('input[type="radio"]:checked');
-    const answered = radioButtons.length;
-    const percentage = Math.round((answered / totalItems) * 100);
-    
-    completionPercentage.textContent = percentage;
-    answeredItems.textContent = answered;
-  }
+  // Agrupar por item
+  const items = {};
+  radioButtons.forEach(radio => {
+    const name = radio.name;
+    if (!items[name]) items[name] = [];
+    items[name].push(radio);
+  });
   
-  // Atualizar progresso quando qualquer radio button for clicado
-  form.addEventListener('change', updateProgress);
+  // Selecionar uma opção aleatória para cada item
+  Object.values(items).forEach(itemRadios => {
+    const randomIndex = Math.floor(Math.random() * itemRadios.length);
+    itemRadios[randomIndex].checked = true;
+  });
   
-  // Atualizar progresso inicial
-  updateProgress();
-});
+  alert("Formulário PSA preenchido aleatoriamente!");
+}
 </script>
+

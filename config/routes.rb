@@ -11,28 +11,16 @@ Rails.application.routes.draw do
       get :cancelled
     end
   end
-  resources :scale_responses, only: [ :index, :new, :create, :show, :destroy ] do
-    member do
-      get :interpretation
-    end
-  end
+  resources :scale_responses, only: [ :index, :new, :create, :show, :destroy ]
 
   # Rotas específicas para SRS-2
   namespace :srs2 do
-    resources :scale_responses, only: [ :show, :new, :create ] do
-      member do
-        get :interpretation
-      end
-    end
+    resources :scale_responses, only: [ :show, :new, :create ]
   end
 
   # Rotas específicas para PSA
   namespace :psa do
-    resources :scale_responses, only: [ :show, :new, :create ] do
-      member do
-        get :interpretation
-      end
-    end
+    resources :scale_responses, only: [ :show, :new, :create, :destroy ]
   end
 
   resources :professionals do

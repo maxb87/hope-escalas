@@ -1,8 +1,8 @@
 class Srs2::ScaleResponsesController < ApplicationController
   include ChartsHelper
 
-  before_action :set_scale_response, only: [ :show, :interpretation ]
-  before_action :ensure_srs2_scale, only: [ :show, :interpretation ]
+  before_action :set_scale_response, only: [ :show ]
+  before_action :ensure_srs2_scale, only: [ :show ]
 
   def show
     authorize @scale_response
@@ -117,34 +117,6 @@ class Srs2::ScaleResponsesController < ApplicationController
     end
   end
 
-  def interpretation
-    authorize @scale_response, :interpretation?
-
-    # Verificar se a escala suporta interpretação
-    unless Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
-      supported_scales = Interpretation::InterpretationServiceFactory.supported_scales.join(", ")
-      redirect_to srs2_scale_response_path(@scale_response), alert: "Interpretação não disponível para esta escala. Escalas suportadas: #{supported_scales}."
-      return
-    end
-
-    begin
-      # Gerar interpretação usando o factory
-      interpretation_data = Interpretation::InterpretationServiceFactory.generate_interpretation(@scale_response)
-
-      # Extrair dados para as variáveis de instância
-      @scale_response_adapter = interpretation_data[:scale_response_adapter]
-      @hetero_response = interpretation_data[:hetero_response]
-      @hetero_reports = interpretation_data[:hetero_reports]
-      @interpretation = interpretation_data[:interpretation]
-      @scale_type = interpretation_data[:scale_type]
-
-      # Gerar dados específicos baseados no tipo de escala
-      generate_scale_specific_data
-
-    rescue Interpretation::InterpretationServiceFactory::UnsupportedScaleError => e
-      redirect_to srs2_scale_response_path(@scale_response), alert: "Erro na interpretação: #{e.message}"
-    end
-  end
 
   private
 

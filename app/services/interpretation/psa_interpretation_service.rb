@@ -85,6 +85,14 @@ module Interpretation
     # Gera análise das categorias
     def self.generate_categories_analysis(results)
       categories = results["categories"]
+      
+      # Verificar se as categorias têm a estrutura correta
+      # Se não, tentar reconstruir a partir dos dados disponíveis
+      if categories.present? && categories.values.first.is_a?(Integer)
+        # Dados antigos com estrutura incorreta - pular análise por enquanto
+        return "Análise das categorias não disponível para este registro."
+      end
+      
       categories_with_difficulties = categories.select { |_, cat| cat["level"] != "normal" }
       
       if categories_with_difficulties.empty?

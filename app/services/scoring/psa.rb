@@ -103,16 +103,18 @@ module Scoring
         'F' => 'Processamento Auditivo'
       }
 
-      category_scores.transform_keys do |key|
-        {
+      result = {}
+      category_scores.each do |key, score|
+        result[key] = {
           "code" => key,
           "name" => category_names[key],
-          "score" => category_scores[key],
+          "score" => score,
           "level" => category_levels[key],
           "description" => get_category_description(key, category_levels[key]),
           "items_count" => get_category_items_count(key)
         }
       end
+      result
     end
 
     # Retorna descrição de uma categoria específica

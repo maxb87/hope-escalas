@@ -10,14 +10,131 @@
             <strong>Paciente:</strong> <%= @scale_response.patient.full_name %>
           </p>
         </div>
-        <div class="text-end">
-          <span class="badge bg-primary fs-6">Autorelato</span>
-          <span class="badge bg-success ms-2">Completado</span>
+        <div class="row">
+          <div class="col">
+            <%= link_to "Voltar ao Perfil", patient_path(@scale_response.patient), class: "btn btn-secondary" %>
+          </div>
+          <div class="col">
+            <% if policy(@scale_response).destroy? %>
+              <%= button_to "Descartar Escala", psa_scale_response_path(@scale_response), method: :delete, data: { turbo_confirm: "Tem certeza que deseja descartar esta escala? Esta ação cancelará a solicitação correspondente e não pode ser desfeita." }, class: "btn btn-danger" %>
+            <% end %>
+          </div>
         </div>
       </div>
 
-      <!-- Renderizar partial específico para PSA -->
-      <%= render 'psa/scale_responses/show', scale_response: @scale_response, is_professional_or_admin: current_user.account_type.in?(['Professional', 'Admin']) %>
+      <!-- Interpretação PSA -->
+      <div class="row">
+        <div class="col-12">
+          <!-- Resumo Geral -->
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-graph-up me-2"></i>
+                Resumo Geral do PSA
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Pontuação Total</h6>
+                  <p class="h4 text-primary"><%= @scale_response_adapter.total_score %> pontos</p>
+                </div>
+                <div class="col-md-6">
+                  <h6>Nível Geral</h6>
+                  <% if @scale_response_adapter %>
+                    <span class="badge bg-<%= @scale_response_adapter.level_color(@scale_response_adapter.overall_level) %> fs-6">
+                      <%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level) %>
+                    </span>
+                  <% else %>
+                    <span class="badge bg-secondary fs-6">Nível não determinado</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Análise por Categorias -->
+          <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-bar-chart me-2"></i>
+                Análise por Categorias Sensoriais
+              </h5>
+            </div>
+            <div class="card-body">
+              <% if @scale_response_adapter && @scale_response_adapter.categories_with_levels.any? %>
+                <div class="row">
+                  <% @scale_response_adapter.categories_with_levels.each do |category| %>
+                    <div class="col-md-6 col-lg-4 mb-3">
+                      <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="card-title mb-0"><%= category[:title] %></h6>
+                            <span class="badge bg-<%= @scale_response_adapter.level_color(category[:level]) %>">
+                              <%= @scale_response_adapter.level_description(category[:level]) %>
+                            </span>
+                          </div>
+                          <p class="text-muted small mb-1">
+                            Pontuação: <%= category[:score] %>/<%= category[:max_possible_score] %>
+                          </p>
+                          <p class="text-muted small mb-0">
+                            <%= category[:description] %>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle me-2"></i>
+                  Análise das categorias não disponível para este registro.
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Interpretação dos Resultados -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-lightbulb me-2"></i>
+                Interpretação dos Resultados
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-4">
+                <h6>Introdução</h6>
+                <p class="text-muted">
+                  O PSA - Perfil Sensorial do Adulto/Adolescente foi aplicado em <strong><%= @scale_response.patient.full_name %></strong> 
+                  e revelou um perfil sensorial com <strong><%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level).downcase %></strong>. 
+                  A pontuação total de <strong><%= @scale_response_adapter.total_score %> pontos</strong> 
+                  indica características específicas no processamento de informações sensoriais que podem 
+                  influenciar o funcionamento diário e a participação em atividades.
+                </p>
+              </div>
+
+              <div class="mb-4">
+                <h6>Análise das Categorias</h6>
+                <p class="text-muted">
+                  <%= @scale_response_adapter.overall_interpretation %>
+                </p>
+              </div>
+
+              <% if @scale_response_adapter.recommendations.any? %>
+                <div class="mb-4">
+                  <h6>Recomendações</h6>
+                  <ol class="text-muted">
+                    <% @scale_response_adapter.recommendations.each do |recommendation| %>
+                      <li><%= recommendation %></li>
+                    <% end %>
+                  </ol>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Seção de Respostas do Paciente -->
       <div class="mt-4">
