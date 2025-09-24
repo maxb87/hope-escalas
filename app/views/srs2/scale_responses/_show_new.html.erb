@@ -65,16 +65,14 @@
 
       <!-- Interpretação -->
       <% if @scale_response.psychometric_scale.code == "SRS2SR" %>
-        <div class="accordion mb-4" id="interpretationAccordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="interpretationHeader">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#interpretationCollapse" aria-expanded="true" aria-controls="interpretationCollapse">
-                <i class="bi bi-clipboard-check me-2"></i>
-                <h3 class="mb-0">Interpretação</h3>
-              </button>
-            </h2>
-            <div id="interpretationCollapse" class="accordion-collapse collapse show" aria-labelledby="interpretationHeader" data-bs-parent="#interpretationAccordion">
-              <div class="accordion-body">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="mb-0">
+              <i class="bi bi-clipboard-check me-2"></i>
+              Interpretação
+            </h4>
+          </div>
+          <div class="card-body">
             <div>
               <!-- interpretacao introducao -->
               <p><%= @interpretation[:introduction].html_safe %></p>
@@ -181,13 +179,11 @@
               </div>
             <% end %>
             
-                <div class="py-4">
-                  <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
-                  <script>
-                    <%= @chart_service.chart_js_function.html_safe %>
-                  </script>
-                </div>
-              </div>
+            <div class="py-4">
+              <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
+              <script>
+                <%= @chart_service.chart_js_function.html_safe %>
+              </script>
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ class PatientsController < ApplicationController
   def show
     authorize @patient
     @pending_requests = @patient.scale_requests.pending.includes(:psychometric_scale, :professional).order(requested_at: :desc)
-    @completed_requests = @patient.scale_requests.completed.includes(:psychometric_scale, :professional, :scale_response).order(requested_at: :desc)
+    @completed_requests = @patient.scale_requests.completed.includes(:psychometric_scale, :professional, :scale_response).order(requested_at: :asc)
   end
 
   # GET /patients/new
