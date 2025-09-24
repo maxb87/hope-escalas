@@ -157,12 +157,12 @@ module Interpretation
       Srs2ResponseAdapter.new(scale_response)
     end
 
-    # Busca heterorelato correspondente
+    # Busca heterorelato correspondente (mantido para compatibilidade)
     def self.find_hetero_response(scale_response)
       patient = scale_response.patient
 
       if scale_response.psychometric_scale.code == "SRS2SR"
-        # Se é autorelato, buscar heterorelato
+        # Se é autorelato, buscar heterorelato mais recente
         hetero_response = ScaleResponse.joins(:psychometric_scale)
                                      .where(patient: patient, psychometric_scales: { code: "SRS2HR" })
                                      .where("completed_at IS NOT NULL")
@@ -180,6 +180,19 @@ module Interpretation
       hetero_response ? adapter_for(hetero_response) : nil
     end
 
+    # Busca todos os heterorrelatos completados para um paciente
+    def self.find_all_hetero_responses(patient)
+      ScaleResponse.joins(:psychometric_scale)
+                   .where(patient: patient, psychometric_scales: { code: "SRS2HR" })
+                   .where("completed_at IS NOT NULL")
+                   .order(completed_at: :desc)
+    end
+
+    # Busca todos os heterorrelatos completados e retorna como adapters
+    def self.find_all_hetero_adapters(patient)
+      find_all_hetero_responses(patient).map { |response| adapter_for(response) }
+    end
+
     # Gera a interpretação textual integrada
     def self.generate_integrated_interpretation(self_adapter, hetero_adapter = nil)
       patient = self_adapter.patient
@@ -191,6 +204,10 @@ module Interpretation
       }
 
       interpretation
+    end
+
+    def self.generate_hetero_report_comparison_text(patient, hetero_adapter)
+      
     end
 
     private
@@ -217,6 +234,7 @@ module Interpretation
       end
     end
 
+
     def self.generate_hetero_report_text(patient, hetero_adapter)
       relator_name = hetero_adapter.relator_name
       relator_relationship = hetero_adapter.relator_relationship
@@ -225,7 +243,7 @@ module Interpretation
       # Verificar se os dados necessários estão presentes
       return "" if relator_name.blank? || relator_relationship.blank?
 
-      text = "Quanto ao heterorrelato, de acordo com <strong>#{relator_name}</strong>, " \
+      text = "De acordo com <strong>#{relator_name}</strong>, " \
              "que é <strong>#{relator_relationship.downcase}</strong> #{patient.gender == 'male' ? 'do' : 'da'} paciente, " \
              "#{patient.first_name.capitalize} apresenta #{level_plural&.downcase || 'resultados'} de forma geral, nos domínios avaliados pela escala SRS-2."
 
@@ -280,5 +298,8 @@ module Interpretation
         "#{domain_names[0..-2].join(', ')} e #{domain_names.last}"
       end
     end
+
+
+   
   end
 end

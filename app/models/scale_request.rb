@@ -23,8 +23,7 @@ class ScaleRequest < ApplicationRecord
   validate :unique_active_request_per_patient_and_scale, unless: :cancelled?
   # Validação para impedir múltiplas solicitações de autorelato SRS-2
   validate :unique_srs2_self_report_request, if: :srs2_self_report?, unless: :cancelled?
-  # Validação para impedir múltiplas solicitações de heterorelato SRS-2
-  validate :unique_srs2_hetero_report_request, if: :srs2_hetero_report?, unless: :cancelled?
+
 
   scope :recent, -> { order(requested_at: :desc) }
   scope :active, -> { pending }
@@ -80,11 +79,8 @@ class ScaleRequest < ApplicationRecord
   def self.can_create_srs2_hetero_report_for?(patient)
     return false unless patient
 
-    !joins(:psychometric_scale)
-      .where(patient: patient)
-      .where(psychometric_scales: { code: "SRS2HR" })
-      .where(status: [ :pending, :completed ])
-      .exists?
+    # Agora permite múltiplos heterorrelatos SRS-2 - sempre retorna true
+    true
   end
 
   # Método para verificar se uma solicitação pode ser criada
@@ -127,6 +123,9 @@ class ScaleRequest < ApplicationRecord
   # Validação para impedir múltiplas solicitações ativas da mesma escala por paciente
   def unique_active_request_per_patient_and_scale
     return unless patient_id.present? && psychometric_scale_id.present?
+
+    # Permitir múltiplos heterorrelatos SRS-2
+    return if psychometric_scale&.code == "SRS2HR"
 
     # Buscar solicitações ativas (pendentes) da mesma escala para o mesmo paciente
     existing_requests = ScaleRequest.where(
@@ -171,56 +170,10 @@ class ScaleRequest < ApplicationRecord
     end
   end
 
-  # Validação para impedir múltiplas solicitações de heterorelato SRS-2
-  def unique_srs2_hetero_report_request
-    return unless patient_id.present?
+  # Validação removida para permitir múltiplos heterorrelatos SRS-2
+  # Agora é possível ter vários heterorrelatos para o mesmo paciente
 
-    # Log para debug
-    Rails.logger.info "[VALIDATION] Verificando heterorelato SRS-2 para paciente ID: #{patient_id}"
-
-    # Buscar qualquer solicitação de heterorelato SRS-2 (pendente ou concluída) para o mesmo paciente
-    existing_requests = ScaleRequest.joins(:psychometric_scale)
-      .where(
-        patient_id: patient_id,
-        psychometric_scales: { code: "SRS2HR" }
-      )
-      .where(status: [ :pending, :completed ])
-
-    # Excluir o próprio registro se estiver sendo atualizado
-    existing_requests = existing_requests.where.not(id: id) if persisted?
-
-    Rails.logger.info "[VALIDATION] Solicitações SRS2HR existentes: #{existing_requests.count}"
-
-    if existing_requests.exists?
-      patient_name = patient&.full_name || "paciente selecionado"
-      scale_name = psychometric_scale&.name || "SRS-2 Heterorrelato"
-
-      Rails.logger.warn "[VALIDATION] BLOQUEANDO criação de heterorelato SRS-2 duplicado para #{patient_name}"
-
-      errors.add(:base, I18n.t("activerecord.errors.models.scale_request.attributes.base.duplicate_srs2_hetero_report",
-                             scale: scale_name, patient: patient_name))
-    end
-  end
-
-  # Método adicional para debug - forçar validação de heterorelato
-  def validate_hetero_report_uniqueness!
-    return unless psychometric_scale&.code == "SRS2HR"
-    return unless patient_id.present?
-
-    # Verificação mais rigorosa
-    existing_count = ScaleRequest.joins(:psychometric_scale)
-                                 .where(patient_id: patient_id)
-                                 .where(psychometric_scales: { code: "SRS2HR" })
-                                 .where(status: [ :pending, :completed ])
-                                 .where.not(id: id || 0)
-                                 .count
-
-    Rails.logger.info "[DEBUG] Verificação rigorosa - heterorelatos existentes: #{existing_count}"
-
-    if existing_count > 0
-      raise ActiveRecord::RecordInvalid.new(self)
-    end
-  end
+  # Método removido - não é mais necessário com múltiplos heterorrelatos permitidos
 
   private
 end

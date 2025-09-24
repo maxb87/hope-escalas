@@ -99,7 +99,12 @@
       <% @completed_requests.each do |req| %>
         <% resp = req.scale_response %>
         <tr>
-          <td><%= req.psychometric_scale.name %></td>
+          <td>
+            <%= req.psychometric_scale.name %>
+            <% if req.psychometric_scale.code == "SRS2HR" %>
+              <span>- <%= req.scale_response.relator_name %> (<%= req.scale_response.relator_relationship %>)</span>
+            <% end %>
+          </td>
           <td><%= l(req.requested_at, format: '%d/%m/%Y %H:%M') %></td>
           <td><%= resp&.completed_at ? l(resp.completed_at, format: '%d/%m/%Y %H:%M') : '-' %></td>
           <td>
@@ -119,7 +124,6 @@
                   <!-- Para heterorelato SRS-2: buscar autorrelato correspondente -->
                   <% self_report_response = find_corresponding_self_report_for(resp.patient) %>
                   <% if self_report_response %>
-                    <%= link_to "Interpretação", interpretation_srs2_scale_response_path(self_report_response), class: 'btn btn-sm btn-warning ms-2' %>
                   <% else %>
                     <span class="btn btn-sm btn-secondary ms-2 disabled" title="Autorrelato SRS-2 necessário para interpretação">Interpretação</span>
                   <% end %>

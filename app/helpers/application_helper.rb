@@ -25,11 +25,17 @@ module ApplicationHelper
     end
 
     # Status do heterorelato
-    if patient.has_active_srs2_hetero_report?
-      hetero_report = patient.active_srs2_hetero_report
-      status_class = hetero_report.pending? ? "bg-warning" : "bg-success"
-      status_text = hetero_report.pending? ? "Heterorelato Pendente" : "Heterorelato Concluído"
-      badges << content_tag(:span, status_text, class: "badge #{status_class}")
+    if patient.has_active_srs2_hetero_reports?
+      hetero_reports_count = patient.active_srs2_hetero_reports_count
+      pending_count = patient.active_srs2_hetero_reports.where(status: :pending).count
+      completed_count = patient.active_srs2_hetero_reports.where(status: :completed).count
+      
+      if pending_count > 0
+        badges << content_tag(:span, "#{pending_count} Heterorelato(s) Pendente(s)", class: "badge bg-warning")
+      end
+      if completed_count > 0
+        badges << content_tag(:span, "#{completed_count} Heterorelato(s) Concluído(s)", class: "badge bg-success")
+      end
     else
       badges << content_tag(:span, "Heterorelato Disponível", class: "badge bg-secondary")
     end

@@ -16,6 +16,7 @@ class Srs2::ScaleResponsesController < ApplicationController
         # Extrair dados para as variáveis de instância
         @scale_response_adapter = interpretation_data[:scale_response_adapter]
         @hetero_response = interpretation_data[:hetero_response]
+        @hetero_reports = interpretation_data[:hetero_reports]
         @interpretation = interpretation_data[:interpretation]
         @scale_type = interpretation_data[:scale_type]
 
@@ -26,6 +27,7 @@ class Srs2::ScaleResponsesController < ApplicationController
         # Se houver erro, definir variáveis vazias para evitar erros na view
         @scale_response_adapter = nil
         @hetero_response = nil
+        @hetero_reports = []
         @interpretation = nil
         @scale_type = nil
         @chart_service = nil
@@ -36,6 +38,7 @@ class Srs2::ScaleResponsesController < ApplicationController
       # Se não suporta interpretação, definir variáveis vazias
       @scale_response_adapter = nil
       @hetero_response = nil
+      @hetero_reports = []
       @interpretation = nil
       @scale_type = nil
       @chart_service = nil
@@ -131,6 +134,7 @@ class Srs2::ScaleResponsesController < ApplicationController
       # Extrair dados para as variáveis de instância
       @scale_response_adapter = interpretation_data[:scale_response_adapter]
       @hetero_response = interpretation_data[:hetero_response]
+      @hetero_reports = interpretation_data[:hetero_reports]
       @interpretation = interpretation_data[:interpretation]
       @scale_type = interpretation_data[:scale_type]
 
@@ -165,7 +169,7 @@ class Srs2::ScaleResponsesController < ApplicationController
   end
 
   def generate_srs2_chart_data
-    @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient)
+    @chart_service = Charts::Srs2ComparisonChartService.new(@scale_response.patient, @hetero_reports)
     @chart_data = @chart_service.chart_data
     @report_info = @chart_service.report_info
   end

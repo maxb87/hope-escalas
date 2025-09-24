@@ -24,8 +24,9 @@ module Charts
       "total" => "Total"
     }.freeze
 
-    def initialize(patient)
+    def initialize(patient, hetero_reports = nil)
       @patient = patient
+      @hetero_reports = hetero_reports
     end
 
     # Retorna dados formatados para Chart.js
@@ -39,7 +40,7 @@ module Charts
 
     # Verifica se há dados suficientes para gerar o gráfico
     def has_data?
-      self_report_data.present? && hetero_report_data.present?
+      self_report_data.present? && (hetero_reports.present? || hetero_report_data.present?)
     end
 
     # Retorna informações sobre os relatórios encontrados
@@ -194,30 +195,39 @@ module Charts
 
     private
 
-    attr_reader :patient
+    attr_reader :patient, :hetero_reports
 
     def labels
       SUBSCALES_ORDER.map { |key| SUBSCALE_NAMES[key] }
     end
 
     def datasets
-      [
-        self_report_dataset,
-        hetero_report_dataset
-      ].compact
+      datasets = [self_report_dataset]
+      
+      # Adicionar datasets para cada heterorelato
+      if hetero_reports.present?
+        hetero_reports.each_with_index do |hetero_response, index|
+          datasets << hetero_report_dataset_for(hetero_response, index)
+        end
+      elsif hetero_report_data.present?
+        # Fallback para método tradicional
+        datasets << hetero_report_dataset
+      end
+      
+      datasets.compact
     end
 
     def self_report_dataset
       return nil unless self_report_data.present?
 
       {
-        label: "Autorrelato (#{self_report_respondent_name})",
+        label: "#{self_report_respondent_name}",
         data: self_report_t_scores,
-        borderColor: "#6c757d", # Cinza
+        borderColor: "rgba(108, 117, 125, 1)", # Cinza
         backgroundColor: "rgba(108, 117, 125, 0.1)",
         borderWidth: 3,
-        pointBackgroundColor: "#6c757d",
-        pointBorderColor: "#6c757d",
+        pointBackgroundColor: "rgba(108, 117, 125, 1)",
+        pointBorderColor: "rgba(108, 117, 125, 1)",
         pointRadius: 6,
         pointHoverRadius: 8,
         pointStyle: "circle", # Círculos para autorelato
@@ -229,13 +239,47 @@ module Charts
       return nil unless hetero_report_data.present?
 
       {
-        label: "Heterorrelato (#{hetero_report_respondent_name})",
+        label: "#{hetero_report_respondent_name}",
         data: hetero_report_t_scores,
-        borderColor: "#0d6efd", # Azul
+        borderColor: "rgba(13, 110, 253, 1)", # Azul
         backgroundColor: "rgba(13, 110, 253, 0.1)",
         borderWidth: 3,
-        pointBackgroundColor: "#0d6efd",
-        pointBorderColor: "#0d6efd",
+        pointBackgroundColor: "rgba(13, 110, 253, 1)",
+        pointBorderColor: "rgba(13, 110, 253, 1)",
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        pointStyle: "triangle", # Triângulos para heterorelato
+        tension: 0.1
+      }
+    end
+
+    def hetero_report_dataset_for(hetero_response, index)
+      return nil unless hetero_response.present?
+
+      # Cores diferentes para cada heterorelato
+      colors = [
+        "rgba(13, 110, 253, 0.8)", # Azul
+        "rgba(41, 151, 100, 0.8)", # Verde
+        "rgba(220, 53, 69, 0.8)", # Vermelho
+        "rgba(253, 126, 20, 0.8)", # Laranja
+        "rgba(111, 66, 193, 0.8)", # Roxo
+        "rgba(32, 201, 151, 0.8)", # Turquesa
+        "rgba(255, 193, 7, 0.8)", # Amarelo
+        "rgba(232, 62, 140, 0.8)"  # Rosa
+      ]
+
+      color = colors[index % colors.length]
+      relator_name = hetero_response.relator_name || "Relator #{index + 1}"
+      relator_relationship = hetero_response.relator_relationship || ""
+
+      {
+        label: "#{relator_name}  (#{relator_relationship})",
+        data: hetero_report_t_scores_for(hetero_response),
+        borderColor: color,
+        backgroundColor: color.gsub("1)", "0.2)"), # Adiciona transparência
+        borderWidth: 3,
+        pointBackgroundColor: color,
+        pointBorderColor: color,
         pointRadius: 6,
         pointHoverRadius: 8,
         pointStyle: "triangle", # Triângulos para heterorelato
@@ -263,6 +307,19 @@ module Charts
       end
     end
 
+    def hetero_report_t_scores_for(hetero_response)
+      results = hetero_response.results
+      return [] unless results.present?
+
+      SUBSCALES_ORDER.map do |subscale|
+        if subscale == "total"
+          results.dig("metrics", "t_score")
+        else
+          results.dig("subscales", subscale, "t_score")
+        end
+      end
+    end
+
     def chart_options
       {
         responsive: true,
@@ -270,7 +327,7 @@ module Charts
         plugins: {
           title: {
             display: true,
-            text: "Comparação SRS-2: Autorrelato vs Heterorrelato",
+            text: "Gráfico de Comparação de Resultados da Escala SRS-2",
             font: {
               size: 16,
               weight: "bold"
@@ -383,7 +440,11 @@ module Charts
         all_values.concat(self_report_t_scores.compact)
       end
 
-      if hetero_report_data.present?
+      if hetero_reports.present?
+        hetero_reports.each do |hetero_response|
+          all_values.concat(hetero_report_t_scores_for(hetero_response).compact)
+        end
+      elsif hetero_report_data.present?
         all_values.concat(hetero_report_t_scores.compact)
       end
 
@@ -402,7 +463,11 @@ module Charts
         all_values.concat(self_report_t_scores.compact)
       end
 
-      if hetero_report_data.present?
+      if hetero_reports.present?
+        hetero_reports.each do |hetero_response|
+          all_values.concat(hetero_report_t_scores_for(hetero_response).compact)
+        end
+      elsif hetero_report_data.present?
         all_values.concat(hetero_report_t_scores.compact)
       end
 

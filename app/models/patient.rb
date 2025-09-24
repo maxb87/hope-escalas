@@ -35,12 +35,36 @@ class Patient < ApplicationRecord
                   .exists?
   end
 
-  # Verifica se o paciente tem heterorelato SRS-2 ativo (pendente ou concluído)
-  def has_active_srs2_hetero_report?
+  # Verifica se o paciente tem heterorrelatos SRS-2 ativos (pendentes ou concluídos)
+  def has_active_srs2_hetero_reports?
     scale_requests.joins(:psychometric_scale)
                   .where(psychometric_scales: { code: "SRS2HR" })
                   .where(status: [ :pending, :completed ])
                   .exists?
+  end
+
+  # Conta quantos heterorrelatos SRS-2 ativos o paciente tem
+  def active_srs2_hetero_reports_count
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2HR" })
+                  .where(status: [ :pending, :completed ])
+                  .count
+  end
+
+  # Obtém todos os heterorrelatos SRS-2 ativos
+  def active_srs2_hetero_reports
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2HR" })
+                  .where(status: [ :pending, :completed ])
+                  .order(requested_at: :desc)
+  end
+
+  # Obtém todos os heterorrelatos SRS-2 completados
+  def completed_srs2_hetero_reports
+    scale_requests.joins(:psychometric_scale)
+                  .where(psychometric_scales: { code: "SRS2HR" })
+                  .where(status: :completed)
+                  .order(requested_at: :desc)
   end
 
   # Verifica se o paciente pode receber uma nova solicitação de autorelato SRS-2
@@ -49,8 +73,9 @@ class Patient < ApplicationRecord
   end
 
   # Verifica se o paciente pode receber uma nova solicitação de heterorelato SRS-2
+  # Agora sempre permite (removida a restrição de apenas um)
   def can_receive_srs2_hetero_report?
-    !has_active_srs2_hetero_report?
+    true
   end
 
   # Obtém o autorelato SRS-2 ativo (se existir)

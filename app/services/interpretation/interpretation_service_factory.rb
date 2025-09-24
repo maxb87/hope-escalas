@@ -47,6 +47,9 @@ module Interpretation
       # Criar adapters usando o serviço SRS-2
       scale_response_adapter = service_class.adapter_for(scale_response)
       hetero_response = service_class.find_hetero_response(scale_response)
+      
+      # Buscar todos os heterorrelatos para o paciente
+      all_hetero_responses = service_class.find_all_hetero_responses(scale_response.patient)
 
       # Gerar interpretação integrada
       interpretation = service_class.generate_integrated_interpretation(
@@ -58,6 +61,7 @@ module Interpretation
       {
         scale_response_adapter: scale_response_adapter,
         hetero_response: hetero_response,
+        hetero_reports: all_hetero_responses,
         interpretation: interpretation,
         scale_type: :srs2
       }

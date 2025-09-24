@@ -1,201 +1,116 @@
-<div class="srs2-interpretation">
-  <!-- Header específico para interpretação SRS-2 -->
-  <div class="alert alert-primary mb-4">
-    <div class="d-flex align-items-center">
-      <i class="bi bi-graph-up me-3 fs-4"></i>
-      <div>
-        <h5 class="mb-1">
-          <i class="bi bi-clipboard-data me-2"></i>
-          Interpretação SRS-2 - Análise Comparativa
-        </h5>
-        <p class="mb-0">
-          <strong>Paciente:</strong> <%= scale_response.patient.full_name %> | 
-          <strong>Autorrelato:</strong> <%= scale_response.total_score %> pts | 
-          <% if hetero_response %>
-            <strong>Heterorrelato:</strong> <%= hetero_response.total_score %> pts
-          <% else %>
-            <strong>Heterorrelato:</strong> Não disponível
-          <% end %>
-        </p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Gráfico de Comparação -->
-  <% if chart_data %>
-    <div class="card mb-4">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="bi bi-bar-chart me-2"></i>
-          Gráfico de Comparação por Domínios
-        </h6>
-      </div>
-      <div class="card-body">
-        <%= render 'srs2/scale_responses/comparison_chart', chart_data: chart_data %>
-      </div>
-    </div>
-  <% end %>
+          <div>
+            <!-- interpretacao introducao -->
+            <p><%= @interpretation[:introduction].html_safe %></p>
+          </div>
+          <div class="my-4">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Domínio</th>
+                  <th>Autorrelato</th>
+                  <th>Heterorrelato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>
+                  <% hetero_domain = @hetero_response&.subscale_domains_with_levels&.find { |d| d[:key] == domain[:key] } %>
+                  <tr>
+                    <td><%= domain[:title] %></td>
+                    <td>
+                      <%= domain[:t_score] %> (<%= domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{domain[:level]}" %>)
+                    </td>
+                    <td>
+                      <% if hetero_domain %>
+                        <%= hetero_domain[:t_score] %> (<%= hetero_domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{hetero_domain[:level]}" %>)
+                      <% else %>
+                        -
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div>
+              <p>
+                <i>Nota. SRS-2: >59 normal; 60-65 sintomatologia leve; 66-75 sintomatologia moderada; 76+ sintomatologia grave.</i>
+              </p>
+            </div>
+          </div>
+          <div class="my-4">
 
-  <!-- Análise Detalhada por Domínios -->
-  <div class="card mb-4">
-    <div class="card-header">
-      <h6 class="mb-0">
-        <i class="bi bi-list-check me-2"></i>
-        Análise Detalhada por Domínios
-      </h6>
-    </div>
-    <div class="card-body">
-      <% if scale_response_adapter %>
-        <div class="accordion" id="srs2DomainsAccordion">
-          <% scale_response_adapter.subscale_domains_with_levels.each_with_index do |domain, index| %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading<%= domain[:key] %>">
-                <button class="accordion-button <%= 'collapsed' unless index == 0 %>" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#collapse<%= domain[:key] %>" 
-                        aria-expanded="<%= index == 0 ? 'true' : 'false' %>" 
-                        aria-controls="collapse<%= domain[:key] %>">
-                  <i class="bi bi-list-check me-2"></i>
-                  <strong><%= domain[:name] %></strong>
-                  <span class="badge bg-<%= domain[:level] == 'normal' ? 'success' : 'warning' %> ms-2">
-                    <%= domain[:level].capitalize %>
-                  </span>
-                  <span class="badge bg-primary ms-2">
-                    T-Score: <%= domain[:t_score] %>
-                  </span>
-                </button>
-              </h2>
-              
-              <div id="collapse<%= domain[:key] %>" 
-                   class="accordion-collapse collapse <%= 'show' if index == 0 %>" 
-                   aria-labelledby="heading<%= domain[:key] %>" 
-                   data-bs-parent="#srs2DomainsAccordion">
-                <div class="accordion-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h6>Autorrelato</h6>
-                      <p><strong>Pontuação Bruta:</strong> <%= domain[:raw_score] %></p>
-                      <p><strong>T-Score:</strong> <%= domain[:t_score] %></p>
-                      <p><strong>Percentil:</strong> <%= domain[:percentile] %>%</p>
-                    </div>
-                    <% if hetero_response %>
-                      <div class="col-md-6">
-                        <h6>Heterorrelato</h6>
-                        <% hetero_domain = hetero_response.results.dig("subscales", domain[:key]) %>
-                        <% if hetero_domain %>
-                          <p><strong>Pontuação Bruta:</strong> <%= hetero_domain["raw_score"] %></p>
-                          <p><strong>T-Score:</strong> <%= hetero_domain["t_score"] %></p>
-                          <p><strong>Percentil:</strong> <%= hetero_domain["percentile"] %>%</p>
-                        <% else %>
-                          <p class="text-muted">Dados não disponíveis</p>
-                        <% end %>
-                      </div>
-                    <% end %>
-                  </div>
-                  
-                  <!-- Interpretação do domínio -->
-                  <div class="mt-3">
-                    <h6>Interpretação</h6>
-                    <p class="mb-0"><%= domain[:interpretation] %></p>
-                  </div>
+            <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>            
+              <% if domain[:level] != "normal" %>
+              <div>
+                <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
+              </div>
+              <% else %>
+                <div>
+                  <p><strong><%= domain[:title] %>:</strong> <%= domain[:interpretation]%></p>
                 </div>
+              <% end %>
+            <% end %>
+
+          <!-- Seção de Heterorrelatos -->
+          <% if @hetero_reports.present? %>
+            <div class="mt-4">
+                <% if @hetero_reports.count == 1 %>
+                  <h5 class="mb-3">
+                  Heterorrelato
+                  </h5>
+                <% else %>
+                  <h5 class="mb-3">
+                  Análise dos Heterorrelatos
+                  </h5>
+                  <span>
+                    Foram coletados (<%= @hetero_reports.count %>) heterorrelatos de diferentes relações do paciente. 
+                    A análise das diferentes perspectivas e seus pontos em comum forma uma importante compreensão 
+                    das características psico-sociais do paciente.
+                  </span>
+                <% end %>
+              
+              
+              <!-- Blocos Individuais de Heterorrelatos -->
+              <div class="my-4" >
+                <% @hetero_reports.each_with_index do |hetero_response, index| %>
+                  <% 
+                    # Criar adapter para o heterorrelato
+                    hetero_adapter = Interpretation::Srs2InterpretationService.adapter_for(hetero_response)
+                    report_text = Interpretation::Srs2InterpretationService.generate_hetero_report_text(@scale_response.patient, hetero_adapter)
+                  %>
+                  <% if report_text.present? %>
+                    <div class="mb-4">
+                      <h6 class="mb-3">
+                        Heterorrelato <%= index + 1 %>
+                        <% if @hetero_reports.count > 1 %>
+                          - <%= hetero_response.relator_name %> (<%= hetero_response.relator_relationship %>)
+                        <% end %>
+                      </h6>
+                      <p><%= report_text.html_safe %></p>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% elsif @interpretation[:hetero_report].present? %>
+            <!-- Fallback para método tradicional se hetero_reports não estiver disponível -->
+            <div class="mt-4">
+              <h5 class="mb-3">
+                <i class="bi bi-person-check me-2"></i>
+                Heterorrelato
+              </h5>
+              <div>
+                <p><%= @interpretation[:hetero_report].html_safe %></p>
               </div>
             </div>
           <% end %>
+          
+          <div class="py-4">
+            <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
+            <script>
+              <%= @chart_service.chart_js_function.html_safe %>
+            </script>
+          </div>
         </div>
-      <% else %>
-        <div class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Dados de interpretação não disponíveis.
-        </div>
-      <% end %>
-    </div>
-  </div>
 
-  <!-- Resumo da Interpretação -->
-  <div class="card mb-4">
-    <div class="card-header">
-      <h6 class="mb-0">
-        <i class="bi bi-file-text me-2"></i>
-        Resumo da Interpretação
-      </h6>
-    </div>
-    <div class="card-body">
-      <% if interpretation %>
-        <div class="interpretation-content">
-          <%= simple_format(interpretation) %>
-        </div>
-      <% else %>
-        <div class="alert alert-info">
-          <i class="bi bi-info-circle me-2"></i>
-          Interpretação detalhada será gerada em breve.
-        </div>
-      <% end %>
-    </div>
-  </div>
 
-  <!-- Recomendações -->
-  <div class="card mb-4">
-    <div class="card-header">
-      <h6 class="mb-0">
-        <i class="bi bi-lightbulb me-2"></i>
-        Recomendações Clínicas
-      </h6>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-6">
-          <h6>Pontos de Atenção</h6>
-          <ul class="list-unstyled">
-            <% if scale_response_adapter %>
-              <% scale_response_adapter.subscale_domains_with_levels.select { |d| d[:level] != 'normal' }.each do |domain| %>
-                <li class="mb-2">
-                  <i class="bi bi-exclamation-circle text-warning me-2"></i>
-                  <strong><%= domain[:name] %></strong> - <%= domain[:level].capitalize %>
-                </li>
-              <% end %>
-            <% end %>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <h6>Próximos Passos</h6>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <i class="bi bi-check-circle text-success me-2"></i>
-              Revisar resultados com equipe multidisciplinar
-            </li>
-            <li class="mb-2">
-              <i class="bi bi-check-circle text-success me-2"></i>
-              Considerar avaliação complementar se necessário
-            </li>
-            <li class="mb-2">
-              <i class="bi bi-check-circle text-success me-2"></i>
-              Desenvolver plano de intervenção baseado nos resultados
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Gráfico de Comparação -->
-  <% if chart_data && chart_service %>
-    <div class="card mb-4">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="bi bi-bar-chart me-2"></i>
-          Gráfico de Comparação por Domínios
-        </h6>
-      </div>
-      <div class="card-body">
-        <div class="py-4">
-          <%= srs2_comparison_chart(chart_data, height: "500px", max_width: "800px") %>
-          <script>
-            <%= chart_service.chart_js_function.html_safe %>
-          </script>
-        </div>
-      </div>
-    </div>
-  <% end %>
-</div>
