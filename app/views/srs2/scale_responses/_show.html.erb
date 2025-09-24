@@ -57,70 +57,83 @@
           </h4>
         </div>
         <div class="card-body">
-          <div>
-            <!-- interpretacao introducao -->
-            <p><%= @interpretation[:introduction].html_safe %></p>
-          </div>
-          <div class="my-4">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Domínio</th>
-                  <th>Autorrelato</th>
-                  <th>Heterorrelato</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>
-                  <% hetero_domain = @hetero_response&.subscale_domains_with_levels&.find { |d| d[:key] == domain[:key] } %>
+          <% if @interpretation.present? %>
+            <div>
+              <!-- interpretacao introducao -->
+              <p><%= @interpretation[:introduction].html_safe %></p>
+            </div>
+          <% else %>
+            <div class="alert alert-info">
+              <p>Interpretação não disponível para esta escala.</p>
+            </div>
+          <% end %>
+          <% if @scale_response_adapter.present? %>
+            <div class="my-4">
+              <table class="table table-striped">
+                <thead>
                   <tr>
-                    <td><%= domain[:title] %></td>
-                    <td>
-                      <%= domain[:t_score] %> (<%= domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{domain[:level]}" %>)
-                    </td>
-                    <td>
-                      <% if hetero_domain %>
-                        <%= hetero_domain[:t_score] %> (<%= hetero_domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{hetero_domain[:level]}" %>)
-                      <% else %>
-                        -
-                      <% end %>
-                    </td>
+                    <th>Domínio</th>
+                    <th>Autorrelato</th>
+                    <th>Heterorrelato</th>
                   </tr>
-                <% end %>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>
+                    <% hetero_domain = @hetero_response&.subscale_domains_with_levels&.find { |d| d[:key] == domain[:key] } %>
+                    <tr>
+                      <td><%= domain[:title] %></td>
+                      <td>
+                        <%= domain[:t_score] %> (<%= domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{domain[:level]}" %>)
+                      </td>
+                      <td>
+                        <% if hetero_domain %>
+                          <%= hetero_domain[:t_score] %> (<%= hetero_domain[:level] == "normal" ? "sem prejuízo" : "prejuízo #{hetero_domain[:level]}" %>)
+                        <% else %>
+                          -
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% end %>
             <div>
               <p>
                 <i>Nota. SRS-2: >59 normal; 60-65 sintomatologia leve; 66-75 sintomatologia moderada; 76+ sintomatologia grave.</i>
               </p>
             </div>
           </div>
-          <div class="my-4">
-
-            <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>            
-              <% if domain[:level] != "normal" %>
-              <div>
-                <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
-              </div>
-              <% else %>
+          <% if @scale_response_adapter.present? %>
+            <div class="my-4">
+              <% @scale_response_adapter.subscale_domains_with_levels.each do |domain| %>            
+                <% if domain[:level] != "normal" %>
                 <div>
-                  <p><strong><%= domain[:title] %>:</strong> <%= domain[:interpretation]%></p>
+                  <p><strong><%= domain[:title] %>:</strong> <%= domain[:description]%> <%= domain[:interpretation]%></p>
                 </div>
+                <% else %>
+                  <div>
+                    <p><strong><%= domain[:title] %>:</strong> <%= domain[:interpretation]%></p>
+                  </div>
+                <% end %>
               <% end %>
-            <% end %>
+            </div>
+          <% end %>
 
-          <% if @interpretation[:hetero_report].present? %>
+          <% if @interpretation.present? && @interpretation[:hetero_report].present? %>
             <div>
               <p><%= @interpretation[:hetero_report].html_safe %></p>
             </div>
           <% end %>
           
-          <div class="py-4">
-            <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
-            <script>
-              <%= @chart_service.chart_js_function.html_safe %>
-            </script>
-          </div>
+          <% if @chart_service.present? && @chart_data.present? %>
+            <div class="py-4">
+              <%= srs2_comparison_chart(@chart_data, height: "500px", max_width: "800px") %>
+              <script>
+                <%= @chart_service.chart_js_function.html_safe %>
+              </script>
+            </div>
+          <% end %>
         </div>
 
       </div>

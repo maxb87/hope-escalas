@@ -53,4 +53,81 @@ module Srs2ScaleResponse
       errors.add(:relator_relationship, "é obrigatório para formulários de heterorrelato") if relator_relationship.blank?
     end
   end
+
+  # Métodos para obter respostas formatadas para exibição (específico da SRS-2)
+  def formatted_answers
+    return [] unless answers.present? && psychometric_scale.present?
+
+    psychometric_scale.scale_items.ordered.map do |item|
+      answer_key = "item_#{item.item_number}"
+      answer_value = answers[answer_key]
+
+      if answer_value.present?
+        {
+          item_number: item.item_number,
+          question_text: item.question_text,
+          answer_value: answer_value,
+          answer_text: item.options[answer_value.to_s] || "Resposta inválida",
+          item: item
+        }
+      else
+        {
+          item_number: item.item_number,
+          question_text: item.question_text,
+          answer_value: nil,
+          answer_text: "Não respondido",
+          item: item
+        }
+      end
+    end
+  end
+
+  # Obtém apenas as respostas que foram preenchidas
+  def answered_items
+    formatted_answers.select { |item| item[:answer_value].present? }
+  end
+
+  # Obtém respostas não preenchidas
+  def unanswered_items
+    formatted_answers.select { |item| item[:answer_value].blank? }
+  end
+
+  # Métodos de cálculo específicos da SRS-2
+  def calculate_srs2_score
+    self.total_score = answers.values.sum(&:to_i)
+    # Para cálculo simples, usar interpretação genérica
+    # O cálculo correto com T-score é feito em calculate_srs2_score_with_service
+    self.interpretation = "Pontuação total: #{total_score}"
+  end
+
+  # Método para calcular score usando o serviço SRS-2
+  def calculate_srs2_score_with_service
+    # Calcular idade do paciente
+    patient_age = calculate_patient_age
+    # Determinar tipo de escala baseado no código
+    scale_type = psychometric_scale.code == "SRS2SR" ? "self_report" : "parent_report"
+
+    results_hash = Scoring::Srs2.calculate(
+      answers,
+      scale_version: psychometric_scale.version,
+      patient_gender: patient.gender,
+      patient_age: patient_age,
+      scale_type: scale_type,
+      patient: patient  # Passar o objeto paciente
+    )
+    apply_results!(results_hash)
+  end
+
+  private
+
+  def calculate_patient_age
+    return nil unless patient&.birthday
+
+    today = Date.current
+    birthday = patient.birthday
+
+    age = today.year - birthday.year
+    age -= 1 if today < birthday + age.years
+    age
+  end
 end

@@ -1,5 +1,6 @@
 class ScaleResponse < ApplicationRecord
   acts_as_paranoid
+  include Srs2ScaleResponse
 
   belongs_to :scale_request
   belongs_to :patient
@@ -44,99 +45,22 @@ class ScaleResponse < ApplicationRecord
   end
 
 
-  # Check if this is any SRS-2 scale
-  def srs2_scale?
-    [ "SRS2SR", "SRS2HR" ].include?(psychometric_scale.code)
-  end
-
-
-  # Métodos para obter respostas formatadas para exibição
-  def formatted_answers
-    return [] unless answers.present? && psychometric_scale.present?
-
-    psychometric_scale.scale_items.ordered.map do |item|
-      answer_key = "item_#{item.item_number}"
-      answer_value = answers[answer_key]
-
-      if answer_value.present?
-        {
-          item_number: item.item_number,
-          question_text: item.question_text,
-          answer_value: answer_value,
-          answer_text: item.options[answer_value.to_s] || "Resposta inválida",
-          item: item
-        }
-      else
-        {
-          item_number: item.item_number,
-          question_text: item.question_text,
-          answer_value: nil,
-          answer_text: "Não respondido",
-          item: item
-        }
-      end
-    end
-  end
-
-  # Obtém apenas as respostas que foram preenchidas
-  def answered_items
-    formatted_answers.select { |item| item[:answer_value].present? }
-  end
-
-  # Obtém respostas não preenchidas
-  def unanswered_items
-    formatted_answers.select { |item| item[:answer_value].blank? }
-  end
-
-  # SRS-2 score and interpretation
-  def srs2_score
-    return nil unless srs2_scale?
-    total_score
-  end
-
-  def srs2_interpretation
-    return nil unless srs2_scale?
-    interpretation
-  end
 
   def total_score
     results.dig("metrics", "raw_score") || 0
   end
 
-  # Check if this is a hetero-report scale
-  def hetero_report?
-    psychometric_scale.code == "SRS2HR"
-  end
 
   private
 
   def calculate_score
     return unless answers.present? && psychometric_scale.present?
 
-    case psychometric_scale.code
-    when "SRS2SR", "SRS2HR"
-      # Calcular idade do paciente
-      patient_age = calculate_patient_age
-      # Determinar tipo de escala baseado no código
-      scale_type = psychometric_scale.code == "SRS2SR" ? "self_report" : "parent_report"
-
-      results_hash = Scoring::Srs2.calculate(
-        answers,
-        scale_version: psychometric_scale.version,
-        patient_gender: patient.gender,
-        patient_age: patient_age,
-        scale_type: scale_type,
-        patient: patient  # Passar o objeto paciente
-      )
-      apply_results!(results_hash)
+    if srs2_scale?
+      calculate_srs2_score_with_service
     else
       calculate_generic_score
     end
-  end
-
-  def calculate_srs2_score
-    self.total_score = answers.values.sum(&:to_i)
-    self.interpretation = interpret_srs2_score(total_score)
   end
 
   def calculate_generic_score
@@ -156,15 +80,6 @@ class ScaleResponse < ApplicationRecord
     self.computed_at = Time.current
   end
 
-  def interpret_srs2_score(score)
-    case score
-    when 65..90 then "Normal"
-    when 91..120 then "Leve"
-    when 121..150 then "Moderado"
-    when 151..260 then "Severo"
-    else "Pontuação inválida"
-    end
-  end
 
   def set_completed_at
     self.completed_at = Time.current
@@ -200,37 +115,37 @@ class ScaleResponse < ApplicationRecord
       end
     end
 
-    # Estrutura e domínio dos valores
+    # Validações específicas por escala
+    if srs2_scale?
+      validate_srs2_answers
+    else
+      validate_generic_answers
+    end
+  end
+
+  def validate_hetero_report_fields
+    if hetero_report?
+      validate_srs2_hetero_report_fields
+    end
+  end
+
+  private
+
+  def validate_generic_answers
+    # Validação genérica para outras escalas
     answers.each do |item_key, value|
       unless item_key.match?(/\Aitem_\d+\z/)
         errors.add(:answers, I18n.t("scale_responses.errors.invalid_key", key: item_key))
         break
       end
-      # SRS-2 uses 1-4 scale instead of 0-3
-      unless value.to_s.match?(/\A[1-4]\z/)
+      # Validação genérica de valores (pode ser customizada por escala)
+      unless value.to_s.match?(/\A\d+\z/)
         errors.add(:answers, I18n.t("scale_responses.errors.invalid_value", key: item_key, value: value))
         break
       end
     end
   end
 
-  def validate_hetero_report_fields
-    if hetero_report?
-      errors.add(:relator_name, "é obrigatório para formulários de heterorrelato") if relator_name.blank?
-      errors.add(:relator_relationship, "é obrigatório para formulários de heterorrelato") if relator_relationship.blank?
-    end
-  end
-
-  def calculate_patient_age
-    return nil unless patient&.birthday
-
-    today = Date.current
-    birthday = patient.birthday
-
-    age = today.year - birthday.year
-    age -= 1 if today < birthday + age.years
-    age
-  end
 
   def cancel_associated_scale_request
     scale_request.cancel! if scale_request.present?

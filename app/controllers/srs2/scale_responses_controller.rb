@@ -6,6 +6,42 @@ class Srs2::ScaleResponsesController < ApplicationController
 
   def show
     authorize @scale_response
+    
+    # Verificar se a escala suporta interpretação e gerar dados necessários
+    if Interpretation::InterpretationServiceFactory.supports_interpretation?(@scale_response)
+      begin
+        # Gerar interpretação usando o factory
+        interpretation_data = Interpretation::InterpretationServiceFactory.generate_interpretation(@scale_response)
+
+        # Extrair dados para as variáveis de instância
+        @scale_response_adapter = interpretation_data[:scale_response_adapter]
+        @hetero_response = interpretation_data[:hetero_response]
+        @interpretation = interpretation_data[:interpretation]
+        @scale_type = interpretation_data[:scale_type]
+
+        # Gerar dados específicos baseados no tipo de escala
+        generate_scale_specific_data
+
+      rescue Interpretation::InterpretationServiceFactory::UnsupportedScaleError => e
+        # Se houver erro, definir variáveis vazias para evitar erros na view
+        @scale_response_adapter = nil
+        @hetero_response = nil
+        @interpretation = nil
+        @scale_type = nil
+        @chart_service = nil
+        @chart_data = nil
+        @report_info = nil
+      end
+    else
+      # Se não suporta interpretação, definir variáveis vazias
+      @scale_response_adapter = nil
+      @hetero_response = nil
+      @interpretation = nil
+      @scale_type = nil
+      @chart_service = nil
+      @chart_data = nil
+      @report_info = nil
+    end
   end
 
   def new
