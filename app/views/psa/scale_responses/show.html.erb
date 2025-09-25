@@ -24,10 +24,6 @@
               <p><strong>Data de Solicitação:</strong> <%= l(@scale_response.scale_request.requested_at, format: :long) %></p>
               <p><strong>Data de Conclusão:</strong> <%= l(@scale_response.completed_at, format: :long) %></p>
             </div>
-            <div class="col-md-6">
-              <p><strong>Pontuação Total:</strong> <%= @scale_response.total_score %></p>
-              <p><strong>Nível:</strong> <%= @scale_response.results.dig("metrics", "level") || "Não disponível" %></p>
-            </div>
           </div>
         </div>
       </div>
@@ -49,7 +45,6 @@
                     <!-- Tabela de Categorias -->
                     <% if @scale_response.results["category"].present? %>
                       <div class="col-md-6 mb-3">
-                        <h6 class="text-primary mb-3">Categorias</h6>
                         <div class="table-responsive">
                           <table class="table table-sm table-striped">
                             <thead class="table-primary">
@@ -66,7 +61,7 @@
                                     <small class="fw-bold"><%= data["title"] || category.humanize %></small>
                                   </td>
                                   <td class="text-center">
-                                    <span class="badge bg-primary"><%= data["score"] || "N/A" %></span>
+                                    <span><%= data["score"] || "N/A" %></span>
                                   </td>
                                   <td>
                                     <small class="text-muted"><%= data["description"] || data["interpretation"] || "Não disponível" %></small>
@@ -82,7 +77,6 @@
                     <!-- Tabela de Subescalas -->
                     <% if @scale_response.results["subscale"].present? %>
                       <div class="col-md-6 mb-3">
-                        <h6 class="text-success mb-3">Subescalas</h6>
                         <div class="table-responsive">
                           <table class="table table-sm table-striped">
                             <thead class="table-success">
@@ -99,10 +93,10 @@
                                     <small class="fw-bold"><%= subscale %> - <%= data["title"] || get_subscale_title(subscale) %></small>
                                   </td>
                                   <td class="text-center">
-                                    <span class="badge bg-success"><%= data["score"] || "N/A" %></span>
+                                    <span><%= data["score"] || "N/A" %></span>
                                   </td>
                                   <td class="text-center">
-                                    <span class="badge bg-secondary"><%= data["average"] || "N/A" %></span>
+                                    <span><%= data["average"] || "N/A" %></span>
                                   </td>
                                 </tr>
                               <% end %>

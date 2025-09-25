@@ -163,7 +163,7 @@ module Interpretation
       
       # Análise das categorias muito abaixo da média
       if classification["muito_abaixo"].any?
-        analysis_parts << "**Categorias Muito Abaixo da Média:**"
+        analysis_parts << "<strong>Categorias Muito Abaixo da Média:</strong>"
         classification["muito_abaixo"].each do |cat|
           analysis_parts << "• #{cat[:title]}: #{cat[:description]} (Pontuação: #{cat[:score]})"
         end
@@ -172,7 +172,7 @@ module Interpretation
       
       # Análise das categorias abaixo da média
       if classification["abaixo"].any?
-        analysis_parts << "**Categorias Abaixo da Média:**"
+        analysis_parts << "<strong>Categorias Abaixo da Média:</strong>"
         classification["abaixo"].each do |cat|
           analysis_parts << "• #{cat[:title]}: #{cat[:description]} (Pontuação: #{cat[:score]})"
         end
@@ -181,7 +181,7 @@ module Interpretation
       
       # Análise das categorias na média
       if classification["media"].any?
-        analysis_parts << "**Categorias na Média:**"
+        analysis_parts << "<strong>Categorias na Média:</strong>"
         classification["media"].each do |cat|
           analysis_parts << "• #{cat[:title]}: #{cat[:description]} (Pontuação: #{cat[:score]})"
         end
@@ -190,7 +190,7 @@ module Interpretation
       
       # Análise das categorias acima da média
       if classification["acima"].any?
-        analysis_parts << "**Categorias Acima da Média:**"
+        analysis_parts << "<strong>Categorias Acima da Média:</strong>"
         classification["acima"].each do |cat|
           analysis_parts << "• #{cat[:title]}: #{cat[:description]} (Pontuação: #{cat[:score]})"
         end
@@ -199,7 +199,7 @@ module Interpretation
       
       # Análise das categorias muito acima da média
       if classification["muito_acima"].any?
-        analysis_parts << "**Categorias Muito Acima da Média:**"
+        analysis_parts << "<strong>Categorias Muito Acima da Média:</strong>"
         classification["muito_acima"].each do |cat|
           analysis_parts << "• #{cat[:title]}: #{cat[:description]} (Pontuação: #{cat[:score]})"
         end
@@ -218,7 +218,7 @@ module Interpretation
       above_normal = classification["acima"].length + classification["muito_acima"].length
       normal = classification["media"].length
       
-      interpretation = "\n**Interpretação Geral:**\n"
+      interpretation = "\n<strong>Interpretação Geral:</strong>\n"
       
       if below_normal == 0 && above_normal == 0
         interpretation += "Perfil sensorial equilibrado com todas as categorias dentro da normalidade."
@@ -455,23 +455,22 @@ module Interpretation
       
       interpretation = "\n<strong>Interpretação Geral:</strong>\n"
       
-      # Sempre exibir texto sobre altas dificuldades se presentes
-      if high_difficulty > 0
-        interpretation += "Perfil sensorial caracterizado por subescalas de média superior. " \
-                        "Estas características podem indicar necessidade de controle dos estímulos sensoriais associados, " \
-                        "estratégias de modulação ou adaptações nos ambientes.\n\n"
-      end
       
-      # Sempre exibir texto sobre baixas dificuldades se presentes
-      if low_difficulty > 0
-        interpretation += "Algumas áreas abaixo da média da população podem indicar necessidade de estímulos mais intensos para percepção normal. " \
-                        "Estratégias de exposição controlada ou sensibilização podem ser utilizadas. O aumento de estímulos pode ser utilizado para o desenvolvimento da capacidade de processamento sensorial.\n\n"
-      end
       
       # Exibir texto sobre perfil equilibrado apenas quando não há altas ou baixas dificuldades
       if high_difficulty == 0 && low_difficulty == 0
         interpretation += "Todas as subescalas estão dentro da normalidade para a faixa etária do paciente, " \
                         "comparado com o restante da população, indicando um perfil sensorial equilibrado."
+      elsif high_difficulty > low_difficulty
+        interpretation += "Perfil sensorial caracterizado por subescalas de média superior. " \
+                        "Estas características podem indicar necessidade de controle dos estímulos sensoriais associados, " \
+                        "estratégias de modulação ou adaptações nos ambientes."
+      elsif low_difficulty > high_difficulty
+        interpretation += "Algumas áreas abaixo da média da população podem indicar necessidade de estímulos mais intensos para percepção normal. " \
+                        "Estratégias de exposição controlada ou sensibilização podem ser utilizadas. O aumento de estímulos pode ser utilizado para o desenvolvimento da capacidade de processamento sensorial. " \
+      else
+        interpretation += "Perfil sensorial caracterizado por áreas diversas distantes das médias populacionais. Uma análise individual das diferentes subescalas" \
+                        "deve ser empregada para medir a necessidade de intervenção específica."
       end
       
       interpretation
