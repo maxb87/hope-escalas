@@ -1,6 +1,7 @@
 # Rails standard ignores
 ./log/*
 /log/*
+/log/development.log
 /tmp/*
 /tmp/
 /storage/*
