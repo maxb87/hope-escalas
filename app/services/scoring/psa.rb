@@ -67,7 +67,7 @@ module Scoring
 
     # Determina nível de uma categoria específica baseado no score
     def self.determine_category_level(category, score, age)
-      #TODO: implement per category
+      
     end
 
     def self.determine_baixo_registro_level(score, age)
