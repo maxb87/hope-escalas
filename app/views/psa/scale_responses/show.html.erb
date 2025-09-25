@@ -1,135 +1,432 @@
-<% content_for :title, "PSA - Perfil Sensorial do Adulto/Adolescente" %>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h1 class="h3 mb-1">PSA - Perfil Sensorial do Adulto/Adolescente</h1>
-          <p class="text-muted mb-0">
-            <strong>Paciente:</strong> <%= @scale_response.patient.full_name %>
-          </p>
-        </div>
-        <div class="row">
-          <div class="col">
-            <%= link_to "Voltar ao Perfil", patient_path(@scale_response.patient), class: "btn btn-secondary" %>
-          </div>
-          <div class="col">
-            <% if policy(@scale_response).destroy? %>
-              <%= button_to "Descartar Escala", psa_scale_response_path(@scale_response), method: :delete, data: { turbo_confirm: "Tem certeza que deseja descartar esta escala? Esta ação cancelará a solicitação correspondente e não pode ser desfeita." }, class: "btn btn-danger" %>
-            <% end %>
-          </div>
+        <h2><%= @scale_response.psychometric_scale.name %></h2>
+        <div class="d-flex gap-2">
+          <%= link_to "Voltar", scale_requests_path, class: "btn btn-outline-secondary" %>
+          <%= link_to "Excluir", psa_scale_response_path(@scale_response), method: :delete, 
+                      class: "btn btn-outline-danger", 
+                      data: { confirm: "Tem certeza que deseja excluir esta resposta?" } %>
         </div>
       </div>
 
-      <!-- Interpretação PSA -->
-      <div class="row">
-        <div class="col-12">
-          <!-- Resumo Geral -->
-          <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-              <h5 class="card-title mb-0">
-                <i class="bi bi-graph-up me-2"></i>
-                Resumo Geral do PSA
-              </h5>
+      <!-- Informações da Resposta -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Informações da Resposta</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Paciente:</strong> <%= @scale_response.patient.full_name %></p>
+              <p><strong>Idade:</strong> <%= @scale_response.patient.age %> anos (<%= l(@scale_response.patient.birthday, format: :long) %>)</p>
+              <p><strong>Data de Solicitação:</strong> <%= l(@scale_response.scale_request.requested_at, format: :long) %></p>
+              <p><strong>Data de Conclusão:</strong> <%= l(@scale_response.completed_at, format: :long) %></p>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <h6>Pontuação Total</h6>
-                  <p class="h4 text-primary"><%= @scale_response.total_score %> pontos</p>
-                </div>
-                <div class="col-md-6">
-                  <h6>Nível Geral</h6>
-                  <% if @scale_response_adapter %>
-                    <span class="badge bg-<%= @scale_response_adapter.level_color(@scale_response_adapter.overall_level) %> fs-6">
-                      <%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level) %>
-                    </span>
-                  <% else %>
-                    <span class="badge bg-secondary fs-6">Nível não determinado</span>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-
-       <!-- Interpretação dos Resultados -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              <h5 class="card-title mb-0">
-                <i class="bi bi-lightbulb me-2"></i>
-                Interpretação dos Resultados
-              </h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-4">
-                <h6>Introdução</h6>
-                <p >
-                  O PSA - Perfil Sensorial do Adulto/Adolescente foi aplicado em <strong><%= @scale_response.patient.full_name %></strong> 
-                  e revelou um perfil sensorial com <strong><%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level).downcase %></strong>. 
-                  A pontuação total de <strong><%= @scale_response_adapter.total_score %> pontos</strong> 
-                  indica características específicas no processamento de informações sensoriais que podem 
-                  influenciar o funcionamento diário e a participação em atividades.
-                </p>
-              </div>
-
-              <div class="mb-4">
-                <h6>Análise das Categorias</h6>
-                <p class="text-muted">
-                  <%= @scale_response_adapter.overall_interpretation %>
-                </p>
-              </div>
-
-              <% if @scale_response_adapter.recommendations.any? %>
-                <div class="mb-4">
-                  <h6>Recomendações</h6>
-                  <ol class="text-muted">
-                    <% @scale_response_adapter.recommendations.each do |recommendation| %>
-                      <li><%= recommendation %></li>
-                    <% end %>
-                  </ol>
-                </div>
-              <% end %>
+            <div class="col-md-6">
+              <p><strong>Pontuação Total:</strong> <%= @scale_response.total_score %></p>
+              <p><strong>Nível:</strong> <%= @scale_response.results.dig("metrics", "level") || "Não disponível" %></p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Seção de Respostas do Paciente -->
-      <div class="mt-4">
-        <div class="accordion" id="patientResponsesAccordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="patientResponsesHeader">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#patientResponsesCollapse" aria-expanded="false" aria-controls="patientResponsesCollapse">
-                <i class="bi bi-list-ul me-2"></i>
-                <h3>Respostas do Paciente <span class="text-muted">(Clique para expandir)</span></h3>
-              </button>
-            </h2>
-            <div id="patientResponsesCollapse" class="accordion-collapse collapse" aria-labelledby="patientResponsesHeader" data-bs-parent="#patientResponsesAccordion">
-              <div class="accordion-body">
-                <% if @scale_response.answers.present? %>
+    
+      <!-- Resultados -->
+      <% if @scale_response.results.present? %>
+        <div class="card mb-4">
+          <div class="accordion" id="resultsAccordion">
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="resultsHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#resultsCollapse" aria-expanded="false" aria-controls="resultsCollapse">
+                  <i class="bi bi-graph-up me-2"></i><h5>Resultados da Escala PSA</h5>
+                </button>
+              </h5>
+              <div id="resultsCollapse" class="accordion-collapse collapse" aria-labelledby="resultsHeading" data-bs-parent="#resultsAccordion">
+                <div class="accordion-body">
                   <div class="row">
-                    <% @scale_response.answered_items.each do |item| %>
-                      <div class="col-12 mb-3">
-                        <div class="border rounded p-3 bg-light">
-                          <p class="mb-2"><strong><%= item[:item_number] %>. <%= item[:question_text] %></strong></p>
-                          <div class="alert alert-success mb-0">
-                            <strong> Resposta:</strong> <%= item[:answer_value] %> — <%= item[:answer_text] %>
-                          </div>
+                    <!-- Tabela de Categorias -->
+                    <% if @scale_response.results["category"].present? %>
+                      <div class="col-md-6 mb-3">
+                        <h6 class="text-primary mb-3">Categorias</h6>
+                        <div class="table-responsive">
+                          <table class="table table-sm table-striped">
+                            <thead class="table-primary">
+                              <tr>
+                                <th>Categoria</th>
+                                <th class="text-center">Escore</th>
+                                <th>Nível</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% @scale_response.results["category"].each do |category, data| %>
+                                <tr>
+                                  <td>
+                                    <small class="fw-bold"><%= data["title"] || category.humanize %></small>
+                                  </td>
+                                  <td class="text-center">
+                                    <span class="badge bg-primary"><%= data["score"] || "N/A" %></span>
+                                  </td>
+                                  <td>
+                                    <small class="text-muted"><%= data["description"] || data["interpretation"] || "Não disponível" %></small>
+                                  </td>
+                                </tr>
+                              <% end %>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    <% end %>
+
+                    <!-- Tabela de Subescalas -->
+                    <% if @scale_response.results["subscale"].present? %>
+                      <div class="col-md-6 mb-3">
+                        <h6 class="text-success mb-3">Subescalas</h6>
+                        <div class="table-responsive">
+                          <table class="table table-sm table-striped">
+                            <thead class="table-success">
+                              <tr>
+                                <th>Subescala</th>
+                                <th class="text-center">Escore</th>
+                                <th class="text-center">Média</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% @scale_response.results["subscale"].each do |subscale, data| %>
+                                <tr>
+                                  <td>
+                                    <small class="fw-bold"><%= subscale %> - <%= data["title"] || get_subscale_title(subscale) %></small>
+                                  </td>
+                                  <td class="text-center">
+                                    <span class="badge bg-success"><%= data["score"] || "N/A" %></span>
+                                  </td>
+                                  <td class="text-center">
+                                    <span class="badge bg-secondary"><%= data["average"] || "N/A" %></span>
+                                  </td>
+                                </tr>
+                              <% end %>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     <% end %>
                   </div>
-                <% else %>
-                  <div class="alert alert-warning">
-                    <strong>Nenhuma resposta encontrada</strong> para esta escala.
-                  </div>
-                <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
+
+
+       <!-- Interpretação -->
+       <div class="card mb-4">
+         <div class="accordion" id="interpretationAccordion">
+           <div class="accordion-item">
+             <h2 class="accordion-header" id="interpretationHeading">
+               <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#interpretationCollapse" aria-expanded="false" aria-controls="interpretationCollapse">
+                 <i class="bi bi-file-text me-2"></i><h5>Interpretação dos Resultados</h5>
+               </button>
+             </h2>
+             <div id="interpretationCollapse" class="accordion-collapse collapse" aria-labelledby="interpretationHeading" data-bs-parent="#interpretationAccordion">
+               <div class="accordion-body">
+                 <% if @scale_response.results.present? %>
+                   <% 
+                     # Gerar interpretações apenas com métodos que existem
+                     categories_analysis = Interpretation::PsaInterpretationService.generate_categories_analysis(@scale_response.results)
+                     
+                     # Calcular idade do paciente para análise de subescalas
+                     patient_age = nil
+                     if @scale_response.patient&.birthday
+                       today = Date.current
+                       birthday = @scale_response.patient.birthday
+                       patient_age = today.year - birthday.year
+                       patient_age -= 1 if today < birthday + patient_age.years
+                     end
+                     
+                     subscales_analysis = Interpretation::PsaInterpretationService.generate_subscales_analysis(@scale_response.results, patient_age)
+                     
+                     # Gerar interpretação geral das subescalas
+                     subscales_classification = Interpretation::PsaInterpretationService.classify_subscales_by_level_with_age(@scale_response.results["subscale"] || @scale_response.results["subscales"], patient_age)
+                     subscales_overall_interpretation = Interpretation::PsaInterpretationService.generate_subscales_overall_interpretation(subscales_classification)
+                   %>
+                   
+                   <!-- Análise das Categorias -->
+                   <div class="card mb-4">
+                     <div class="card-header">
+                       <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Análise das Categorias</h6>
+                     </div>
+                     <div class="card-body">
+                       <div class="text-justify">
+                         <%= simple_format(categories_analysis) %>
+                       </div>
+                     </div>
+                   </div>
+                   
+                   <!-- Análise das Subescalas -->
+                   <div class="card mb-4">
+                     <div class="card-header">
+                       <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Análise das Subescalas</h6>
+                     </div>
+                     <div class="card-body">
+                       <div class="text-justify">
+                         <%= simple_format(subscales_analysis) %>
+                 
+                       </div>
+                     </div>
+                   </div>
+                 <% else %>
+                   <div class="alert alert-info mb-4">
+                     <i class="bi bi-info-circle me-2"></i>
+                     <strong>Interpretação em Desenvolvimento</strong>
+                     <p class="mb-0 mt-2">A interpretação detalhada dos resultados será implementada em uma próxima versão do sistema.</p>
+                   </div>
+                 <% end %>
+                 
+                 <div class="row">
+                   <div class="col-md-6 mb-4">
+                     <%= psa_subscales_radar_chart(@scale_response) %>
+                   </div>
+                   <div class="col-md-6 mb-4">
+                     <%= psa_categories_boxplot_chart(@scale_response) %>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       <!-- Comentários por Subescala -->
+       <% if @scale_response.psa_scale? && @scale_response.has_subscale_comments? %>
+         <div class="card mb-4">
+           <div class="accordion" id="commentsAccordion">
+             <div class="accordion-item">
+               <h2 class="accordion-header" id="commentsHeading">
+                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#commentsCollapse" aria-expanded="false" aria-controls="commentsCollapse">
+                   <i class="bi bi-chat-text me-2"></i>Comentários por Subescala
+                 </button>
+               </h2>
+               <div id="commentsCollapse" class="accordion-collapse collapse" aria-labelledby="commentsHeading" data-bs-parent="#commentsAccordion">
+                 <div class="accordion-body">
+                   <% if @scale_response.formatted_subscale_comments.present? %>
+                     <% @scale_response.formatted_subscale_comments.each do |subscale_comment| %>
+                       <% if subscale_comment[:comment].present? %>
+                         <div class="mb-3">
+                           <h6 class="text-primary">
+                             Subescala <%= subscale_comment[:subscale] %> - <%= get_subscale_title(subscale_comment[:subscale]) %>
+                           </h6>
+                           <p class="mb-0"><%= subscale_comment[:comment] %></p>
+                         </div>
+                       <% end %>
+                     <% end %>
+                   <% else %>
+                     <p class="text-muted">Nenhum comentário disponível.</p>
+                   <% end %>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       <% end %>
+
+       <!-- Respostas Detalhadas -->
+       <div class="card">
+         <div class="card-header">
+           <h5 class="mb-0">Respostas Detalhadas</h5>
+         </div>
+         <div class="card-body">
+           <% if @scale_response.items_by_subscale.present? %>
+             <div class="accordion" id="subscalesAccordion">
+               <% @scale_response.items_by_subscale.each_with_index do |(subscale, items), index| %>
+                 <div class="accordion-item">
+                   <h2 class="accordion-header" id="heading<%= subscale %>">
+                     <button class="accordion-button collapsed" 
+                             type="button" 
+                             data-bs-toggle="collapse" 
+                             data-bs-target="#collapse<%= subscale %>" 
+                             aria-expanded="false" 
+                             aria-controls="collapse<%= subscale %>">
+                       <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                         <div>
+                           <strong>Subescala <%= subscale %></strong> - <%= get_subscale_title(subscale) %>
+                         </div>
+                         <div class="d-flex gap-2">
+                           <% if @scale_response.results.present? && @scale_response.results["subscale"].present? && @scale_response.results["subscale"][subscale].present? %>
+                             <span class="badge bg-success">
+                               Score: <%= @scale_response.results["subscale"][subscale]["score"] %>
+                             </span>
+                           <% end %>
+                           <span class="badge bg-primary">
+                             <%= items.count %> itens
+                           </span>
+                           <% if @scale_response.psa_scale? && @scale_response.get_subscale_comment(subscale).present? %>
+                             <span class="badge bg-info">
+                               <i class="bi bi-chat-text me-1"></i>
+                               Comentário
+                             </span>
+                           <% end %>
+                         </div>
+                       </div>
+                     </button>
+                   </h2>
+                   <div id="collapse<%= subscale %>" 
+                        class="accordion-collapse collapse" 
+                        aria-labelledby="heading<%= subscale %>" 
+                        data-bs-parent="#subscalesAccordion">
+                     <div class="accordion-body">
+                       <% if items.present? %>
+                         <div class="list-group">
+                           <% items.each do |item| %>
+                             <div class="list-group-item mb-3">
+                               
+                               <p class="mb-3"><strong><%= item.question_text %></strong></p>
+                               
+                               <div class="row">
+                                 <div class="col-md-8">
+                                   <% if item.options.present? %>
+                                     <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+                                       <div class="form-check">
+                                         <input type="radio" class="form-check-input" disabled 
+                                                <%= 'checked' if @scale_response.answers["item_#{item.item_number}"] == score.to_s %>>
+                                         <label class="form-check-label">
+                                           <%= score %> — <%= label %>
+                                         </label>
+                                       </div>
+                                     <% end %>
+                                   <% else %>
+                                     <p class="text-muted">Opções não disponíveis para este item.</p>
+                                   <% end %>
+                                 </div>
+                                 
+                               </div>
+                             </div>
+                           <% end %>
+                         </div>
+                       <% else %>
+                         <div class="alert alert-warning">
+                           <p>Nenhum item disponível para esta subescala.</p>
+                         </div>
+                       <% end %>
+                       
+                       <!-- Comentário da subescala se existir -->
+                       <% if @scale_response.psa_scale? && @scale_response.get_subscale_comment(subscale).present? %>
+                         <div class="mt-4">
+                           <div class="alert alert-info">
+                             <h6 class="alert-heading">
+                               <i class="bi bi-chat-text me-2"></i>
+                               Comentário da Subescala <%= subscale %>
+                             </h6>
+                             <p class="mb-0"><%= @scale_response.get_subscale_comment(subscale) %></p>
+                           </div>
+                         </div>
+                       <% end %>
+                       
+                       <!-- Informações da subescala -->
+                       <% if @scale_response.results.present? && @scale_response.results["subscale"].present? && @scale_response.results["subscale"][subscale].present? %>
+                         <div class="mt-4">
+                           <div class="card">
+                             <div class="card-header">
+                               <h6 class="mb-0">Informações da Subescala</h6>
+                             </div>
+                             <div class="card-body">
+                               <div class="row">
+                                 <div class="col-md-6">
+                                   <p><strong>Score Total:</strong> <%= @scale_response.results["subscale"][subscale]["score"] %></p>
+                                 </div>
+                                 <div class="col-md-6">
+                                   <p><strong>Média:</strong> <%= @scale_response.results["subscale"][subscale]["average"] %></p>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                       <% end %>
+                     </div>
+                   </div>
+                 </div>
+               <% end %>
+             </div>
+           <% else %>
+             <div class="alert alert-warning">
+               <p>Nenhuma subescala disponível para esta escala.</p>
+             </div>
+           <% end %>
+         </div>
+       </div>
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de Subescalas
+    const subscalesCanvas = document.getElementById('psaSubscalesChart');
+    if (subscalesCanvas) {
+      const subscalesData = subscalesCanvas.dataset.chartData;
+      const subscalesOptions = subscalesCanvas.dataset.chartOptions;
+      
+      if (subscalesData) {
+        const chartData = JSON.parse(subscalesData);
+        const options = JSON.parse(subscalesOptions);
+        
+        new Chart(subscalesCanvas, {
+          type: 'radar',
+          data: {
+            labels: chartData.patient.labels,
+            datasets: [
+              chartData.patient.datasets[0],
+              chartData.reference.datasets[0]
+            ]
+          },
+          options: options
+        });
+      }
+    }
+
+    // Gráfico de Categorias (Barras Coloridas + Linha)
+    const categoriesCanvas = document.getElementById('psaCategoriesBoxplot');
+    if (categoriesCanvas) {
+      const categoriesData = categoriesCanvas.dataset.chartData;
+      const categoriesOptions = categoriesCanvas.dataset.chartOptions;
+      
+      if (categoriesData) {
+        const chartData = JSON.parse(categoriesData);
+        const options = JSON.parse(categoriesOptions);
+        
+        new Chart(categoriesCanvas, {
+          type: 'bar',
+          data: {
+            labels: chartData.labels,
+            datasets: chartData.datasets
+          },
+          options: {
+            ...options,
+            plugins: {
+              ...options.plugins,
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                  title: function(context) { 
+                    return context[0].label; 
+                  },
+                  label: function(context) { 
+                    if (context.dataset.label === 'Score do Paciente') {
+                      return 'Score do Paciente: ' + context.parsed.y;
+                    } else {
+                      return context.dataset.label + ': ' + context.parsed.y;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  });
+</script>

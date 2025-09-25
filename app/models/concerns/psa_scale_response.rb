@@ -48,10 +48,19 @@ module PsaScaleResponse
 
   def items_by_subscale
     return {} unless psychometric_scale.present?
+    
+    subscale_ranges = {
+      'A' => (1..8).to_a,      # Processamento Tátil/Olfativo
+      'B' => (9..16).to_a,    # Processamento Vestibular/Proprioceptivo
+      'C' => (17..26).to_a,   # Processamento Visual
+      'D' => (27..39).to_a,   # Processamento Tátil
+      'E' => (40..49).to_a,   # Nível de Atividade
+      'F' => (50..60).to_a    # Processamento Auditivo
+    }
+    
     items = {}
-    psychometric_scale.scale_items.each do |item|
-      # TODO: Implementar lógica de agrupamento por subescala aqui
-      # Por enquanto, retornar hash vazio
+    subscale_ranges.each do |subscale, item_numbers|
+      items[subscale] = psychometric_scale.scale_items.where(item_number: item_numbers).ordered
     end
     items
   end

@@ -27,6 +27,7 @@ module Interpretation
     }.freeze
 
     # Retorna descrição da interpretação baseada no nível
+    # TODO: considerar remover este método, informação duplicada em generate_introduction_text
     def get_interpretation_description(patient, self_report)
       # Determinar o nível de prejuízo baseado no T-Score total
       t_score = self_report.respond_to?(:t_total) ? self_report.t_total : self_report.dig("metrics", "t_score")

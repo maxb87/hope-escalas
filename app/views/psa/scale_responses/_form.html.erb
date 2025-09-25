@@ -1,115 +1,151 @@
-<% 
-  # Mapeamento das categorias PSA
-  psa_categories = {
-    'A' => { name: 'Processamento Tátil/Olfativo', items: (1..8).to_a, color: 'primary' },
-    'B' => { name: 'Processamento Vestibular/Proprioceptivo', items: (9..16).to_a, color: 'success' },
-    'C' => { name: 'Processamento Visual', items: (17..26).to_a, color: 'info' },
-    'D' => { name: 'Processamento Tátil', items: (27..39).to_a, color: 'warning' },
-    'E' => { name: 'Nível de Atividade', items: (40..49).to_a, color: 'danger' },
-    'F' => { name: 'Processamento Auditivo', items: (50..60).to_a, color: 'secondary' }
-  }
-%>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="bi bi-info-circle me-2"></i>
+      Instruções para Preenchimento - PSA
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-warning mb-3">
+      <h3 class="mb-2"><strong>Em cada questão, selecione a opção que melhor descreve seu comportamento nos últimos seis meses.</strong></h3>
+      <h3 class="mb-0"><strong>Responda todas as 60 questões em um único acesso. Selecione uma opção de 1 a 5 para cada pergunta.</strong></h3>
+    </div>
+  </div>
+</div>
 
-<div class="psa-form">
-  <!-- Formulário organizado por categorias -->
-  <% psa_categories.each do |category_code, category_info| %>
-    <div class="card mb-4">
-      <div class="card-header bg-<%= category_info[:color] %> text-white">
-        <h5 class="card-title mb-0">
-          <i class="bi bi-tag me-2"></i>
-          Categoria <%= category_code %>: <%= category_info[:name] %>
-        </h5>
-        <small>
-          Itens <%= category_info[:items].first %>-<%= category_info[:items].last %> 
-          (<%= category_info[:items].count %> questões)
-        </small>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-bordered mb-0">
-            <thead class="table-light">
-              <tr>
-                <th style="width: 5%;" class="text-center">Item</th>
-                <th style="width: 50%;">Pergunta</th>
-                <th style="width: 9%;" class="text-center">1</th>
-                <th style="width: 9%;" class="text-center">2</th>
-                <th style="width: 9%;" class="text-center">3</th>
-                <th style="width: 9%;" class="text-center">4</th>
-                <th style="width: 9%;" class="text-center">5</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% scale_items.select { |item| category_info[:items].include?(item.item_number) }.each do |item| %>
-                <tr>
-                  <td class="text-center fw-bold"><%= item.item_number %></td>
-                  <td class="align-middle">
-                    <%= item.question_text %>
-                  </td>
-                  <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
-                    <td class="text-center">
-                      <div class="form-check d-flex justify-content-start">
-                        <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false,
-                            class: "form-check-input", 
-                            id: "item_#{item.item_number}_#{score}" %>
-                      </div>
-                    </td>
-                  <% end %>
-                </tr>
+<% if current_user.email == "admin@admin.com" %>
+  <div class="mb-3">
+    <button type="button" class="btn btn-warning btn-sm" onclick="fillRandomAnswers()">
+      <i class="bi bi-shuffle"></i> Preenchimento Aleatório (Teste)
+    </button>
+  </div>
+<% end %>
+
+<%= form_with model: scale_response, url: psa_scale_responses_path, method: :post, data: { turbo: false } do |f| %>
+  <% if scale_response.errors.any? %>
+    <div class="alert alert-danger" data-turbo-cache="false">
+      <h4 class="mb-2"><%= t('errors.messages.not_saved', count: scale_response.errors.count, resource: scale_response.class.model_name.human.downcase) %></h4>
+      <ul class="mb-0">
+        <% scale_response.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%= hidden_field_tag :scale_request_id, @scale_request.id %>
+  
+  <!-- Formulário com subescalas (para PSA) -->
+  <% if scale_response.items_by_subscale.present? %>
+    <% scale_response.items_by_subscale.each do |subscale, items| %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></h5>
+        </div>
+        <div class="card-body">
+          <% if items.present? %>
+            <div class="list-group">
+              <% items.each do |item| %>
+                <div class="list-group-item mb-3">
+                  <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
+                  <div>
+                    <% if item.options.present? %>
+                      <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+                        <div class="form-check">
+                          <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
+                          <label class="form-check-label">
+                            <%= score %> — <%= label %>
+                          </label>
+                        </div>
+                      <% end %>
+                    <% else %>
+                      <p class="text-muted">Opções não disponíveis para este item.</p>
+                    <% end %>
+                  </div>
+                </div>
               <% end %>
-            </tbody>
-          </table>
+            </div>
+          <% else %>
+            <p class="text-muted">Nenhum item disponível para esta subescala.</p>
+          <% end %>
+          
+          <!-- Campo de comentários para a subescala -->
+          <div class="mt-4">
+            <div class="mb-3">
+              <label for="subscale_comment_<%= subscale %>" class="form-label">
+                <strong>Comentários sobre a Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></strong>
+                <small class="text-muted">(Opcional - Adicione observações relevantes sobre esta subescala)</small>
+              </label>
+              <%= text_area_tag "scale_response[answers][subscale_comments][#{subscale}]", 
+                  scale_response.get_subscale_comment(subscale), 
+                  class: "form-control", 
+                  id: "subscale_comment_#{subscale}",
+                  rows: 3,
+                  placeholder: "Digite aqui suas observações sobre esta subescala..." %>
+            </div>
+          </div>
         </div>
       </div>
+    <% end %>
+  <% else %>
+    <div class="alert alert-warning">
+      <p>Nenhuma subescala disponível para esta escala.</p>
     </div>
   <% end %>
 
-</div>
+  <div class="mt-4">
+    <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>
+  </div>
+<% end %>
 
-<style>
-/* Estilos para a tabela PSA */
-.psa-form .table {
-  font-size: 0.9rem;
-}
-
-.psa-form .table th {
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.75rem 0.5rem;
-}
-
-.psa-form .table td {
-  padding: 0.75rem 0.5rem;
-  vertical-align: middle;
-}
-
-.psa-form .form-check-input {
-  margin: 0;
-  transform: scale(1.1);
-}
-
-.psa-form .table tbody tr:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-/* Responsividade para tabelas */
-@media (max-width: 768px) {
-  .psa-form .table {
-    font-size: 0.8rem;
-  }
+<script>
+function fillRandomAnswers() {
+  // Preencher todas as respostas aleatoriamente
+  const radioButtons = document.querySelectorAll("input[type='radio'][name*='scale_response[answers]']");
   
-  .psa-form .table th,
-  .psa-form .table td {
-    padding: 0.5rem 0.25rem;
-  }
+  // Agrupar por item
+  const items = {};
+  radioButtons.forEach(radio => {
+    const name = radio.name;
+    if (!items[name]) items[name] = [];
+    items[name].push(radio);
+  });
   
-  .psa-form .table th:nth-child(3),
-  .psa-form .table th:nth-child(4),
-  .psa-form .table th:nth-child(5),
-  .psa-form .table th:nth-child(6),
-  .psa-form .table th:nth-child(7) {
-    font-size: 0.7rem;
-  }
+  // Selecionar uma opção aleatória para cada item
+  Object.values(items).forEach(itemRadios => {
+    const randomIndex = Math.floor(Math.random() * itemRadios.length);
+    itemRadios[randomIndex].checked = true;
+  });
+  
+  // Preencher comentários aleatórios
+  const commentFields = document.querySelectorAll("textarea[name*='scale_response[answers][subscale_comments]']");
+  const sampleComments = [
+    "Observações importantes sobre esta subescala.",
+    "Comportamento típico observado nesta área.",
+    "Variações significativas no período avaliado.",
+    "Sem observações especiais nesta subescala."
+  ];
+  
+  commentFields.forEach(field => {
+    const randomComment = sampleComments[Math.floor(Math.random() * sampleComments.length)];
+    field.value = randomComment;
+  });
+  
+  alert("Formulário preenchido aleatoriamente!");
 }
+</script>
 
-</style>
-
+<% content_for :head do %>
+  <script>
+    function get_subscale_title(subscale) {
+      const titles = {
+        'A': 'Processamento Tátil/Olfativo',
+        'B': 'Processamento Vestibular/Proprioceptivo',
+        'C': 'Processamento Visual',
+        'D': 'Processamento Tátil',
+        'E': 'Nível de Atividade',
+        'F': 'Processamento Auditivo'
+      };
+      return titles[subscale] || subscale;
+    }
+  </script>
+<% end %>

@@ -53,6 +53,54 @@ module ChartsHelper
     end
   end
 
+  # Gera o HTML para o gráfico de radar das subescalas PSA
+  def psa_subscales_radar_chart(scale_response, options = {})
+    chart_data = psa_subscales_chart_data(scale_response)
+    return content_tag(:p, "Dados das subescalas não disponíveis.", class: "text-muted") if chart_data.empty?
+
+    container_id = options[:id] || "psaSubscalesChart"
+    height = options[:height] || "400px"
+    max_width = options[:max_width] || nil
+
+    style = "height: #{height};"
+    style += " max-width: #{max_width};" if max_width
+
+    content_tag :div, class: "psa-chart-container", style: style do
+      content_tag :canvas, "", 
+        id: container_id,
+        width: "400", 
+        height: "400",
+        data: {
+          chart_data: chart_data.to_json,
+          chart_options: psa_radar_chart_options("Perfil Sensorial - Subescalas").to_json
+        }
+    end
+  end
+
+  # Gera o HTML para o gráfico de categorias PSA (box plot simulado)
+  def psa_categories_boxplot_chart(scale_response, options = {})
+    chart_data = psa_categories_boxplot_data(scale_response)
+    return content_tag(:p, "Dados das categorias não disponíveis.", class: "text-muted") if chart_data.empty?
+
+    container_id = options[:id] || "psaCategoriesBoxplot"
+    height = options[:height] || "400px"
+    max_width = options[:max_width] || nil
+
+    style = "height: #{height};"
+    style += " max-width: #{max_width};" if max_width
+
+    content_tag :div, class: "psa-chart-container", style: style do
+      content_tag :canvas, "", 
+        id: container_id,
+        width: "600", 
+        height: "400",
+        data: {
+          chart_data: chart_data.to_json,
+          chart_options: psa_boxplot_chart_options("Perfil Sensorial - Categorias (Box Plot)").to_json
+        }
+    end
+  end
+
   private
 
   def self_report_info_section(self_report_info)

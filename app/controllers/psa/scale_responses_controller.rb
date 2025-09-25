@@ -156,7 +156,7 @@ class Psa::ScaleResponsesController < ApplicationController
   end
 
   def scale_response_params
-    # Permitir respostas para todos os itens (item_1, item_2, etc.)
+    # Permitir respostas para todos os itens (item_1, item_2, etc.) e comentários por subescala
     # Quando o usuário envia tudo em branco, não vem a chave :scale_response.
     if params[:scale_response].present?
       permitted_params = params.require(:scale_response).permit(
@@ -167,11 +167,23 @@ class Psa::ScaleResponsesController < ApplicationController
       # Converter answers para o formato esperado se necessário
       if permitted_params[:answers].present?
         answers = {}
+        subscale_comments = {}
+        
         permitted_params[:answers].each do |key, value|
           if key.match?(/\Aitem_\d+\z/) && value.present?
             answers[key] = value.to_s  # Manter como string para validação posterior
+          elsif key == "subscale_comments" && value.is_a?(Hash)
+            # Processar comentários por subescala
+            value.each do |subscale, comment|
+              if comment.present?
+                subscale_comments[subscale.to_s] = comment.to_s
+              end
+            end
           end
         end
+        
+        # Adicionar comentários por subescala se existirem
+        answers["subscale_comments"] = subscale_comments if subscale_comments.any?
         permitted_params[:answers] = answers
       else
         permitted_params[:answers] = {}
