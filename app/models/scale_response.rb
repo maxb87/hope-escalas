@@ -1,7 +1,8 @@
 class ScaleResponse < ApplicationRecord
-  acts_as_paranoid
   include Srs2ScaleResponse
   include PsaScaleResponse
+
+  acts_as_paranoid
 
   belongs_to :scale_request
   belongs_to :patient
@@ -24,7 +25,7 @@ class ScaleResponse < ApplicationRecord
 
 
   def answered_items_count
-    answers.keys.count
+    psychometric_scale.answers.keys.count
   end
 
   def total_items_count

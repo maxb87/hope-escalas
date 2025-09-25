@@ -244,9 +244,8 @@ module Scoring
       result = {}
       category_scores.each do |key, score|
         result[category_names[key]] = {
-          "raw_score" => score,
-          "average_score" => average_score,
-          "interpretation" => get_interpretation_text(category_levels[key]),
+          "total_score" => score,
+          "description" => get_category_description(key, category_levels[key], patient.age)
         }
       end
       result
@@ -277,30 +276,8 @@ module Scoring
       result
     end
 
-    # Constrói hash das categorias com informações detalhadas
-    def self.build_categories_hash(category_scores, category_levels)
-      category_names = {
-        'A' => 'Processamento Tátil/Olfativo',
-        'B' => 'Processamento Vestibular/Proprioceptivo', 
-        'C' => 'Processamento Visual',
-        'D' => 'Processamento Tátil',
-        'E' => 'Nível de Atividade',
-        'F' => 'Processamento Auditivo'
-      }
-
-      result = {}
-      category_scores.each do |key, score|
-        items_count = get_category_items_count(key)
-        average_score = items_count > 0 ? (score.to_f / items_count).round(2) : 0.0
-        
-        result[key] = {
-          "total" => score,
-          "average" => average_score,
-          "interpretation" => get_interpretation_text(category_levels[key]),
-        }
-      end
-      result
-    end
+    # TODO: Constrói hash das sub-escalas com informações detalhadas
+    
 
     # Converte nível para texto de interpretação
     def self.get_interpretation_text(level)

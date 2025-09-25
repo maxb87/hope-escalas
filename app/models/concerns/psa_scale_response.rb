@@ -19,6 +19,43 @@ module PsaScaleResponse
     interpretation
   end
 
+  def subscale_comments
+    answers["subscale_comments"] || {}
+  end
+
+  def set_subscale_comment(subscale, comment)
+    self.answers = answers.merge("subscale_comments" => (subscale_comments.merge(subscale.to_s => comment)))
+  end
+
+  def get_subscale_comment(subscale)
+    subscale_comments[subscale.to_s]
+  end
+
+  def has_subscale_comments?
+    subscale_comments.present? && subscale_comments.values.any?(&:present?)
+  end
+
+  def formatted_subscale_comments
+    return [] unless has_subscale_comments?
+
+    subscale_comments.map do |subscale, comment|
+      {
+        subscale: subscale,
+        comment: comment,
+      }
+    end.sort_by { |comment| comment[:subscale] }
+  end
+
+  def items_by_subscale
+    return {} unless psychometric_scale.present?
+    items = {}
+    psychometric_scale.scale_items.each do |item|
+      # TODO: Implementar lógica de agrupamento por subescala aqui
+      # Por enquanto, retornar hash vazio
+    end
+    items
+  end
+
   # Validação específica para PSA (escala 1-5)
   def validate_psa_answers
     return unless psa_scale?
