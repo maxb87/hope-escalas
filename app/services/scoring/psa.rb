@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# reference: https://www.studocu.com/pt-br/document/instituto-de-pos-graduacao-e-graduacao/neuropsicologia/perfil-sensorial-do-adulto-adolescente/95684872
 
 module Scoring
   class Psa
@@ -30,12 +31,22 @@ module Scoring
     # Calcula scores para cada categoria PSA
     def self.calculate_category_scores(answers)
       {
-        'A' => calculate_category_raw(answers, (1..8).to_a),      # Processamento Tátil/Olfativo
-        'B' => calculate_category_raw(answers, (9..16).to_a),    # Processamento Vestibular/Proprioceptivo
-        'C' => calculate_category_raw(answers, (17..26).to_a),   # Processamento Visual
-        'D' => calculate_category_raw(answers, (27..39).to_a),    # Processamento Tátil
-        'E' => calculate_category_raw(answers, (40..49).to_a),    # Nível de Atividade
-        'F' => calculate_category_raw(answers, (50..60).to_a)    # Processamento Auditivo
+        'baixo_registro' => calculate_category_raw(answers, [3,6,12,15,21,23,36,37,39,41,44,45,52,55,59]),      # Processamento Tátil/Olfativo
+        'procura_sensacao'calculate_category_raw(answers, [2,4,8,10,14,17,19,28,30,32,40,42,47,50,58]), # Processamento Vestibular/Proprioceptivo
+        'sensibilidade_sensorial' => calculate_category_raw(answers, [7,9,13,16,20,22,25,27,31,33,34,48,51,54,60]), # Processamento Visual
+        'evita_sensacao' => calculate_category_raw(answers, [1,5,11,18,24,26,29,35,38,43,46,49,53,56,57]),    # Processamento Tátil  
+      }
+    end
+    
+
+    def self.calculate_subscale_scores(answers)
+      {
+        'A' => calculate_subscale_raw(answers, (1..8).to_a),      # Processamento Tátil/Olfativo
+        'B' => calculate_subscale_raw(answers, (9..16).to_a), # Processamento Vestibular/Proprioceptivo
+        'C' => calculate_subscale_raw(answers, (17..26).to_a), # Processamento Visual
+        'D' => calculate_subscale_raw(answers, (27..39).to_a),    # Processamento Tátil  
+        'E' => calculate_subscale_raw(answers, (40..49).to_a),    # Nível de Atividade  
+        'F' => calculate_subscale_raw(answers, (50..60).to_a),    # Processamento Auditivo  
       }
     end
 
@@ -55,13 +66,135 @@ module Scoring
     end
 
     # Determina nível de uma categoria específica baseado no score
-    def self.determine_category_level(score)
-      case score
-      when 0..8 then "normal"
-      when 9..16 then "leve"
-      when 17..24 then "moderado"
-      when 25..55 then "severo"
-      else "pontuação_inválida"
+    def self.determine_category_level(category, score, age)
+      #TODO: implement per category
+    end
+
+    def self.determine_baixo_registro_level(score, age)
+        case age
+        when age < 18
+          case score
+          when score < 18 then "Muito menos que a maioria"
+          when 19..26 then "Menos que a maioria"
+          when 27..40 then "Semelhante a maioria"
+          when 41..51 then "Mais que a maioria"
+          when 52..75 then "Muito mais que a maioria"
+          else "FALSE"
+          end
+        when age >= 18 and age <= 64
+          case score
+          when score < 18 then "Muito menos que a maioria"
+          when 19..23 then "Menos que a maioria"
+          when 24..35 then "Semelhante a maioria"
+          when 36..44 then "Mais que a maioria"
+          when 45..75 then "Muito mais que a maioria"
+          else "FALSE"
+          end
+        when age >= 65
+          case score
+          when score < 19 then "Muito menos que a maioria"
+          when 20..26 then "Menos que a maioria"
+          when 27..40 then "Semelhante a maioria"
+          when 41..51 then "Mais que a maioria"
+          when 52..75 then "Muito mais que a maioria"
+          else "FALSE"
+          end
+        end
+    end
+
+    def self.determine_procura_sensacao_level(score, age)
+      case age
+      when age < 18
+        case score
+        when score < 27 then "Muito menos que a maioria"
+        when 28..41 then "Menos que a maioria"
+        when 42..58 then "Semelhante a maioria"
+        when 59..65 then "Mais que a maioria"
+        when 66..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      when age >= 18 and age <= 64
+        case score
+        when score < 35 then "Muito menos que a maioria"
+        when 36..42 then "Menos que a maioria"
+        when 43..56 then "Semelhante a maioria"
+        when 57..62 then "Mais que a maioria"
+        when 63..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end 
+      when age >= 65
+        case score
+        when score < 28 then "Muito menos que a maioria"
+        when 29..39 then "Menos que a maioria"
+        when 40..52 then "Semelhante a maioria"
+        when 53..63 then "Mais que a maioria"
+        when 64..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      end
+    end
+
+    def self.determine_sensibilidade_sensorial_level(score, age)
+      case age
+      when age < 18
+        case score
+        when score < 19 then "Muito menos que a maioria"
+        when 20..25 then "Menos que a maioria"
+        when 26..40 then "Semelhante a maioria"
+        when 41..48 then "Mais que a maioria"
+        when 49..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      when age >= 18 and age <= 64
+        case score
+        when score < 18 then "Muito menos que a maioria"
+        when 19..25 then "Menos que a maioria"
+        when 26..41 then "Semelhante a maioria"
+        when 42..48 then "Mais que a maioria"
+        when 49..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      when age >= 65
+        case score
+        when score < 18 then "Muito menos que a maioria"
+        when 19..25 then "Menos que a maioria"
+        when 26..41 then "Semelhante a maioria"
+        when 42..48 then "Mais que a maioria"
+        when 49..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      end
+    end
+
+    def self.determine_evita_sensacao_level(score, age)
+      case age
+      when age < 18
+        case score
+        when score < 18 then "Muito menos que a maioria"
+        when 19..25 then "Menos que a maioria"
+        when 26..40 then "Semelhante a maioria"
+        when 41..48 then "Mais que a maioria"
+        when 49..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      when age >= 18 and age <= 64
+        case score
+        when score < 19 then "Muito menos que a maioria"
+        when 20..26 then "Menos que a maioria"
+        when 27..41 then "Semelhante a maioria"
+        when 42..49 then "Mais que a maioria"
+        when 50..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
+      when age >= 65
+        case score
+        when score < 18 then "Muito menos que a maioria"
+        when 19..25 then "Menos que a maioria"
+        when 26..42 then "Semelhante a maioria"
+        when 43..49 then "Mais que a maioria"
+        when 49..75 then "Muito mais que a maioria"
+        else "FALSE"
+        end
       end
     end
 
@@ -74,6 +207,10 @@ module Scoring
       when 145..300 then "severo"
       else "pontuação_inválida"
       end
+    end
+
+    def self.determine_subscale_level(subscale, score)
+      # TODO: implement this
     end
 
     # Constrói o hash de resultados final
@@ -94,6 +231,27 @@ module Scoring
       }
     end
 
+
+    def self.build_categories_hash(category_scores, category_levels)
+      # TODO: double check implementation. Search for standard ratios
+      category_names = {
+        'baixo_registro' => 'Processamento Tátil/Olfativo',
+        'procura_sensacao' => 'Processamento Vestibular/Proprioceptivo',
+        'sensibilidade_sensorial' => 'Processamento Visual',
+        'evita_sensacao' => 'Processamento Tátil'
+      }
+
+      result = {}
+      category_scores.each do |key, score|
+        result[category_names[key]] = {
+          "raw_score" => score,
+          "average_score" => average_score,
+          "interpretation" => get_interpretation_text(category_levels[key]),
+        }
+      end
+      result
+    end
+    
     # Constrói hash das subscalas (formato da imagem)
     def self.build_subscales_hash(category_scores, category_levels)
       category_names = {

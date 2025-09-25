@@ -64,7 +64,7 @@
             <div class="card-body">
               <div class="mb-4">
                 <h6>Introdução</h6>
-                <p class="text-muted">
+                <p >
                   O PSA - Perfil Sensorial do Adulto/Adolescente foi aplicado em <strong><%= @scale_response.patient.full_name %></strong> 
                   e revelou um perfil sensorial com <strong><%= @scale_response_adapter.level_description(@scale_response_adapter.overall_level).downcase %></strong>. 
                   A pontuação total de <strong><%= @scale_response_adapter.total_score %> pontos</strong> 
