@@ -13,87 +13,72 @@
   </div>
 </div>
 
-<% if current_user.email == "admin@admin.com" %>
-  <div class="mb-3">
-    <button type="button" class="btn btn-warning btn-sm" onclick="fillRandomAnswers()">
-      <i class="bi bi-shuffle"></i> Preenchimento Aleatório (Teste)
-    </button>
+<% if scale_response.errors.any? %>
+  <div class="alert alert-danger" data-turbo-cache="false">
+    <h4 class="mb-2"><%= t('errors.messages.not_saved', count: scale_response.errors.count, resource: scale_response.class.model_name.human.downcase) %></h4>
+    <ul class="mb-0">
+      <% scale_response.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
   </div>
 <% end %>
 
-<%= form_with model: scale_response, url: psa_scale_responses_path, method: :post, data: { turbo: false } do |f| %>
-  <% if scale_response.errors.any? %>
-    <div class="alert alert-danger" data-turbo-cache="false">
-      <h4 class="mb-2"><%= t('errors.messages.not_saved', count: scale_response.errors.count, resource: scale_response.class.model_name.human.downcase) %></h4>
-      <ul class="mb-0">
-        <% scale_response.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-  <%= hidden_field_tag :scale_request_id, @scale_request.id %>
-  
-  <!-- Formulário com subescalas (para PSA) -->
-  <% if scale_response.items_by_subscale.present? %>
-    <% scale_response.items_by_subscale.each do |subscale, items| %>
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="mb-0">Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></h5>
-        </div>
-        <div class="card-body">
-          <% if items.present? %>
-            <div class="list-group">
-              <% items.each do |item| %>
-                <div class="list-group-item mb-3">
-                  <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
-                  <div>
-                    <% if item.options.present? %>
-                      <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
-                        <div class="form-check">
-                          <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
-                          <label class="form-check-label">
-                            <%= score %> — <%= label %>
-                          </label>
-                        </div>
-                      <% end %>
-                    <% else %>
-                      <p class="text-muted">Opções não disponíveis para este item.</p>
+<!-- Formulário com subescalas (para PSA) -->
+<% if scale_response.items_by_subscale.present? %>
+  <% scale_response.items_by_subscale.each do |subscale, items| %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></h5>
+      </div>
+      <div class="card-body">
+        <% if items.present? %>
+          <div class="list-group">
+            <% items.each do |item| %>
+              <div class="list-group-item mb-3">
+                <p><strong><%= item.item_number %>. <%= item.question_text %></strong></p>
+                <div>
+                  <% if item.options.present? %>
+                    <% item.options.sort_by { |k,_| k.to_i }.each do |score, label| %>
+                      <div class="form-check">
+                        <%= radio_button_tag "scale_response[answers][item_#{item.item_number}]", score, false, class: "form-check-input" %>
+                        <label class="form-check-label">
+                          <%= score %> — <%= label %>
+                        </label>
+                      </div>
                     <% end %>
-                  </div>
+                  <% else %>
+                    <p class="text-muted">Opções não disponíveis para este item.</p>
+                  <% end %>
                 </div>
-              <% end %>
-            </div>
-          <% else %>
-            <p class="text-muted">Nenhum item disponível para esta subescala.</p>
-          <% end %>
-          
-          <!-- Campo de comentários para a subescala -->
-          <div class="mt-4">
-            <div class="mb-3">
-              <label for="subscale_comment_<%= subscale %>" class="form-label">
-                <strong>Comentários sobre a Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></strong>
-                <small class="text-muted">(Opcional - Adicione observações relevantes sobre esta subescala)</small>
-              </label>
-              <%= text_area_tag "scale_response[answers][subscale_comments][#{subscale}]", 
-                  scale_response.get_subscale_comment(subscale), 
-                  class: "form-control", 
-                  id: "subscale_comment_#{subscale}",
-                  rows: 3,
-                  placeholder: "Digite aqui suas observações sobre esta subescala..." %>
-            </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted">Nenhum item disponível para esta subescala.</p>
+        <% end %>
+        
+        <!-- Campo de comentários para a subescala -->
+        <div class="mt-4">
+          <div class="mb-3">
+            <label for="subscale_comment_<%= subscale %>" class="form-label">
+              <strong>Comentários sobre a Subescala <%= subscale %> - <%= get_subscale_title(subscale) %></strong>
+              <small class="text-muted">(Opcional - Adicione observações relevantes sobre esta subescala)</small>
+            </label>
+            <%= text_area_tag "scale_response[answers][subscale_comments][#{subscale}]", 
+                scale_response.get_subscale_comment(subscale), 
+                class: "form-control", 
+                id: "subscale_comment_#{subscale}",
+                rows: 3,
+                placeholder: "Digite aqui suas observações sobre esta subescala..." %>
           </div>
         </div>
       </div>
-    <% end %>
-  <% else %>
-    <div class="alert alert-warning">
-      <p>Nenhuma subescala disponível para esta escala.</p>
     </div>
   <% end %>
-
-  <div class="mt-4">
-    <%= f.submit t('scale_responses.new.submit'), class: "btn btn-primary" %>
+<% else %>
+  <div class="alert alert-warning">
+    <p>Nenhuma subescala disponível para esta escala.</p>
   </div>
 <% end %>
 
